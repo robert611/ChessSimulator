@@ -1,0 +1,26 @@
+td {
+	padding: 7px;
+}
+
+td {
+	color: grey !important;
+	width: 80px!important;
+	height: 80px!important;
+	text-align: center;
+}
+
+.container {
+	margin-top: 40px;
+}
+
+.container-fluid {
+	margin-top: 40px;
+}
+
+.piece-board-img {
+	max-width: 70px;
+}
+
+.opacity-0 {
+	opacity: 0;
+}

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chess{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+		<div class="row">
+            <div class="col-md-4">
+                
+            </div>
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    {% for i in 8..1 %}
+                        <tr>
+                            <td>{{ i }}</td>
+
+                            {% for j in 1..8 %}
+                                {% if i % 2 == 0 %}
+                                    {% if j % 2 == 0 %}
+                                        {% set color = '#3e2723' %}
+                                    {% else %}
+                                        {% set color = '#eceff1' %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if j % 2 == 0 %}
+                                        {% set color = '#eceff1' %}
+                                    {% else %}
+                                        {% set color = '#3e2723' %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if board[i][j] == null %}
+                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
+                                {% else %}
+                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~board[i][j].getPicture) }}"></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td>a</td>
+                        <td>b</td>
+                        <td>c</td>
+                        <td>d</td>
+                        <td>e</td>
+                        <td>f</td>
+                        <td>g</td>
+                        <td>h</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
