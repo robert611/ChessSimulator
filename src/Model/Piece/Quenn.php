@@ -22,16 +22,14 @@ class Quenn extends Piece
 		return $possibleMoves;
 	}
 
-	public function getPossibleMoves(array $board): array
+	public function findOutPossibleMovesAndProtectedSquares(array $board): array
 	{
 		$possibleMoves = [];
 
-		return $possibleMoves;
-	}
+		$protectedSquares = [];
 
-	public function isProtectingGivenSquare(array $board, array $squareToProtect): bool
-	{
-		return true;
+		/* $protectedSquares on its own contains only squares on which our pieces are, $possibleMoves contains all of the other moves like empty squares or oponnent pieces */
+		return ['possible_moves' => $possibleMoves, 'protected_squares' => array_merge($possibleMoves, $protectedSquares)];
 	}
 
 	public function getPicture(): string

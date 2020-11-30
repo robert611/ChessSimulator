@@ -22,9 +22,11 @@ class Bishop extends Piece
 		return $possibleMoves;
 	}
 
-	public function getPossibleMoves(array $board): array
+	public function findOutPossibleMovesAndProtectedSquares(array $board): array
 	{	
 		$possibleMoves = [];
+
+		$protectedSquares = [];
 
 		/* Bishop moves on diagonals, it can be: [up, left] , [up, right], [down, left], [down, right] */
 
@@ -58,8 +60,9 @@ class Bishop extends Piece
 				$possibleMoves[] = $checkedCoordination;
 			}
 
-			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal */
+			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
 			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
@@ -90,8 +93,9 @@ class Bishop extends Piece
 				$possibleMoves[] = $checkedCoordination;
 			}
 
-			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal */
+			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
 			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
@@ -122,8 +126,9 @@ class Bishop extends Piece
 				$possibleMoves[] = $checkedCoordination;
 			}
 
-			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal */
+			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
 			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
@@ -154,8 +159,9 @@ class Bishop extends Piece
 				$possibleMoves[] = $checkedCoordination;
 			}
 
-			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal */
+			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
 			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
@@ -163,25 +169,8 @@ class Bishop extends Piece
 			if($horizontalSquareNumber == 1 or $this->cords[1] - $iteration == 1) break; 
 		}
 		
-		return $possibleMoves;
-	}
-
-	public function isProtectingGivenSquare(array $board, array $squareToProtect): bool
-	{
-		/* So we must check if beetwen a bishop and a given square is only empty space, if there is our or our opponent's piece then bishop does not protected given square */
-
-		/* First let's check if bishop can even move to that square */
-
-		/* Let's assume cords are coords[8, 3] and given square is [8,5] */
-
-		/* Bishop can never protect any square on the same column */
-		if ($this->cords[1] == $squareToProtect[1]) {
-			return false;
-		}
-
-
-
-		return true;
+		/* $protectedSquares on its own contains only squares on which our pieces are, $possibleMoves contains all of the other moves like empty squares or oponnent pieces*/
+		return ['possible_moves' => $possibleMoves, 'protected_squares' => array_merge($possibleMoves, $protectedSquares)];
 	}
 
 	public function getPicture(): string

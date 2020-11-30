@@ -22,10 +22,11 @@ class King extends Piece
 		return $possibleMoves;
 	}
 
-	public function getPossibleMoves(array $board): array
+	public function findOutPossibleMovesAndProtectedSquares(array $board): array
 	{
-		/* First lets calculate all moves which that piece can make */
 		$possibleMoves = [];
+
+		$protectedSquares = [];
 
 		/* King can move in every direction but only one square at a time, we also must check if the king won't be in check in a given square */
 
@@ -34,18 +35,32 @@ class King extends Piece
 			$cords[1] is vertical column
 		*/
 
-		/* Up */
-		$coordinates = [$this->cords[0], $this->cords[1] + 1];
+		$potentialMovesCoordinates = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($this->cords);
 
-		if($this->checkIfKingCanMoveToGivenSquare($board, $coordinates)) {
-			$possibleMoves[] = $coordinates;
+		foreach ($potentialMovesCoordinates as $potentialMove) {
+			if($this->checkIfKingCanMoveToGivenSquare($board, $potentialMove)) {
+				$possibleMoves[] = $potentialMove;
+			}
 		}
 
-		return $possibleMoves;
+		/* Now we must figure out which squares king protects, and those are all to which king can move unless that square is attacked by oponnent's piece then king does not protect it since it would be in check */
+		$protectedSquaresByOpponent = $this->getSquaresWhichOpponentsPiecesProtect($board, $this->getSide());
+
+		foreach ($potentialMovesCoordinates as $potentialMove) {
+			if (!$this->checkIfCoordinatesAreInsideOfBoard($potentialMove[0], $potentialMove[1])) continue;
+
+			if (!in_array($potentialMove, $protectedSquaresByOpponent)) {
+				$protectedSquares[] = $potentialMove;
+			}
+		}
+		
+		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
 	private function checkIfKingCanMoveToGivenSquare(array $board, array $cords): bool 
 	{
+		if (!$this->checkIfCoordinatesAreInsideOfBoard($cords[0], $cords[1])) return false;
+
 		$squareOnBoard = $board[$cords[0]][$cords[1]];
 
 		/* If on this square is placed our piece then we can't move there */
@@ -54,9 +69,9 @@ class King extends Piece
 			return false;
 		}
 
-        if ($this->checkIfKingIsInCheck($board)) {
+        if ($this->checkIfKingIsInCheck($board, $cords)) {
 			return false;
-        }
+		}
 		
 		return true;
 	}
@@ -64,6 +79,7 @@ class King extends Piece
 	public function checkIfKingIsInCheck(array $board, $kingCordsOnBoard = null): bool
 	{
 		/* That function can be used from outside this class in situation which we check coordinates in which king is currently placed not the coordinates to which we want to move */
+		/* So it can check square which already has a king or a square to which king wants to move */
 		if (is_null($kingCordsOnBoard)) $kingCordsOnBoard = $this->cords;
 
 		/* We must check if: 
@@ -80,9 +96,10 @@ class King extends Piece
 
 		$opponentKingPositionOnBoard = [];
 
-		$oponnentPossibleMoves = array();
+		$opponentPossibleMovesCoords = array();
+		$opponentProtectedSquaresCoords = array();
 	
-		/* I could go through all of the opoonent pieces and check if any of them has that square in possible moves */
+		/* I could go through all of the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
 		foreach ($board as $horizontalColumn) {
 			foreach ($horizontalColumn as $square)
 			{
@@ -97,27 +114,28 @@ class King extends Piece
                         continue;
 					}
 
-					$oponnentPossibleMoves = array_merge($square->getPossibleMoves($board), $oponnentPossibleMoves);
+					$opponentPossibleMovesCoords = array_merge($square->getPossibleMoves($board), $opponentPossibleMovesCoords);
+					$opponentProtectedSquaresCoords = array_merge($square->getProtectedSquares($board), $opponentProtectedSquaresCoords);
 				}
 			}
 		}	
 	
-		if (in_array($kingCordsOnBoard, $oponnentPossibleMoves)) 
+		if (in_array($kingCordsOnBoard, $opponentPossibleMovesCoords)) 
 		{
 			$isInCheck = true;
 		}
 
-		/* Check if opponent's king is bordering with given square */
-		$cordsOnWhichOpponentKingCannnotBe = [
-			[$kingCordsOnBoard[0], $kingCordsOnBoard[1] - 1], /* Left */
-			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1] - 1], /* Left and up on diagonal */
-			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1] - 1], /* Down and left on diagonal */
-			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1]], /* Down */
-			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1] + 1], /* Down and right on diagonal */
-			[$kingCordsOnBoard[0], $kingCordsOnBoard[1] + 1], /* Right */
-			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1] + 1], /* Right and up on diagonal */
-			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1]] /* Up */
-		];
+		/* If the examined square has an opponent's piece then we have to check if it is not protected and we can capture */
+		$kingsSquareOnBoard = $board[$kingCordsOnBoard[0]][$kingCordsOnBoard[1]];
+
+		if(is_object($kingsSquareOnBoard) && $kingSquareOnBoard->getSide() !== $this->getSide()) {
+			if (in_array($kingCordsOnBoard, $opponentProtectedSquaresCoords)) {
+				$isInCheck = true;
+			}
+		}
+
+		/* Check if opponent's king is bordering with given square, I omit kings in previous loop to avoid infinite loop */
+		$cordsOnWhichOpponentKingCannnotBe = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard);
 
 		if (in_array($opponentKingPositionOnBoard, $cordsOnWhichOpponentKingCannnotBe)) 
 		{
@@ -127,9 +145,18 @@ class King extends Piece
 		return $isInCheck;
 	}
 
-	public function isProtectingGivenSquare(array $board, array $squareToProtect): bool
+	public function getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard): array
 	{
-		return true;
+		return [
+			[$kingCordsOnBoard[0], $kingCordsOnBoard[1] - 1], /* Left */
+			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1] - 1], /* Left and up on diagonal */
+			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1] - 1], /* Down and left on diagonal */
+			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1]], /* Down */
+			[$kingCordsOnBoard[0] - 1, $kingCordsOnBoard[1] + 1], /* Down and right on diagonal */
+			[$kingCordsOnBoard[0], $kingCordsOnBoard[1] + 1], /* Right */
+			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1] + 1], /* Right and up on diagonal */
+			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1]] /* Up */
+		];
 	}
 
 	public function getPicture(): string
