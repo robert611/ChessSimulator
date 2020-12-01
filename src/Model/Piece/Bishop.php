@@ -15,15 +15,17 @@ class Bishop extends Piece
 		$this->side = $side;
 	}
 
-	public function move(array $board)
+	public function move(object $game)
 	{
-		$possibleMoves = $this->getPossibleMoves($board);
+		$possibleMoves = $this->getPossibleMoves($game);
 
 		return $possibleMoves;
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(array $board): array
+	public function findOutPossibleMovesAndProtectedSquares(object $game): array
 	{	
+		$board = $game->getBoard();
+		
 		$possibleMoves = [];
 
 		$protectedSquares = [];

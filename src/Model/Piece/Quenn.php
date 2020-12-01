@@ -6,24 +6,26 @@ class Quenn extends Piece
 {
 	private string $name = 'quenn';
 	private string $picture;
-	private array $cord;
+	private array $cords;
 	private string $side;
 
-	public function __construct($cord, $side)
+	public function __construct($cords, $side)
 	{
-		$this->cord = $cord;
+		$this->cords = $cords;
 		$this->side = $side;
 	}
 
-	public function move(array $board)
+	public function move(object $game)
 	{
-		$possibleMoves = $this->getPossibleMoves($board);
+		$possibleMoves = $this->getPossibleMoves($game);
 
 		return $possibleMoves;
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(array $board): array
+	public function findOutPossibleMovesAndProtectedSquares(object $game): array
 	{
+		$board = $game->getBoard();
+
 		$possibleMoves = [];
 
 		$protectedSquares = [];

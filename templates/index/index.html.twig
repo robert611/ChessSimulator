@@ -7,7 +7,6 @@
     <div class="container-fluid">
 		<div class="row">
             <div class="col-md-4">
-                
             </div>
             <div class="col-md-8">
                 <table class="table table-bordered">
@@ -30,10 +29,10 @@
                                     {% endif %}
                                 {% endif %}
 
-                                {% if board[i][j] == null %}
+                                {% if game.getBoard()[i][j] == null %}
                                     <td style="{{ 'background-color:'~color }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
                                 {% else %}
-                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~board[i][j].getPicture) }}"></td>
+                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPicture) }}"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>

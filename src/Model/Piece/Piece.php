@@ -8,23 +8,23 @@ abstract class Piece
 
     private string $picture;
     
-    private array $cord;
+    private array $cords;
     
     private string $side;
     
-    abstract function move(array $board);
+    abstract function move(object $game);
 
-    public function getPossibleMoves(array $board): array
+    public function getPossibleMoves(object $game): array
 	{
-		return $this->findOutPossibleMovesAndProtectedSquares($board)['possible_moves'];
+		return $this->findOutPossibleMovesAndProtectedSquares($game)['possible_moves'];
 	}
 
-	public function getProtectedSquares(array $board): array
+	public function getProtectedSquares(object $game): array
 	{
-		return $this->findOutPossibleMovesAndProtectedSquares($board)['protected_squares'];
+		return $this->findOutPossibleMovesAndProtectedSquares($game)['protected_squares'];
 	}
 
-    abstract function findOutPossibleMovesAndProtectedSquares(array $board): array;
+    abstract function findOutPossibleMovesAndProtectedSquares(object $game): array;
 
     abstract function getPicture(): string;
 
