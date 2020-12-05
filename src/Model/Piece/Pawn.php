@@ -4,13 +4,19 @@ namespace App\Model\Piece;
 
 class Pawn extends Piece
 {
+	private string $id;
+
 	private string $name = 'pawn';
+
 	private string $picture;
+
 	private array $cords;
+
 	private string $side;
 
-	public function __construct($cords, $side)
+	public function __construct(string $id, array $cords, string $side)
 	{
+		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
 	}
@@ -28,8 +34,6 @@ class Pawn extends Piece
 		$board = $game->getBoard();
 
 		$possibleMoves = [];
-
-		$protectedSquares = [];
 
 		if ($this->side == "white") {
 			$pawnStartingLine = 2;
@@ -52,28 +56,35 @@ class Pawn extends Piece
 		* Move up and left if on that square is placed oponnent piece
 		* Move up and right if on that square is placed opponent piece
 		* En pasant, which is move up and left or move up and right even if there is not any opponent piece on that square, but opponent pawn moved 2 squares up and now is on the same horizontall column next to our pawn, en pasant also captures that opponent pawn
-		* Also We must check if that pawn is not blocking any attack from opponent's piece towards our king
+		* Also We must check if that pawn is not blocking any attack from opponent's piece towards our king, but it will be done in diffrent method called getPossibleMoves
 		/
 
 		/* One move up */
-		$moveOneSquareUpOnBoard = $board[$moveOneSquareUpCords[0]][$moveOneSquareUpCords[1]];
+		if ($this->checkIfCoordinatesAreInsideOfBoard($moveOneSquareUpCords[0], $moveOneSquareUpCords[1]))
+		{
+			$moveOneSquareUpOnBoard = $board[$moveOneSquareUpCords[0]][$moveOneSquareUpCords[1]]->getPiece();
 
-		/* If on that square is a piece either ours or our opponent's then pawn can't move there */
-		if (!is_object($moveOneSquareUpOnBoard)) {
-			$possibleMoves[] = $moveOneSquareUpCords;
-		}
-
+            /* If on that square is a piece either ours or our opponent's then pawn can't move there */
+            if (!is_object($moveOneSquareUpOnBoard)) {
+                $possibleMoves[] = $moveOneSquareUpCords;
+            }
+        }
+		
 		/* Two moves up */
-		$moveTwoSquaresUpOnBoard = $board[$moveTwoSquaresUpCords[0]][$moveTwoSquaresUpCords[1]];
+		if ($this->checkIfCoordinatesAreInsideOfBoard($moveTwoSquaresUpCords[0], $moveTwoSquaresUpCords[1]))
+	 	{
+            $moveTwoSquaresUpOnBoard = $board[$moveTwoSquaresUpCords[0]][$moveTwoSquaresUpCords[1]]->getPiece();
 
-		/* If on that square is a piece either ours or our opponent's then pawn can't move there, also it must be the first move of that pawn to be able to move two squares at the same time, if the white pawn is on second and black pawn on seventh line then it is first move */
-		if (!is_object($moveOneSquareUpOnBoard) && !is_object($moveTwoSquaresUpOnBoard) && $pawnStartingLine == $this->cords[0]) {
-			$possibleMoves[] = $moveTwoSquaresUpCords;
-		}
+            /* If on that square is a piece either ours or our opponent's then pawn can't move there, also it must be the first move of that pawn to be able to move two squares at the same time, if the white pawn is on second and black pawn on seventh line then it is first move */
+			/* Also we must check if there is some piece on a square up then we can't jump through it */
+            if (!is_object($moveOneSquareUpOnBoard) && !is_object($moveTwoSquaresUpOnBoard) && $pawnStartingLine == $this->cords[0]) {
+                $possibleMoves[] = $moveTwoSquaresUpCords;
+            }
+        }
 
 		/* Move up and left with capture */
         if ($this->checkIfCoordinatesAreInsideOfBoard($moveUpAndLeftCords[0], $moveUpAndLeftCords[1])) {
-            $moveUpAndLeftOnBoard = $board[$moveUpAndLeftCords[0]][$moveUpAndLeftCords[1]];
+            $moveUpAndLeftOnBoard = $board[$moveUpAndLeftCords[0]][$moveUpAndLeftCords[1]]->getPiece();
         
             /* In order to capture up and left there must be an opponent's piece on that square */
             if (is_object($moveUpAndLeftOnBoard) && $moveUpAndLeftOnBoard->getSide() !== $this->getSide()) {
@@ -83,7 +94,7 @@ class Pawn extends Piece
 
 		/* Move up and right with capture */
 		if ($this->checkIfCoordinatesAreInsideOfBoard($moveUpAndRightCords[0], $moveUpAndRightCords[1])) {
-			$moveUpAndRightOnBoard = $board[$moveUpAndRightCords[0]][$moveUpAndRightCords[1]];
+			$moveUpAndRightOnBoard = $board[$moveUpAndRightCords[0]][$moveUpAndRightCords[1]]->getPiece();
 
 			/* In order to capture up and left there must be an opponent's piece on that square */
 			if(is_object($moveUpAndRightOnBoard) && $moveUpAndRightOnBoard->getSide() !== $this->getSide()) {
@@ -93,7 +104,6 @@ class Pawn extends Piece
 		
 		/* En passant up and left and up and right */
 		/* En passant is possible only if last move of our opponent was with his pawn two squares at a time, and that moved pawn is vertically next to this pawn and is horizontally on the same file as this pawn either on left or right side */
-
 		$lastOpponentMove = !empty($gameMoves) ? $gameMoves[count($gameMoves) - 1] : ['piece' => null, 'previous_cords' => [], 'new_cords' => []];
 		
 		/* Check if it was a move with a pawn */
@@ -126,8 +136,11 @@ class Pawn extends Piece
 			}
 		}
 
-		/* $protectedSquares on its own contains only squares on which our pieces are, $possibleMoves contains all of the other moves like empty squares or oponnent pieces */
-		return ['possible_moves' => $possibleMoves, 'protected_squares' => array_merge($possibleMoves, $protectedSquares)];
+		/* In case of a pawn protected squares are not all of the pawn moves, since pawn does not protect square up or two square up but he can move there */
+		$protectedSquares = [$moveUpAndLeftCords, $moveUpAndRightCords];
+
+		/* $protectedSquares on its own contains squares to which we can move and those we aim on which are either ours or our oponnent pieces, $possibleMoves contains all of the other moves like empty squares or oponnent pieces */
+		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
 	public function getPicture(): string

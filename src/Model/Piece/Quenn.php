@@ -4,13 +4,19 @@ namespace App\Model\Piece;
 
 class Quenn extends Piece
 {
+	private string $id;
+
 	private string $name = 'quenn';
+	
 	private string $picture;
+
 	private array $cords;
+
 	private string $side;
 
-	public function __construct($cords, $side)
+	public function __construct(string $id, array $cords, string $side)
 	{
+		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
 	}

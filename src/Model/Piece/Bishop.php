@@ -4,13 +4,19 @@ namespace App\Model\Piece;
 
 class Bishop extends Piece
 {
+	private string $id;
+
 	private string $name = 'bishop';
+	
 	private string $picture;
+	
 	private array $cords; /* $cords[0] -> number, $cords[1] -> letter, for instance: $cords[0] = 2, $cords[1] = a */ 
+	
 	private string $side;
 
-	public function __construct($cords, $side)
+	public function __construct(string $id, array $cords, string $side)
 	{
+		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
 	}
@@ -48,28 +54,28 @@ class Bishop extends Piece
 
 			/* These are coordination we check in current loop cycle if bishop can move there */
 			$checkedCoordination = [$horizontalSquareNumber, $this->cords[1] - $iteration];
-			$squareOnBoard = $board[$horizontalSquareNumber][$this->cords[1] - $iteration];
+			$pieceOnSquare = $board[$horizontalSquareNumber][$this->cords[1] - $iteration]->getPiece();
 
 			/* If in a given coordinates is placed an opponent piece, then add it to possible moves and break since we can't go further on this diagonal */
-			if(is_object($squareOnBoard) && $squareOnBoard->getSide() !== $this->getSide())
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide())
 			{
 				$possibleMoves[] = $checkedCoordination;
 				break;
 			}
 
-			if($squareOnBoard == null)
+			if ($pieceOnSquare == null)
 			{
 				$possibleMoves[] = $checkedCoordination;
 			}
 
 			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
-			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide()) {
 				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
 			/* It will apply if we are on A8, C8, E8, G8, A6, A4, A2 position then you can't go further up, because it is the end of a board */
-			if($horizontalSquareNumber == 1 or $this->cords[1] - $iteration == 8) break; 
+			if ($horizontalSquareNumber == 1 or $this->cords[1] - $iteration == 8) break; 
 		}
 
 		/* [down, right] diagonal */
@@ -81,28 +87,28 @@ class Bishop extends Piece
 
 			/* These are coordination we check in current loop cycle if bishop can move there */
 			$checkedCoordination = [$horizontalSquareNumber, $this->cords[1] + $iteration];
-			$squareOnBoard = $board[$horizontalSquareNumber][$this->cords[1] + $iteration];
+			$pieceOnSquare = $board[$horizontalSquareNumber][$this->cords[1] + $iteration]->getPiece();
 
 			/* If in a given coordinates is placed an opponent piece, then add it to possible moves and break since we can't go further on this diagonal */
-			if(is_object($squareOnBoard) && $squareOnBoard->getSide() !== $this->getSide())
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide())
 			{
 				$possibleMoves[] = $checkedCoordination;
 				break;
 			}
 
-			if($squareOnBoard == null)
+			if ($pieceOnSquare == null)
 			{
 				$possibleMoves[] = $checkedCoordination;
 			}
 
 			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
-			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide()) {
 				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
 			/* It will apply if we are on B1, D1, F1, H1, H3, H5, H7 position then you can't go further up, because it is the end of a board */
-			if($horizontalSquareNumber == 1 or $this->cords[1] + $iteration == 1) break; 
+			if ($horizontalSquareNumber == 1 or $this->cords[1] + $iteration == 1) break; 
 		}
 
 		/* [up, right] diagonal */
@@ -114,28 +120,28 @@ class Bishop extends Piece
 
 			/* These are coordination we check in current loop cycle if bishop can move there */
 			$checkedCoordination = [$horizontalSquareNumber, $this->cords[1] + $iteration];
-			$squareOnBoard = $board[$horizontalSquareNumber][$this->cords[1] + $iteration];
+			$pieceOnSquare = $board[$horizontalSquareNumber][$this->cords[1] + $iteration]->getPiece();
 
 			/* If in a given coordinates is placed an opponent piece, then add it to possible moves and break since we can't go further on this diagonal */
-			if(is_object($squareOnBoard) && $squareOnBoard->getSide() !== $this->getSide())
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide())
 			{
 				$possibleMoves[] = $checkedCoordination;
 				break;
 			}
 
-			if($squareOnBoard == null)
+			if ($pieceOnSquare == null)
 			{
 				$possibleMoves[] = $checkedCoordination;
 			}
 
 			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
-			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide()) {
 				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
 			/* It will apply if we are on A8, C8, E8, G8, H7, H5, H3, H1 position then you can't go further up, because it is the end of a board */
-			if($horizontalSquareNumber == 8 or $this->cords[1] + $iteration == 8) break; 
+			if ($horizontalSquareNumber == 8 or $this->cords[1] + $iteration == 8) break; 
 		}
 
 		/* [down, left] diagonal */
@@ -147,31 +153,31 @@ class Bishop extends Piece
 
 			/* These are coordination we check in current loop cycle if bishop can move there */
 			$checkedCoordination = [$horizontalSquareNumber, $this->cords[1] - $iteration];
-			$squareOnBoard = $board[$horizontalSquareNumber][$this->cords[1] - $iteration];
+			$pieceOnSquare = $board[$horizontalSquareNumber][$this->cords[1] - $iteration]->getPiece();
 
 			/* If in a given coordinates is placed an opponent piece, then add it to possible moves and break since we can't go further on this diagonal */
-			if(is_object($squareOnBoard) && $squareOnBoard->getSide() !== $this->getSide())
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide())
 			{
 				$possibleMoves[] = $checkedCoordination;
 				break;
 			}
 
-			if($squareOnBoard == null)
+			if ($pieceOnSquare == null)
 			{
 				$possibleMoves[] = $checkedCoordination;
 			}
 
 			/* In this case we try to hit our own piece, so we can't go this way or any further on this diagonal, and it means we are protecting that piece */
-			if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide()) {
+			if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide()) {
 				$protectedSquares[] = $checkedCoordination;
 				break;
 			}
 
 			/* It will apply if we are on B1, D1, F1, H1, A2, A4, A6, A8 position then you can't go further up, because it is the end of a board */
-			if($horizontalSquareNumber == 1 or $this->cords[1] - $iteration == 1) break; 
+			if ($horizontalSquareNumber == 1 or $this->cords[1] - $iteration == 1) break; 
 		}
 		
-		/* $protectedSquares on its own contains only squares on which our pieces are, $possibleMoves contains all of the other moves like empty squares or oponnent pieces*/
+		/* $protectedSquares on its own contains squares to which we can move and those we aim on which are either ours or our oponnent pieces, $possibleMoves contains all of the other moves like empty squares or oponnent pieces*/
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => array_merge($possibleMoves, $protectedSquares)];
 	}
 

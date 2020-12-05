@@ -2,15 +2,23 @@
 
 namespace App\Model\Piece;
 
+use App\Model\Game;
+
 class King extends Piece
 {
+	private string $id;
+
 	private string $name = 'king';
+
 	private string $picture;
+
 	private array $cords;
+
 	private string $side;
 
-	public function __construct($cords, $side)
+	public function __construct(string $id, array $cords, string $side)
 	{
+		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
 	}
@@ -40,13 +48,13 @@ class King extends Piece
 		$potentialMovesCoordinates = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($this->cords);
 
 		foreach ($potentialMovesCoordinates as $potentialMove) {
-			if($this->checkIfKingCanMoveToGivenSquare($board, $potentialMove)) {
+			if ($this->checkIfKingCanMoveToGivenSquare($game, $potentialMove)) {
 				$possibleMoves[] = $potentialMove;
 			}
 		}
 
 		/* Now we must figure out which squares king protects, and those are all to which king can move unless that square is attacked by oponnent's piece then king does not protect it since it would be in check */
-		$protectedSquaresByOpponent = $this->getSquaresWhichOpponentsPiecesProtect($board, $this->getSide());
+		$protectedSquaresByOpponent = $this->getSquaresWhichOpponentsPiecesProtect($game, $this->getSide());
 
 		foreach ($potentialMovesCoordinates as $potentialMove) {
 			if (!$this->checkIfCoordinatesAreInsideOfBoard($potentialMove[0], $potentialMove[1])) continue;
@@ -55,31 +63,36 @@ class King extends Piece
 				$protectedSquares[] = $potentialMove;
 			}
 		}
+
 		
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
-	private function checkIfKingCanMoveToGivenSquare(array $board, array $cords): bool 
+	private function checkIfKingCanMoveToGivenSquare(Game $game, array $cords): bool 
 	{
 		if (!$this->checkIfCoordinatesAreInsideOfBoard($cords[0], $cords[1])) return false;
 
-		$squareOnBoard = $board[$cords[0]][$cords[1]];
+		$board = $game->getBoard();
+
+		$pieceOnSquare = $board[$cords[0]][$cords[1]]->getPiece();
 
 		/* If on this square is placed our piece then we can't move there */
-		if (is_object($squareOnBoard) && $squareOnBoard->getSide() == $this->getSide())
+		if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide())
 		{
 			return false;
 		}
 
-        if ($this->checkIfKingIsInCheck($board, $cords)) {
+        if ($this->checkIfKingIsInCheck($game, $cords)) {
 			return false;
 		}
 		
 		return true;
 	}
 
-	public function checkIfKingIsInCheck(array $board, $kingCordsOnBoard = null): bool
+	public function checkIfKingIsInCheck(Game $game, $kingCordsOnBoard = null): bool
 	{
+		$board = $game->getBoard();
+
 		/* That function can be used from outside this class in situation which we check coordinates in which king is currently placed not the coordinates to which we want to move */
 		/* So it can check square which already has a king or a square to which king wants to move */
 		if (is_null($kingCordsOnBoard)) $kingCordsOnBoard = $this->cords;
@@ -98,40 +111,44 @@ class King extends Piece
 
 		$opponentKingPositionOnBoard = [];
 
-		$opponentPossibleMovesCoords = array();
 		$opponentProtectedSquaresCoords = array();
 	
 		/* I could go through all of the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
 		foreach ($board as $horizontalColumn) {
 			foreach ($horizontalColumn as $square)
 			{
+				$piece = $square->getPiece();
+
 				/* If there is as piece on that square */
-				if (is_object($square)) {
+				if (is_object($piece) && $piece->getSide() !== $this->getSide()) {
 					
 					/* Check if this is the king, if it is this king then there is no point in checking and also it would cause infinite loop */
 					/* If it is the other king there is still no point in checking because that king could never move to any square bordering with this king according to the rules of the game so it would not be in possibleMoves, and also it would cause infinite loop*/
-                    if ($square instanceof $this) {
+                    if ($piece instanceof $this) {
 
-						if ($square->getSide() !== $this->getSide()) $opponentKingPositionOnBoard = $square->getCords();
+						if ($piece->getSide() !== $this->getSide()) $opponentKingPositionOnBoard = $piece->getCords();
                         continue;
 					}
 
-					$opponentPossibleMovesCoords = array_merge($square->getPossibleMoves($board), $opponentPossibleMovesCoords);
-					$opponentProtectedSquaresCoords = array_merge($square->getProtectedSquares($board), $opponentProtectedSquaresCoords);
+					$opponentProtectedSquaresCoords = array_merge($piece->getProtectedSquares($game), $opponentProtectedSquaresCoords);
 				}
 			}
 		}	
 	
-		if (in_array($kingCordsOnBoard, $opponentPossibleMovesCoords)) 
+		/* If king is or wants to move to a square which is protected(or in another word attacked) by oponnent then it is in check on that square */
+		/* If it comes to possible moves they don't fit, cause for instance pawn can move one square up but he does not protect that square */
+		if (in_array($kingCordsOnBoard, $opponentProtectedSquaresCoords)) 
 		{
 			$isInCheck = true;
 		}
 
 		/* If the examined square has an opponent's piece then we have to check if it is not protected and we can capture */
-		$kingsSquareOnBoard = $board[$kingCordsOnBoard[0]][$kingCordsOnBoard[1]];
+		$squareOnBoardToWhichKingIsMoving = $board[$kingCordsOnBoard[0]][$kingCordsOnBoard[1]]->getPiece();
 
-		if(is_object($kingsSquareOnBoard) && $kingSquareOnBoard->getSide() !== $this->getSide()) {
+		if(is_object($squareOnBoardToWhichKingIsMoving) && $squareOnBoardToWhichKingIsMoving->getSide() !== $this->getSide()) {
+
 			if (in_array($kingCordsOnBoard, $opponentProtectedSquaresCoords)) {
+
 				$isInCheck = true;
 			}
 		}

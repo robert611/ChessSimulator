@@ -15,24 +15,14 @@
                             <td>{{ i }}</td>
 
                             {% for j in 1..8 %}
-                                {% if i % 2 == 0 %}
-                                    {% if j % 2 == 0 %}
-                                        {% set color = '#3e2723' %}
-                                    {% else %}
-                                        {% set color = '#eceff1' %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if j % 2 == 0 %}
-                                        {% set color = '#eceff1' %}
-                                    {% else %}
-                                        {% set color = '#3e2723' %}
-                                    {% endif %}
-                                {% endif %}
+                                {% set color = game.getBoard()[i][j].getColor() %}
 
-                                {% if game.getBoard()[i][j] == null %}
-                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
+                                {% if color == 'black' %} {% set color = "#3e2723" %} {% endif %}
+                                
+                                {% if game.getBoard()[i][j].getPiece() == null %}
+                                    <td style="{{ 'background-color:'~color  }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
                                 {% else %}
-                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPicture) }}"></td>
+                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
