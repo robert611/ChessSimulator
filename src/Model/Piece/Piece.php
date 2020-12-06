@@ -45,14 +45,14 @@ abstract class Piece
 
             /* Make move and check if in that situation my king is in check */
 			$gameWithPawnMove = clone $game;
-			$gameWithPawnMove->setBoard($recreatedBoard);
+            $gameWithPawnMove->setBoard($recreatedBoard);
 			$gameWithPawnMove->makeMove($recreatedBoard[$this->getCords()[0]][$this->getCords()[1]]->getPiece(), $move);
 
             $myKing = $gameWithPawnMove->getPieceSquare('king', $this->getSide())->getPiece();
 
-			$isInCheck = $myKing->checkIfKingIsInCheck($gameWithPawnMove, $myKing->getCords());
+            $isInCheck = $myKing->checkIfKingIsInCheck($gameWithPawnMove, $myKing->getCords());
 
-			if (!$isInCheck) $filteredMoves[] = $move;
+            if (!$isInCheck) $filteredMoves[] = $move;
 		}
 
 		return $filteredMoves;
