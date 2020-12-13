@@ -3,6 +3,8 @@
 namespace App\Model\Piece;
 
 use App\Model\Game;
+use App\Model\Piece\Piece;
+use App\Model\BoardSquare;
 
 abstract class Piece 
 {
@@ -56,7 +58,23 @@ abstract class Piece
 		}
 
 		return $filteredMoves;
-	}
+    }
+    
+    public function checkIfGivenMoveLeavesKingInCheck(Game $game, Piece $piece, array $move): bool
+    {
+        $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
+
+        /* Make move and check if in that situation my king is in check */
+        $gameWithNewMove = clone $game;
+        $gameWithNewMove->setBoard($recreatedBoard);
+        $gameWithNewMove->makeMove($piece, $move);
+
+        $myKing = $gameWithNewMove->getPieceSquare('king', $piece->getSide())->getPiece();
+
+        $isInCheck = $myKing->checkIfKingIsInCheck($gameWithNewMove, $myKing->getCords());
+
+        return $isInCheck;
+    }
 
     abstract function findOutPossibleMovesAndProtectedSquares(Game $game): array;
 
@@ -94,7 +112,7 @@ abstract class Piece
 		return false;
     }
     
-    public function getSquaresWhichOpponentsPiecesProtect(Game $game, $side)
+    public function getSquaresWhichGivenSidePiecesProtect(Game $game, string $side)
     {
         $board = $game->getBoard();
 
@@ -119,5 +137,47 @@ abstract class Piece
         }
         
         return $opponentProtectedSquaresCoords;
+    }
+
+    public function getSquaresAttackedByGivenSidePieces(Game $game, string $side)
+    {
+        $board = $game->getBoard();
+
+        $squaresAttackedByGivenSide = array();
+
+        foreach ($board as $horizontalColumn) {
+			foreach ($horizontalColumn as $square)
+			{
+                $pieceOnSquare = $square->getPiece();
+
+				/* If there is as piece on that square */
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {   
+                    /* Without this if, it would lead to infinite loop beacause one king checks protected squares of another to calculate it's protected squares, so none can really do it */ 
+                    if ($pieceOnSquare instanceof $this and $pieceOnSquare instanceof \App\Model\Piece\King) {
+                        $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($square->getCords())];
+                        continue;
+                    }
+
+                    $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPossibleMoves($game)];
+				}
+			}
+        }
+        
+        return $squaresAttackedByGivenSide;
+    }
+
+    public function getPiecesAttackingGivenSquare(Game $game, BoardSquare $square, string $side)
+    {
+        $piecesAttackingGivenSquare = array();
+
+        $squaresAttackedByGivenSidePieces = $this->getSquaresAttackedByGivenSidePieces($game, $side);
+
+        foreach ($squaresAttackedByGivenSidePieces as $piece) {
+            if (in_array($square->getCords(), $piece['possible_moves'])) {
+                $piecesAttackingGivenSquare[] = $piece['piece'];
+            }
+        }
+
+        return $piecesAttackingGivenSquare;
     }
 }
