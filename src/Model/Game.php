@@ -29,6 +29,39 @@ class Game
 		$piece->setCords($cords);
 	}
 
+	public function playGame()
+	{
+		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
+		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+
+		$movingSide = 'white';
+
+		$iteration = 1;
+
+		do {
+			/* Every piece has access to that method from abstract class piece */
+			$sidePossibleMoves = $whiteKing->getGivenSidePossibleMoves($this, $movingSide);
+
+			do {
+				$movingPiece = $sidePossibleMoves[array_rand($sidePossibleMoves)];
+
+				$move = null;
+	
+				if (!empty($movingPiece['possible_moves'])) {
+					$move = $movingPiece['possible_moves'][array_rand($movingPiece['possible_moves'])];
+				}
+			}
+			while (is_null($move));
+			
+			$this->makeMove($movingPiece['piece'], $move);
+
+			/* If white then black, and if black then white */
+			$movingSide = $movingSide == 'white' ? 'black' : 'white';
+
+			$iteration++;
+		} while(!$whiteKing->checkIfKingIsInCheckmate($this) && !$blackKing->checkIfKingIsInCheckmate($this) && $iteration <= 120);
+	}
+
 	/* Note that only kings, queens and bishops can be recognized */
 	public function getPieceSquare($name, $side, $squareColor = null): ?object
 	{

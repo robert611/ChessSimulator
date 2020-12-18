@@ -2,11 +2,17 @@
 
 {% block title %}Chess{% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('assets/js/play_game.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 
     <div class="container-fluid">
 		<div class="row">
             <div class="col-md-4">
+                <button class="btn btn-primary" id="play-game-button">Play Game</button>
+                <button class="btn btn-primary" id="play-next-move-button">Play next move</button>
             </div>
             <div class="col-md-8">
                 <table class="table table-bordered">
@@ -17,12 +23,12 @@
                             {% for j in 1..8 %}
                                 {% set color = game.getBoard()[i][j].getColor() %}
 
-                                {% if color == 'black' %} {% set color = "#3e2723" %} {% endif %}
+                                {% if color == 'black' %} {% set color = "#769656" %} {% endif %}
                                 
                                 {% if game.getBoard()[i][j].getPiece() == null %}
-                                    <td style="{{ 'background-color:'~color  }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
+                                    <td style="{{ 'background-color:'~color  }}" data-CordOne="{{ i }}" data-CordTwo="{{ j }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
                                 {% else %}
-                                    <td style="{{ 'background-color:'~color }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
+                                    <td style="{{ 'background-color:'~color }}" data-CordOne="{{ i }}" data-CordTwo="{{ j }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
@@ -39,6 +45,7 @@
                         <td>h</td>
                     </tr>
                 </table>
+                <input type="hidden" id="move-counter" value="0">
             </div>
         </div>
     </div>

@@ -139,7 +139,7 @@ abstract class Piece
         return $opponentProtectedSquaresCoords;
     }
 
-    public function getSquaresAttackedByGivenSidePieces(Game $game, string $side)
+    public function getGivenSidePossibleMoves(Game $game, string $side)
     {
         $board = $game->getBoard();
 
@@ -151,13 +151,7 @@ abstract class Piece
                 $pieceOnSquare = $square->getPiece();
 
 				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {   
-                    /* Without this if, it would lead to infinite loop beacause one king checks protected squares of another to calculate it's protected squares, so none can really do it */ 
-                    if ($pieceOnSquare instanceof $this and $pieceOnSquare instanceof \App\Model\Piece\King) {
-                        $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($square->getCords())];
-                        continue;
-                    }
-
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {
                     $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPossibleMoves($game)];
 				}
 			}
@@ -170,7 +164,7 @@ abstract class Piece
     {
         $piecesAttackingGivenSquare = array();
 
-        $squaresAttackedByGivenSidePieces = $this->getSquaresAttackedByGivenSidePieces($game, $side);
+        $squaresAttackedByGivenSidePieces = $this->getGivenSidePossibleMoves($game, $side);
 
         foreach ($squaresAttackedByGivenSidePieces as $piece) {
             if (in_array($square->getCords(), $piece['possible_moves'])) {
