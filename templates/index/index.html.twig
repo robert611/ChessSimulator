@@ -15,36 +15,38 @@
                 <button class="btn btn-primary" id="play-next-move-button">Play next move</button>
             </div>
             <div class="col-md-8">
-                <table class="table table-bordered">
-                    {% for i in 8..1 %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        {% for i in 8..1 %}
+                            <tr>
+                                <td>{{ i }}</td>
+
+                                {% for j in 1..8 %}
+                                    {% set color = game.getBoard()[i][j].getColor() %}
+
+                                    {% if color == 'black' %} {% set color = "#769656" %} {% endif %}
+                                    
+                                    {% if game.getBoard()[i][j].getPiece() == null %}
+                                        <td style="{{ 'background-color:'~color  }}" class="cord-{{ i }}{{ j }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
+                                    {% else %}
+                                        <td style="{{ 'background-color:'~color }}" class="cord-{{ i }}{{ j }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
                         <tr>
-                            <td>{{ i }}</td>
-
-                            {% for j in 1..8 %}
-                                {% set color = game.getBoard()[i][j].getColor() %}
-
-                                {% if color == 'black' %} {% set color = "#769656" %} {% endif %}
-                                
-                                {% if game.getBoard()[i][j].getPiece() == null %}
-                                    <td style="{{ 'background-color:'~color  }}" data-CordOne="{{ i }}" data-CordTwo="{{ j }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
-                                {% else %}
-                                    <td style="{{ 'background-color:'~color }}" data-CordOne="{{ i }}" data-CordTwo="{{ j }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
-                                {% endif %}
-                            {% endfor %}
+                            <td></td>
+                            <td>a</td>
+                            <td>b</td>
+                            <td>c</td>
+                            <td>d</td>
+                            <td>e</td>
+                            <td>f</td>
+                            <td>g</td>
+                            <td>h</td>
                         </tr>
-                    {% endfor %}
-                    <tr>
-                        <td></td>
-                        <td>a</td>
-                        <td>b</td>
-                        <td>c</td>
-                        <td>d</td>
-                        <td>e</td>
-                        <td>f</td>
-                        <td>g</td>
-                        <td>h</td>
-                    </tr>
-                </table>
+                    </table>
+                </div>
                 <input type="hidden" id="move-counter" value="0">
             </div>
         </div>
