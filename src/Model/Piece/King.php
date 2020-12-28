@@ -175,13 +175,13 @@ class King extends Piece
 
 			$oponnentSide = $this->getSide() == 'white' ? 'black' : 'white';
 
-			$attackingPieces = $this->getPiecesAttackingGivenSquare($game, $kingSquare, $oponnentSide);
+			$attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $oponnentSide);
 
 			if (count($attackingPieces) == 1) {
 				$attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];
 				$attackingPieceSquare = $game->getBoard()[$attackingPieceCords[0]][$attackingPieceCords[1]];
 
-				$myPiecesAbleToCaptureAttackingPiece = $this->getPiecesAttackingGivenSquare($game, $attackingPieceSquare, $this->side);
+				$myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
 
 				/* If king has no possible moves and my pieces can't capture attackin piece then it's checkmate */
 				if (count($myPiecesAbleToCaptureAttackingPiece) == 0) {

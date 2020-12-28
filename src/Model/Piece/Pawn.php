@@ -104,32 +104,32 @@ class Pawn extends Piece
 		
 		/* En passant up and left and up and right */
 		/* En passant is possible only if last move of our opponent was with his pawn two squares at a time, and that moved pawn is vertically next to this pawn and is horizontally on the same file as this pawn either on left or right side */
-		$lastOpponentMove = !empty($gameMoves) ? $gameMoves[count($gameMoves) - 1] : ['piece' => null, 'previous_cords' => [], 'new_cords' => []];
+		$lastOpponentMove = !empty($gameMoves) ? $gameMoves[count($gameMoves) - 1] : ['piece' => null, 'previous_cords' => [], 'new_cords_square' => []];
 		
 		/* Check if it was a move with a pawn */
 		if ($lastOpponentMove['piece'] instanceof \App\Model\Piece\Pawn) {
-			$movesAtATime = $lastOpponentMove['previous_cords'][0] - $lastOpponentMove['new_cords'][0];
+			$movesAtATime = $lastOpponentMove['previous_cords'][0] - $lastOpponentMove['new_cords_square']->getCords()[0];
 
 			/* Check if it was two squares at a time */
 			/* It will be 2 if it is black pawn and minus 2 if it is white pawn */
 			if($movesAtATime == 2 or $movesAtATime == -2) {
 
 				if ($this->side == "white") {
-					$lastOpponentMoveProperLeftVerticalPosition = $lastOpponentMove['new_cords'][1] + 1;
-					$lastOpponentMoveProperRightVerticalPosition = $lastOpponentMove['new_cords'][1] - 1;
+					$lastOpponentMoveProperLeftVerticalPosition = $lastOpponentMove['new_cords_square']->getCords()[1] + 1;
+					$lastOpponentMoveProperRightVerticalPosition = $lastOpponentMove['new_cords_square']->getCords()[1] - 1;
 				} else {
-					$lastOpponentMoveProperLeftVerticalPosition = $lastOpponentMove['new_cords'][1] - 1;
-					$lastOpponentMoveProperRightVerticalPosition = $lastOpponentMove['new_cords'][1] + 1;
+					$lastOpponentMoveProperLeftVerticalPosition = $lastOpponentMove['new_cords_square']->getCords()[1] - 1;
+					$lastOpponentMoveProperRightVerticalPosition = $lastOpponentMove['new_cords_square']->getCords()[1] + 1;
 				}
 
 				/* Check if the pawn is on the same file horizontally and next to the pawn on left side vertically */
-				if ($lastOpponentMove['new_cords'][0] == $this->cords[0] && $lastOpponentMoveProperLeftVerticalPosition == $this->cords[1]) {
+				if ($lastOpponentMove['new_cords_square']->getCords()[0] == $this->cords[0] && $lastOpponentMoveProperLeftVerticalPosition == $this->cords[1]) {
 					/* Remember in en passant move we do not capture oponnent pawn in a square which has that pawn but on a square up vertically */
 					$possibleMoves[] = $moveUpAndLeftCords;
 				}
 
 				/* Check if the pawn is on the same file horizontally and next to the pawn on right side vertically */
-				if ($lastOpponentMove['new_cords'][0] == $this->cords[0] && $lastOpponentMoveProperRightVerticalPosition == $this->cords[1]) {
+				if ($lastOpponentMove['new_cords_square']->getCords()[0] == $this->cords[0] && $lastOpponentMoveProperRightVerticalPosition == $this->cords[1]) {
 					/* Remember in en passant move we do not capture oponnent pawn in a square which has that pawn but on a square up vertically */
 					$possibleMoves[] = $moveUpAndRightCords;
 				}

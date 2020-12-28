@@ -40,6 +40,14 @@ abstract class Piece
     public function checkIfPossibleMovesLeaveKingInCheckAndFilterThem(array $possibleMoves, Game $game): array
 	{
         $filteredMoves = array();
+
+        $opponentKingColor = $this->getSide() == 'white' ? 'black' : 'white';
+        $opponentKing = $game->getPieceSquare('king', $opponentKingColor)->getPiece();
+        
+        /* In this case that method is called from king method checkIfKingIsInCheckmate to find out king attacking pieces, we do not want to actually capture oponnent's king in loop below */
+        if ($opponentKing->checkIfKingIsInCheck($game, $opponentKing->getCords())) {
+            return $possibleMoves;
+        }
         
 		/* Check if any of possible moves is truly not possible because pawn is blocking an attack towards our king, and given move would put a king in position of check */
 		foreach ($possibleMoves as $move) {
@@ -137,41 +145,5 @@ abstract class Piece
         }
         
         return $opponentProtectedSquaresCoords;
-    }
-
-    public function getGivenSidePossibleMoves(Game $game, string $side)
-    {
-        $board = $game->getBoard();
-
-        $squaresAttackedByGivenSide = array();
-
-        foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
-			{
-                $pieceOnSquare = $square->getPiece();
-
-				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {
-                    $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPossibleMoves($game)];
-				}
-			}
-        }
-        
-        return $squaresAttackedByGivenSide;
-    }
-
-    public function getPiecesAttackingGivenSquare(Game $game, BoardSquare $square, string $side)
-    {
-        $piecesAttackingGivenSquare = array();
-
-        $squaresAttackedByGivenSidePieces = $this->getGivenSidePossibleMoves($game, $side);
-
-        foreach ($squaresAttackedByGivenSidePieces as $piece) {
-            if (in_array($square->getCords(), $piece['possible_moves'])) {
-                $piecesAttackingGivenSquare[] = $piece['piece'];
-            }
-        }
-
-        return $piecesAttackingGivenSquare;
     }
 }
