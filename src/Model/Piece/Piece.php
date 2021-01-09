@@ -72,6 +72,9 @@ abstract class Piece
     {
         $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
 
+        /* Do not change state of piece which plays in actual game */
+        $piece = clone $piece;
+
         /* Make move and check if in that situation my king is in check */
         $gameWithNewMove = clone $game;
         $gameWithNewMove->setBoard($recreatedBoard);
