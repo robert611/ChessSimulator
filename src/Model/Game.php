@@ -3,7 +3,6 @@
 namespace App\Model;
 
 use App\Model\Board;
-
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Pawn;
@@ -34,7 +33,7 @@ class Game
 		/* ['default', 'capture', 'check', 'check_with_capture'] */
 		$type = 'default';
 
-		/* Remove piece from square from wchich piece moved */
+		/* Remove moving piece from square from which piece moved */
 		$this->getBoard()[$piece->getCords()[0]][$piece->getCords()[1]]->setPiece(null);
 
 		/* Get piece which was on that square before */
@@ -44,8 +43,20 @@ class Game
 		/* Make sure that new_cords_square index will have state of the square before that move was made */
 		$cloneOfSquareWithNewCords = clone $squareToWhichMoveIsMade;
 
-		/* Assign piece to a square to which piece moved */
-		$this->getBoard()[$cords[0]][$cords[1]]->setPiece($piece);
+		$piecePreviousCords = $piece->getCords();
+
+		/* Check if pawn should be promoted after that move, for now it will promote to quenn as a default */
+		if ($piece instanceof Pawn && (($piece->getSide() == 'white' && $cords[0] == 8) or ($piece->getSide() == 'black' && $cords[0] == 1))) {
+			$newPiece = new Quenn($piece->getId(), $cords, $piece->getSide());
+			$promotion = true;
+
+			$this->getBoard()[$cords[0]][$cords[1]]->setPiece($newPiece);
+		} else {
+			/* Assign piece to a square to which piece moved */
+			$this->getBoard()[$cords[0]][$cords[1]]->setPiece($piece);
+		}
+
+		$piece->setCords($cords);
 
 		/* Determine type of this move */
 		$opponentKingColor = $piece->getSide() == 'white' ? 'black' : 'white';
@@ -54,22 +65,29 @@ class Game
 		$isOpponentKingInCheck = $opponentKing->checkIfKingIsInCheck($this);
 
 		if (is_null($pieceOnSquareToWhichMoveIsMade)) {
-			if ($isOpponentKingInCheck) {
+			if ($isOpponentKingInCheck && isset($promotion)) {
+				$type = 'promotion_with_check';
+			} else if(isset($promotion)) {
+				$type = 'promotion';
+			}
+			else if ($isOpponentKingInCheck) {
 				$type = 'check';
 			}
 		}
 		else {
-			if ($isOpponentKingInCheck) {
+			if ($isOpponentKingInCheck && isset($promotion)) {
+				$type = 'promotion_with_capture_and_check';
+			} else if ($isOpponentKingInCheck) {
 				$type = 'check_with_capture';
+			} else if (isset($promotion)) {
+				$type = 'promotion_with_capture';
 			}
 			else {
 				$type = 'capture';
 			}
 		}
 
-		$this->moves[] = ['piece' => $piece, 'previous_cords' => $piece->getCords(), 'new_cords_square' => $cloneOfSquareWithNewCords, 'type' => $type];
-
-		$piece->setCords($cords);
+		$this->moves[] = ['piece' => $piece, 'previous_cords' => $piecePreviousCords, 'new_cords_square' => $cloneOfSquareWithNewCords, 'type' => $type];
 
 		$this->addNewPosition();
 	}
@@ -353,7 +371,7 @@ class Game
             foreach ($horizontalColumn as $square) {
                 $squareCords = $square->getCords();
 
-                $position[$squareCords[0]][$squareCords[1]] = is_null($square->getPiece()) ? null : get_class($square->getPiece());
+                $position[$squareCords[0]][$squareCords[1]] = is_null($square->getPiece()) ? null : get_class($square->getPiece()) . "\\". $square->getPiece()->getId();
             }
 		}
 		
@@ -417,6 +435,18 @@ class Game
         }
 
         return $possibleMoves;
+	}
+
+	public function getPieceMoves(string $pieceId): array
+	{
+		$pieceMoves = array();
+
+		foreach ($this->moves as $move)
+		{
+			if ($move['piece']->getId() == $pieceId) $pieceMoves[] = $move;
+		}
+
+		return $pieceMoves;
 	}
 
 	/**

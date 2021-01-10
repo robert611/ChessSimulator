@@ -270,4 +270,9 @@ class King extends Piece
 
 		return $this;
 	}
+
+	public function getId(): string
+	{
+		return $this->id;
+	}
 }

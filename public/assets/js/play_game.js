@@ -1,5 +1,6 @@
 let playGameButton = document.getElementById('play-game-button');
 let playNextMoveButton = document.getElementById('play-next-move-button');
+let containerForMoves = document.getElementById('container-for-moves');
 
 function playGame()
 {
@@ -32,11 +33,22 @@ function playNextMove(game)
         let squareWithThePiece = document.getElementsByClassName(`cord-${move.previous_cords[0]}${move.previous_cords[1]}`)[0];
         let newSquareForThePiece = document.getElementsByClassName(`cord-${newCords[0]}${newCords[1]}`)[0];
 
+        if (move.piece.name == 'pawn' && ((move.piece.side == 'white' && newCords[0] == 8) || (move.piece.side == 'black' && newCords[0] == 1))) 
+        {
+            move.piece.picture = move.piece.side + '-quenn.png';
+        }
+
         squareWithThePiece.firstChild.classList.add('opacity-0');
         newSquareForThePiece.firstChild.classList.remove('opacity-0');
         newSquareForThePiece.firstChild.setAttribute('src', `/assets/images/${move.piece.picture}`);
 
         counter.value = moveNumber + 1;
+
+        let paragraphWithMove = document.createElement('p');
+        paragraphWithMove.textContent = `${moveNumber + 1}. ${move.piece.side} ${move.piece.name}, from [${move.previous_cords[0]} , ${move.previous_cords[1]}] to [${newCords[0]}, ${newCords[1]}]
+            type: ${move.type}`;
+
+        containerForMoves.appendChild(paragraphWithMove);
     });
 }
 

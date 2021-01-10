@@ -24,3 +24,9 @@ td {
 .opacity-0 {
 	opacity: 0;
 }
+
+#container-for-moves {
+	max-height: 500px;
+	overscroll-behavior-block: contain;
+	overflow: auto;
+}
