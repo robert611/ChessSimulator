@@ -377,7 +377,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         
         $game->getBoard()[3][1]->setPiece(new Bishop('SOPEDF', [3, 1], 'black'));
         
-        $squares = $game->getBoard()[7][5]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([3, 1], [7, 5]);
+        $squares = $game->getBoard()[7][5]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([7, 5], [3, 1]);
         sort($squares);
 
         $expectedSquares = [[4, 2], [5, 3], [6, 4]];
@@ -599,5 +599,173 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         sort($expectedSquares);
 
         $this->assertEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnHorizontalColumnFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[3][2]->setPiece(new King('SOPEDF', [3, 2], 'white'));
+        $game->getBoard()[8][7]->setPiece(new King('SOPEDF', [8, 7], 'black'));
+
+        $game->getBoard()[3][4]->setPiece(new Rook('SOPEDF', [3, 4], 'black'));
+
+        $squares = $game->getBoard()[3][2]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([3, 2], [3, 4]);
+        sort($squares);
+
+        $expectedSquares = [[3, 3], [3, 4], [3, 5], [3, 6], [3, 7]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnVerticalColumnFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[5][2]->setPiece(new King('SOPEDF', [5, 2], 'white'));
+        $game->getBoard()[8][7]->setPiece(new King('SOPEDF', [8, 7], 'black'));
+        
+        $game->getBoard()[7][2]->setPiece(new Rook('SOPEDF', [7, 2], 'black'));
+        
+        $squares = $game->getBoard()[5][2]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([5, 2], [7, 2]);
+        sort($squares);
+
+        $expectedSquares = [[6, 2], [7, 2]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnUpLeftDiagonalFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[3][5]->setPiece(new King('SOPEDF', [3, 5], 'white'));
+        $game->getBoard()[8][7]->setPiece(new King('SOPEDF', [8, 7], 'black'));
+        
+        $game->getBoard()[6][2]->setPiece(new Bishop('SOPEDF', [6, 2], 'black'));
+        
+        $squares = $game->getBoard()[3][5]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([3, 5], [6, 2]);
+        sort($squares);
+
+        $expectedSquares = [[6, 2], [5, 3], [4, 4]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnDownLeftDiagonalFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[7][5]->setPiece(new King('SOPEDF', [7, 5], 'white'));
+        $game->getBoard()[8][8]->setPiece(new King('SOPEDF', [8, 8], 'black'));
+        
+        $game->getBoard()[4][2]->setPiece(new Bishop('SOPEDF', [4, 2], 'black'));
+        
+        $squares = $game->getBoard()[7][5]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([7, 5], [4, 2]);
+        sort($squares);
+
+        $expectedSquares = [[4, 2], [5, 3], [6, 4]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnUpRightDiagonalFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[4][2]->setPiece(new King('SOPEDF', [4, 2], 'black'));
+        $game->getBoard()[8][8]->setPiece(new King('SOPEDF', [8, 8], 'white'));
+        
+        $game->getBoard()[6][4]->setPiece(new Bishop('SOPEDF', [6, 4], 'white'));
+        
+        $squares = $game->getBoard()[4][2]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([4, 2], [6, 4]);
+        sort($squares);
+
+        $expectedSquares = [[4, 2], [5, 3]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
+    }
+
+    public function testIfWrongPositionsOnDownRightDiagonalFailToMatchExpectedSquares()
+    {
+        /* Position 1 */
+        $game = new Game();
+
+        $board = $game->getBoard();
+
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                $game->getBoard()[$i][$j]->setPiece(null);
+            }
+        }
+
+        /* Kings */
+        $game->getBoard()[4][3]->setPiece(new King('SOPEDF', [4, 3], 'black'));
+        $game->getBoard()[8][8]->setPiece(new King('SOPEDF', [8, 8], 'white'));
+        
+        $game->getBoard()[1][6]->setPiece(new Bishop('SOPEDF', [1, 6], 'white'));
+        
+        $squares = $game->getBoard()[4][3]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([4, 3], [1, 6]);
+        sort($squares);
+
+        $expectedSquares = [[3, 4], [2, 5], [1, 6]];
+        sort($expectedSquares);
+
+        $this->assertNotEquals($squares, $expectedSquares);
     }
 }
