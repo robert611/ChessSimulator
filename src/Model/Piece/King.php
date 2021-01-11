@@ -183,6 +183,28 @@ class King extends Piece
 
 				$myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
 
+				$canBlock = false;
+
+				/* Check if one of my pieces can block check */
+				if (!$attackingPieces[0] instanceof \App\Model\Piece\Knight && !$attackingPieces[0] instanceof \App\Model\Piece\Pawn) {
+					$squaresOnWhichMyPieceBlocksCheck = $this->getSquaresOnWhichMyPieceWouldBlockCheck($kingSquare->getCords(), $attackingPieceCords);
+
+					$possibleMoves = $game->getGivenSidePossibleMoves($this->getSide());
+					
+					foreach ($squaresOnWhichMyPieceBlocksCheck as $square) 
+					{
+						if (in_array($square, $possibleMoves))
+						{
+							$canBlock = true;
+						}
+					}
+				}
+
+				if ($canBlock == true)
+				{
+					return false;
+				}
+
 				/* If king has no possible moves and my pieces can't capture attackin piece then it's checkmate */
 				if (count($myPiecesAbleToCaptureAttackingPiece) == 0) {
 					return true;
@@ -193,7 +215,7 @@ class King extends Piece
 					/* Problem is that the king is already in check, so I must omit that one */
 					$attackingPieceSquare->setPiece(null);
 
-					/* If any of those pieces can capture attackin piece then king is not in checkmate */
+					/* If any of those pieces can capture attacking piece then king is not in checkmate */
 					$canCapture = !$this->checkIfGivenMoveLeavesKingInCheck($game, $piece, $attackingPieceCords);
 
 					$attackingPieceSquare->setPiece($attackingPieces[0]);
@@ -207,6 +229,104 @@ class King extends Piece
 		}
 
 		return false;
+	}
+
+	public function getSquaresOnWhichMyPieceWouldBlockCheck($kingCords, $attackingPieceCords): array
+	{
+		$squares = array();
+
+		/* First determine checkType which can be Horizontal | Vertical | Diagonal */
+		if ($kingCords[0] == $attackingPieceCords[0])
+		{
+			/* If type is horizontal check which piece is further on right on the board and then count number of squares beetwen king and attacking piece and add all of them to $squares variable */
+			if ($kingCords[1] > $attackingPieceCords[1])
+			{
+				$diffrence = ($kingCords[1] - $attackingPieceCords[1]) - 1;
+				
+				for($i = 1; $i <= $diffrence; $i++) {
+					$squares[] = [$kingCords[0], $kingCords[1] - $i];
+				} 
+			}
+			else 
+			{
+				$diffrence = ($attackingPieceCords[1] - $kingCords[1]) - 1;
+				
+				for($i = 1; $i <= $diffrence; $i++) {
+					$squares[] = [$kingCords[0], $attackingPieceCords[1] - $i];
+				} 
+			}
+		}
+		elseif ($kingCords[1] == $attackingPieceCords[1])
+		{
+			/* If type is vertical check which piece is further up on the board and then count number of squares beetwen king and attacking piece and add all of them to $squares variable */
+			if ($kingCords[0] > $attackingPieceCords[0])
+			{
+				$diffrence = ($kingCords[0] - $attackingPieceCords[0]) - 1;
+
+				for($i = 1; $i <= $diffrence; $i++) {
+					$squares[] = [$kingCords[0] - $i, $attackingPieceCords[1]];
+				} 
+			}
+			else 
+			{
+				$diffrence = ($attackingPieceCords[0] - $kingCords[0]) - 1;
+
+				for($i = 1; $i <= $diffrence; $i++) {
+					$squares[] = [$attackingPieceCords[0] - $i, $attackingPieceCords[1]];
+				} 
+			}
+		}
+		else 
+		{
+			/* Side from which piece is attacking on diagonal, first one is left, second right */
+			if ($kingCords[1] > $attackingPieceCords[1])
+			{
+				/* Left, now we must determine if attacking piece is below or higher on vertical line */
+				
+				/* Lower, [down, left] diagonal */
+				if ($kingCords[0] > $attackingPieceCords[0])
+				{
+					$diffrence = ($kingCords[0] - $attackingPieceCords[0]) - 1;
+
+                    for ($i = 1; $i <= $diffrence; $i++) {
+                        $squares[] = [$kingCords[0] - $i, $kingCords[1] - $i];
+                    }
+
+				}
+				else /* Higher, [up, left] diagonal */
+				{
+					$diffrence = ($attackingPieceCords[0] - $kingCords[0]) - 1;
+
+                    for ($i = 1; $i <= $diffrence; $i++) {
+                        $squares[] = [$attackingPieceCords[0] - $i, $attackingPieceCords[1] + $i];
+                    }
+				}
+			}
+			else 
+			{
+				/* Right, now we must determine if attacking piece is below or higher on vertical line */
+
+				/* Lower, [down, right] diagonal */
+				if ($kingCords[0] > $attackingPieceCords[0])
+				{
+					$diffrence = ($kingCords[0] - $attackingPieceCords[0]) - 1;
+
+                    for ($i = 1; $i <= $diffrence; $i++) {
+                        $squares[] = [$kingCords[0] - $i, $kingCords[1] + $i];
+                    }
+				}
+				else /* Higher, [up, right] diagonal */
+				{
+					$diffrence = ($attackingPieceCords[0] - $kingCords[0]) - 1;
+
+                    for ($i = 1; $i <= $diffrence; $i++) {
+                        $squares[] = [$attackingPieceCords[0] - $i, $attackingPieceCords[1] - $i];
+                    }
+                }
+			}
+		}
+
+		return $squares;
 	}
 
 	public function getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard): array
