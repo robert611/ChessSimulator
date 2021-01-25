@@ -54,7 +54,7 @@ class King extends Piece
 		}
 
 		/* Now we must figure out which squares king protects, and those are all to which king can move unless that square is attacked by oponnent's piece then king does not protect it since it would be in check */
-		$protectedSquaresByOpponent = $this->getSquaresWhichGivenSidePiecesProtect($game, $this->getSide());
+		$protectedSquaresByOpponent = $game->getGivenSideProtectedSquares($this->getSide(), '\App\Model\Piece\King');
 
 		foreach ($potentialMovesCoordinates as $potentialMove) {
 			if (!$this->checkIfCoordinatesAreInsideOfBoard($potentialMove[0], $potentialMove[1])) continue;
@@ -64,8 +64,147 @@ class King extends Piece
 			}
 		}
 
+		/* Add castle moves */
+		$shortCastle = $this->ifKingCanMakeShortCastleReturnMove($game);
+		empty($shortCastle) ? null : $possibleMoves[] = $shortCastle; 
+
+		$longCastle = $this->ifKingCanMakeLongCastleReturnMove($game);
+		empty($longCastle) ? null : $possibleMoves[] = $longCastle; 
 		
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
+	}
+
+	private function ifKingCanMakeShortCastleReturnMove($game)
+	{
+		/* Requirments,
+			A - The king is not currently in check - Done
+			B - There are no pieces between the king and the chosen rook - Done
+			C - King has not previously moved - Done
+			D - Rook has not previously moved - Done
+			E - The king does not pass through a square that is attacked by an enemy piece
+			F - The king does not end up in check. (True of any legal move)
+		*/
+		
+		/* Short Castle */
+
+		/* Requirement A The king is not currently in check */
+		if ($this->checkIfKingIsInCheck($game)) return [];
+
+		/* Requirement B There are no pieces between the king and the chosen rook */
+		$areSquaresBeetwenKingAndRookOccupied = true;
+
+		$cordsBeetwenKingAndRook = $this->side == 'white' ? [[1, 6], [1, 7]] : [[8, 6], [8, 7]];
+
+		if (is_object($game->getBoard()[$cordsBeetwenKingAndRook[0][0]][$cordsBeetwenKingAndRook[0][1]]->getPiece()) || is_object($game->getBoard()[$cordsBeetwenKingAndRook[1][0]][$cordsBeetwenKingAndRook[1][1]]->getPiece())) {
+			return [];
+		}
+
+		/* Requirement C King has not previously moved */
+		$king = $game->getBoard()[$this->cords[0]][$this->cords[1]]->getPiece();
+		$didKingPreviouslyMoved = !empty($game->getPieceMoves($king->getId()));
+
+		if ($didKingPreviouslyMoved) {
+			return [];
+		}
+		
+		/* Requirement D Rook has not previously moved */
+		$rookStartingPosition = $this->side == 'white' ? [1, 8] : [8, 8];
+
+		$pieceOnRookStartingPositionSquare = $game->getBoard()[$rookStartingPosition[0]][$rookStartingPosition[1]];
+		
+		/* Check if rook actually moved */
+		/* Note that for this if to pass, on this square can't be second rook which moved to rookStartingPosition, cause that rook would have to move in order to do it and second part of if would never pass, so using id of any rook here is ok */
+		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof \App\Model\Piece\Rook or !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
+		{
+			return [];
+		} 
+
+		/* Requirements E && F The king does not pass through a square that is attacked by an enemy piece, note that if king will end up in check after castle it will be always spotted here */
+		$protectedSquaresByOpponent = $game->getGivenSideProtectedSquares($this->getSide(), '\App\Model\Piece\King');
+
+		foreach ($cordsBeetwenKingAndRook as $cords)
+		{
+			if (in_array($cords, $protectedSquaresByOpponent)) {
+				return [];
+			}
+		}
+
+		/* Requirment F The king does not end up in check. (True of any legal move) */
+		$kingPositionBeforeCastle = $this->side == 'white' ? [1, 5] : [8, 5];
+		$rookPositionBeforeCastle = $this->side == 'white' ? [1, 8] : [8, 8];
+		$kingPositionAfterCastle = $this->side == 'white' ? [1, 7] : [8, 7];
+		$rookPositionAfterCastle = $this->side == 'white' ? [1, 6] : [8, 6];
+
+		$shortCastleMoves = [['from' => $kingPositionBeforeCastle, 'to' => $kingPositionAfterCastle], ['from' => $rookPositionBeforeCastle, 'to' => $rookPositionAfterCastle]];
+
+		return $shortCastleMoves;
+	}
+
+	private function ifKingCanMakeLongCastleReturnMove($game)
+	{
+		/* Requirments,
+			A - The king is not currently in check - Done
+			B - There are no pieces between the king and the chosen rook - Done
+			C - King has not previously moved - Done
+			D - Rook has not previously moved - Done
+			E - The king does not pass through a square that is attacked by an enemy piece
+			F - The king does not end up in check. (True of any legal move)
+		*/
+		
+		/* Long Castle */
+
+		/* Requirement A The king is not currently in check */
+		if ($this->checkIfKingIsInCheck($game)) return [];
+
+		/* Requirement B There are no pieces between the king and the chosen rook */
+		$areSquaresBeetwenKingAndRookOccupied = true;
+
+		$cordsBeetwenKingAndRook = $this->side == 'white' ? [[1, 4], [1, 3], [1, 2]] : [[8, 4], [8, 3], [8, 2]];
+
+		foreach ($cordsBeetwenKingAndRook as $cords)
+		{
+			if (is_object($game->getBoard()[$cords[0]][$cords[1]]->getPiece())) return [];
+		}
+
+		/* Requirement C King has not previously moved */
+		$king = $game->getBoard()[$this->cords[0]][$this->cords[1]]->getPiece();
+		$didKingPreviouslyMoved = !empty($game->getPieceMoves($king->getId()));
+
+		if ($didKingPreviouslyMoved) {
+			return [];
+		}
+		
+		/* Requirement D Rook has not previously moved */
+		$rookStartingPosition = $this->side == 'white' ? [1, 1] : [8, 1];
+
+		$pieceOnRookStartingPositionSquare = $game->getBoard()[$rookStartingPosition[0]][$rookStartingPosition[1]];
+	
+		/* Check if rook actually moved */
+		/* Note that for this if to pass, on this square can't be second rook which moved to rookStartingPosition, cause that rook would have to move in order to do it and second part of if would never pass, so using id of any rook here is ok */
+		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof \App\Model\Piece\Rook or !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
+		{
+			return [];
+		} 
+
+		/* Requirements E && F The king does not pass through a square that is attacked by an enemy piece, note that if king will end up in check after castle it will be always spotted here */
+		$protectedSquaresByOpponent = $game->getGivenSideProtectedSquares($this->getSide(), '\App\Model\Piece\King');
+
+		foreach ($cordsBeetwenKingAndRook as $cords)
+		{
+			if (in_array($cords, $protectedSquaresByOpponent)) {
+				return [];
+			}
+		}
+
+		/* Requirment F The king does not end up in check. (True of any legal move) */
+		$kingPositionBeforeCastle = $this->side == 'white' ? [1, 5] : [8, 5];
+		$rookPositionBeforeCastle = $this->side == 'white' ? [1, 1] : [8, 1];
+		$kingPositionAfterCastle = $this->side == 'white' ? [1, 3] : [8, 3];
+		$rookPositionAfterCastle = $this->side == 'white' ? [1, 4] : [8, 4];
+
+		$longCastleMoves = [['from' => $kingPositionBeforeCastle, 'to' => $kingPositionAfterCastle], ['from' => $rookPositionBeforeCastle, 'to' => $rookPositionAfterCastle]];
+
+		return $longCastleMoves;
 	}
 
 	private function checkIfKingCanMoveToGivenSquare(Game $game, array $cords): bool 
@@ -216,7 +355,7 @@ class King extends Piece
 					$attackingPieceSquare->setPiece(null);
 
 					/* If any of those pieces can capture attacking piece then king is not in checkmate */
-					$canCapture = !$this->checkIfGivenMoveLeavesKingInCheck($game, $piece, $attackingPieceCords);
+					$canCapture = !$this->checkIfGivenMoveSequenceLeavesKingInCheck($game, $piece, [$attackingPieceCords]);
 
 					$attackingPieceSquare->setPiece($attackingPieces[0]);
 

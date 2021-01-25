@@ -51,6 +51,12 @@ abstract class Piece
         
 		/* Check if any of possible moves is truly not possible because pawn is blocking an attack towards our king, and given move would put a king in position of check */
 		foreach ($possibleMoves as $move) {
+            /* It is a castle move, and it's already checked */
+            if (isset($move[0]['from'])) {
+                $filteredMoves[] = $move;
+                continue;
+            }
+
             $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
 
             /* Make move and check if in that situation my king is in check */
@@ -68,7 +74,7 @@ abstract class Piece
 		return $filteredMoves;
     }
     
-    public function checkIfGivenMoveLeavesKingInCheck(Game $game, Piece $piece, array $move): bool
+    public function checkIfGivenMoveSequenceLeavesKingInCheck(Game $game, Piece $piece, array $moves): bool
     {
         $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
 
@@ -76,13 +82,23 @@ abstract class Piece
         $piece = clone $piece;
 
         /* Make move and check if in that situation my king is in check */
-        $gameWithNewMove = clone $game;
-        $gameWithNewMove->setBoard($recreatedBoard);
-        $gameWithNewMove->makeMove($piece, $move);
+        $gameWithNewMoves = clone $game;
+        $gameWithNewMoves->setBoard($recreatedBoard);
 
-        $myKing = $gameWithNewMove->getPieceSquare('king', $piece->getSide())->getPiece();
+        foreach ($moves as $move) 
+        {
+            if (isset($move['from'])) 
+            {
+                $piece = $gameWithNewMoves->getBoard()[$move['from'][0]][$move['from'][1]]->getPiece();
+                $move = $move['to'];
+            }
 
-        $isInCheck = $myKing->checkIfKingIsInCheck($gameWithNewMove, $myKing->getCords());
+            $gameWithNewMoves->makeMove($piece, $move);
+        }
+
+        $myKing = $gameWithNewMoves->getPieceSquare('king', $piece->getSide())->getPiece();
+
+        $isInCheck = $myKing->checkIfKingIsInCheck($gameWithNewMoves, $myKing->getCords());
 
         return $isInCheck;
     }
@@ -121,32 +137,5 @@ abstract class Piece
 		}
 
 		return false;
-    }
-    
-    public function getSquaresWhichGivenSidePiecesProtect(Game $game, string $side)
-    {
-        $board = $game->getBoard();
-
-        $opponentProtectedSquaresCoords = array();
-
-        foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
-			{
-                $pieceOnSquare = $square->getPiece();
-
-				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $side) {   
-                    /* Without this if, it would lead to infinite loop beacause one king checks protected squares of another to calculate it's protected squares, so none can really do it */ 
-                    if ($pieceOnSquare instanceof $this and $pieceOnSquare instanceof \App\Model\Piece\King) {
-                        $opponentProtectedSquaresCoords = array_merge($pieceOnSquare->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($square->getCords()), $opponentProtectedSquaresCoords);
-                        continue;
-                    }
-
-                    $opponentProtectedSquaresCoords = array_merge($pieceOnSquare->getProtectedSquares($game), $opponentProtectedSquaresCoords);
-				}
-			}
-        }
-        
-        return $opponentProtectedSquaresCoords;
     }
 }

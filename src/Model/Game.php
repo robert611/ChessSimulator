@@ -30,6 +30,11 @@ class Game
 
 	public function makeMove(object $piece, array $cords): void
 	{
+		if (isset($cords[0]['from'])) {
+			$this->makeCastleMove($piece, $cords);
+			return;
+		}
+
 		/* ['default', 'capture', 'check', 'check_with_capture'] */
 		$type = 'default';
 
@@ -88,6 +93,58 @@ class Game
 		}
 
 		$this->moves[] = ['piece' => $piece, 'previous_cords' => $piecePreviousCords, 'new_cords_square' => $cloneOfSquareWithNewCords, 'type' => $type];
+
+		$this->addNewPosition();
+	}
+
+	public function makeCastleMove(object $piece, array $moves): void
+	{
+		$moveData = ['piece' => [], 'previous_cords' => [], 'new_cords_square' => [], 'type' => null];
+
+		foreach ($moves as $move) {
+			$piece = $this->getBoard()[$move['from'][0]][$move['from'][1]]->getPiece();
+
+			/* Remove moving piece from square from which piece moved */
+			$this->getBoard()[$move['from'][0]][$move['from'][1]]->setPiece(null);
+
+			$squareToWhichMoveIsMade = $this->getBoard()[$move['to'][0]][$move['to'][1]];
+			
+			/* Make sure that new_cords_square index will have state of the square before that move was made */
+			$cloneOfSquareWithNewCords = clone $squareToWhichMoveIsMade;
+
+			$piecePreviousCords = [$move['from'][0], $move['from'][1]];
+
+			/* Assign piece to a square to which piece moved */
+			$squareToWhichMoveIsMade->setPiece($piece);
+
+			$piece->setCords([$move['to'][0], $move['to'][1]]);
+
+			$moveData['piece'][] = $piece;
+			$moveData['previous_cords'][] = ['piece_name' => $piece->getName(), 'previous_cords' => $piecePreviousCords];
+			$moveData['new_cords_square'][] = ['piece_name' => $piece->getName(), 'square' => $cloneOfSquareWithNewCords];
+		}
+
+		/* Determine type of this move */
+		$opponentKingColor = $piece->getSide() == 'white' ? 'black' : 'white';
+		$opponentKing = $this->getPieceSquare('king', $opponentKingColor)->getPiece();
+
+		$isOpponentKingInCheck = $opponentKing->checkIfKingIsInCheck($this);
+
+		/* Determine if it is long or short castle */
+		if ($moves[0]['to'][1] == 3) {
+			$type = 'long_castle';
+		}
+		else {
+			$type = 'short_castle';
+		}
+
+		if ($isOpponentKingInCheck) {
+			$type .= "_with_check";
+		}
+
+		$moveData['type'] = $type;
+
+		$this->moves[] = $moveData;
 
 		$this->addNewPosition();
 	}
@@ -317,7 +374,9 @@ class Game
 		/* Stalemate */
 		if ($numberOfMovesPlayed > 0)
 		{
-			$sideToMove = $this->moves[$numberOfMovesPlayed - 1]['piece']->getSide() == 'black' ? 'white' : 'black';
+			/* In case that castle was last move */
+			$lastMovePiece = is_object($this->moves[$numberOfMovesPlayed - 1]['piece']) ? $this->moves[$numberOfMovesPlayed - 1]['piece'] : $this->moves[$numberOfMovesPlayed - 1]['piece'][0];
+			$sideToMove = $lastMovePiece->getSide() == 'black' ? 'white' : 'black';
 		
 			$sidePossibleMoves = $this->getGivenSidePossibleMoves($sideToMove);
 	
@@ -437,13 +496,45 @@ class Game
         return $possibleMoves;
 	}
 
+	public function getGivenSideProtectedSquares(string $side, $callingPiece): array
+    {
+        $board = $this->getBoard();
+
+        $givenSideProtectedSquaresCords = array();
+
+        foreach ($board as $horizontalColumn) {
+			foreach ($horizontalColumn as $square)
+			{
+                $pieceOnSquare = $square->getPiece();
+
+				/* If there is as piece on that square */
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $side) {   
+                    /* Without this if, it would lead to infinite loop beacause one king checks protected squares of another to calculate it's protected squares, so none can really do it */ 
+                    if ($pieceOnSquare instanceof $callingPiece and $pieceOnSquare instanceof \App\Model\Piece\King) {
+                        $givenSideProtectedSquaresCords = array_merge($pieceOnSquare->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($square->getCords()), $givenSideProtectedSquaresCords);
+                        continue;
+                    }
+
+                    $givenSideProtectedSquaresCords = array_merge($pieceOnSquare->getProtectedSquares($this), $givenSideProtectedSquaresCords);
+				}
+			}
+        }
+        
+        return $givenSideProtectedSquaresCords;
+    }
+
 	public function getPieceMoves(string $pieceId): array
 	{
 		$pieceMoves = array();
 
 		foreach ($this->moves as $move)
 		{
-			if ($move['piece']->getId() == $pieceId) $pieceMoves[] = $move;
+			/* If move is of type castle */
+			if (is_array($move['piece'])) {
+				if ($move['piece'][0]->getId() == $pieceId) $pieceMoves[] = $move;
+				else if ($move['piece'][1]->getId() == $pieceId) $pieceMoves[] = $move;
+			}
+			else if ($move['piece']->getId() == $pieceId) $pieceMoves[] = $move;
 		}
 
 		return $pieceMoves;

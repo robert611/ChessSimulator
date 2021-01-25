@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Tests\Model;
+namespace App\Tests\Model\King;
 
 use App\Model\Board;
 use App\Model\Game;
