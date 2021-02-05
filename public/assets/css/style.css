@@ -25,8 +25,16 @@ td {
 	opacity: 0;
 }
 
-#container-for-moves {
+#container-for-moves, #container-for-human-game-moves {
 	max-height: 500px;
 	overscroll-behavior-block: contain;
 	overflow: auto;
+}
+
+.bg-white {
+	background-color: white;
+}
+
+.bg-green-board-square {
+	background-color: #769656;
 }

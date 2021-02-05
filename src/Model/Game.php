@@ -149,46 +149,40 @@ class Game
 		$this->addNewPosition();
 	}
 
-	public function playGame(int $moves = 10000)
+	public function playComputerMove()
 	{
-		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
-		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+		/* First check which side is to move */
+		$movingSide = $this->getSideToMove();
 
-		$movingSide = 'white';
+		/* Get all pieces of given side with their possible moves */
+		$movingSidePiecesWithPossibleMoves = $this->getGivenSidePiecesWithPossibleMoves($movingSide);
 
+		/* Get random move from random piece */
+		do {
+			$movingPiece = $movingSidePiecesWithPossibleMoves[array_rand($movingSidePiecesWithPossibleMoves)];
+
+			$move = null;
+
+			if (!empty($movingPiece['possible_moves'])) {
+				$move = $movingPiece['possible_moves'][array_rand($movingPiece['possible_moves'])];
+			}
+		}
+		while (is_null($move));
+
+		$this->makeMove($movingPiece['piece'], $move);
+	}
+
+	public function playGame(int $movesToPlay = 10000)
+	{
+		/* Start from one, since loop first executes and then checks conditions */
 		$iteration = 1;
 
 		do {
-			/* Every piece has access to that method from abstract class piece */
-			$sidePiecesWithPossibleMoves = $this->getGivenSidePiecesWithPossibleMoves($movingSide);
-
-			do {
-				$movingPiece = $sidePiecesWithPossibleMoves[array_rand($sidePiecesWithPossibleMoves)];
-
-				$move = null;
-	
-				if (!empty($movingPiece['possible_moves'])) {
-					$move = $movingPiece['possible_moves'][array_rand($movingPiece['possible_moves'])];
-				}
-			}
-			while (is_null($move));
-			
-			$this->makeMove($movingPiece['piece'], $move);
-
-			/* If white then black, and if black then white */
-			$movingSide = $movingSide == 'white' ? 'black' : 'white';
-
+			$this->playComputerMove();
 			$iteration++;
-		} while(!$whiteKing->checkIfKingIsInCheckmate($this) && !$blackKing->checkIfKingIsInCheckmate($this) && !$this->checkIfGameIsDrawn() && $iteration <= $moves);
+		} while(!$this->checkIfGameHasEnded() && $iteration <= $movesToPlay);
 
-		if ($whiteKing->checkIfKingIsInCheckmate($this))
-		{
-			$this->result = ['result' => 'black_win', 'type' => 'checkmate'];
-		}
-		else if ($blackKing->checkIfKingIsInCheckmate($this))
-		{
-			$this->result = ['result' => 'white_win', 'type' => 'checkmate'];
-		}
+		$this->saveResultInCaseOfCheckmate();
 	}
 
 	/* Note that only kings, queens and bishops can be recognized */
@@ -218,6 +212,34 @@ class Game
 		}
 		
 		return null;
+	}
+
+	public function checkIfGameHasEnded()
+	{
+		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
+		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+
+		if($whiteKing->checkIfKingIsInCheckmate($this) or $blackKing->checkIfKingIsInCheckmate($this) or $this->checkIfGameIsDrawn())
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public function saveResultInCaseOfCheckmate()
+	{
+		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
+		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+
+		if ($whiteKing->checkIfKingIsInCheckmate($this))
+		{
+			$this->result = ['result' => 'black_win', 'type' => 'checkmate'];
+		}
+		else if ($blackKing->checkIfKingIsInCheckmate($this))
+		{
+			$this->result = ['result' => 'white_win', 'type' => 'checkmate'];
+		}
 	}
 
 	public function checkIfGameIsDrawn(): bool
@@ -374,9 +396,7 @@ class Game
 		/* Stalemate */
 		if ($numberOfMovesPlayed > 0)
 		{
-			/* In case that castle was last move */
-			$lastMovePiece = is_object($this->moves[$numberOfMovesPlayed - 1]['piece']) ? $this->moves[$numberOfMovesPlayed - 1]['piece'] : $this->moves[$numberOfMovesPlayed - 1]['piece'][0];
-			$sideToMove = $lastMovePiece->getSide() == 'black' ? 'white' : 'black';
+			$sideToMove = $this->getSideToMove();
 		
 			$sidePossibleMoves = $this->getGivenSidePossibleMoves($sideToMove);
 	
@@ -546,6 +566,28 @@ class Game
 	public function getMoves()
 	{
 		return $this->moves;
+	}
+
+	public function getLastMove(): ?array
+	{
+		$lastMove = count($this->moves) > 0 ? $this->getMoves()[count($this->getMoves()) - 1] : null;
+
+		return $lastMove;
+	}
+
+	public function getSideToMove()
+	{
+		$lastMove = $this->getLastMove();
+
+		if (is_null($lastMove)) {
+			return 'white';
+		}
+
+		$lastMovePiece = is_array($lastMove['piece']) ? $lastMove['piece'][0] : $lastMove['piece'];
+
+		$sideToMove = is_null($lastMove) || $lastMovePiece->getSide() == 'white' ? 'black' : 'white';
+
+		return $sideToMove;
 	}
 
 	/**

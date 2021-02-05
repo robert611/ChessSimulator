@@ -129,13 +129,11 @@ class King extends Piece
 			}
 		}
 
-		/* Requirment F The king does not end up in check. (True of any legal move) */
-		$kingPositionBeforeCastle = $this->side == 'white' ? [1, 5] : [8, 5];
-		$rookPositionBeforeCastle = $this->side == 'white' ? [1, 8] : [8, 8];
-		$kingPositionAfterCastle = $this->side == 'white' ? [1, 7] : [8, 7];
-		$rookPositionAfterCastle = $this->side == 'white' ? [1, 6] : [8, 6];
+		$kingPosition = $this->getKingPositionBeforeAndAfterCastle();
+		$rookPosition = $this->getRookPositionBeforeAndAfterCastle();
 
-		$shortCastleMoves = [['from' => $kingPositionBeforeCastle, 'to' => $kingPositionAfterCastle], ['from' => $rookPositionBeforeCastle, 'to' => $rookPositionAfterCastle]];
+		$shortCastleMoves = [['from' => $kingPosition['short']['king']['before'], 'to' => $kingPosition['short']['king']['after']], 
+			['from' => $rookPosition['short']['rook']['before'], 'to' => $rookPosition['short']['rook']['after']]];
 
 		return $shortCastleMoves;
 	}
@@ -196,16 +194,36 @@ class King extends Piece
 			}
 		}
 
-		/* Requirment F The king does not end up in check. (True of any legal move) */
-		$kingPositionBeforeCastle = $this->side == 'white' ? [1, 5] : [8, 5];
-		$rookPositionBeforeCastle = $this->side == 'white' ? [1, 1] : [8, 1];
-		$kingPositionAfterCastle = $this->side == 'white' ? [1, 3] : [8, 3];
-		$rookPositionAfterCastle = $this->side == 'white' ? [1, 4] : [8, 4];
+		$kingPosition = $this->getKingPositionBeforeAndAfterCastle();
+		$rookPosition = $this->getRookPositionBeforeAndAfterCastle();
 
-		$longCastleMoves = [['from' => $kingPositionBeforeCastle, 'to' => $kingPositionAfterCastle], ['from' => $rookPositionBeforeCastle, 'to' => $rookPositionAfterCastle]];
+		$longCastleMoves = [['from' => $kingPosition['long']['king']['before'], 'to' => $kingPosition['long']['king']['after']], 
+			['from' => $rookPosition['long']['rook']['before'], 'to' => $rookPosition['long']['rook']['after']]];
 
 		return $longCastleMoves;
 	}
+
+	public function getKingPositionBeforeAndAfterCastle(): array
+	{
+		$position['short']['king']['before'] = $this->side == 'white' ? [1, 5] : [8, 5];
+		$position['short']['king']['after'] = $this->side == 'white' ? [1, 7] : [8, 7];
+
+		$position['long']['king']['before'] = $this->side == 'white' ? [1, 5] : [8, 5];
+		$position['long']['king']['after'] = $this->side == 'white' ? [1, 3] : [8, 3];
+
+		return $position;
+	}
+
+	public function getRookPositionBeforeAndAfterCastle(): array
+	{
+		$position['short']['rook']['before'] = $this->side == 'white' ? [1, 8] : [8, 8];
+		$position['short']['rook']['after'] = $this->side == 'white' ? [1, 6] : [8, 6];
+
+		$position['long']['rook']['before'] = $this->side == 'white' ? [1, 1] : [8, 1];
+		$position['long']['rook']['after'] = $this->side == 'white' ? [1, 4] : [8, 4];
+
+		return $position;
+    }
 
 	private function checkIfKingCanMoveToGivenSquare(Game $game, array $cords): bool 
 	{
