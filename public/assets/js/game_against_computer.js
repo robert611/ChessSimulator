@@ -3,18 +3,15 @@ const playNextMoveAgainstComputerForm = document.getElementById('play-next-move-
 const containerForHumanGameMoves = document.getElementById('container-for-human-game-moves');
 let playHumanMoveButton = document.getElementById('play-human-move-button');
 let humanGameMoveCounter = document.getElementById('human-game-move-counter');
-const colorButtonsDiv = document.getElementById('pick-color-buttons-div');
-const colorButtons = document.getElementsByClassName('pick-color-button');
 
-function playGameBeetwenHumandAndComputer(piecesColor)
+function playGameBeetwenHumandAndComputer()
 {
-    fetch(`/api/game/play/with/computer/${piecesColor}`)
+    fetch('/api/game/play/with/computer/black')
         .then(response => response.json())
         .then(response => JSON.parse(response))
         .then(response => {
             recreatePlayHumanMoveButton();
-            if (piecesColor == "black") reverseStartingBoardPosition(); 
-            else resetBoardToStartingPosition();
+            reverseStartingBoardPosition();
             resetMovesContainers();
             resetCounters();
 
@@ -24,11 +21,6 @@ function playGameBeetwenHumandAndComputer(piecesColor)
                 playMoveOnTheBoard(response.moves[0], humanGameMoveCounter, containerForHumanGameMoves);
             }
         });
-}
-
-function showPickColorButtons()
-{
-    colorButtonsDiv.classList.remove('hidden');
 }
 
 function enableHumanToPlayMove(gameFileName)
@@ -104,10 +96,4 @@ function endGameBeetwenHumandAndComputer(result)
     playHumanMoveButton.setAttribute('disabled', true);
 }
 
-playGameWithComputerButton.addEventListener('click', showPickColorButtons);
-
-Array.from(colorButtons).forEach((button) => {
-    let piecesColor = button.getAttribute('data-color');
-    button.addEventListener('click', () => {playGameBeetwenHumandAndComputer(piecesColor)});
-});
-
+playGameWithComputerButton.addEventListener('click', playGameBeetwenHumandAndComputer);
