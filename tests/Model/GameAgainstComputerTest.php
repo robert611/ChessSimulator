@@ -5,6 +5,7 @@ namespace App\Tests\Model;
 use App\Model\GameAgainstComputer;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Model\OpeningModule\MatchOpening;
 
 class GameAgainstComputerTest extends WebTestCase
 {
@@ -151,6 +152,30 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertTrue($recreatedMove['new_cords_square']->getCords() == $gameMove['new_cords_square']->getCords());
         $this->assertTrue($recreatedMove['piece']->getName() == $gameMove['piece']->getName());
     }
+
+    public function testIfComputerMoveFromOpeningTheoryCanBePlayed()
+    {
+        $matchOpening = new MatchOpening();
+
+        $gameFileName = $this->gameAgainstComputer->startGame();
+
+        $game = $this->gameAgainstComputer->recreateGameFromFile($gameFileName);
+
+        $game->makeMove($game->getBoard()[2][3]->getPiece(), [4, 3]);
+        $game->makeMove($game->getBoard()[7][5]->getPiece(), [5, 5]);
+        $game->makeMove($game->getBoard()[1][2]->getPiece(), [3, 3]);
+
+        $matchingNodes = $matchOpening->getMatchingOpeningsNodes($game->getMoves());
+        $potentialMoves = $matchOpening->getPositionPotentialMoves($matchingNodes);
+
+        $this->gameAgainstComputer->playAndSaveComputerMove($gameFileName, $game);
+
+        $playedMove = $game->getMoves()[count($game->getMoves()) - 1];
+
+        $playedMove = [$playedMove['previous_cords'], $playedMove['new_cords_square']->getCords()];
+
+        $this->assertTrue(in_array($playedMove, $potentialMoves));
+    } 
 
     public function testIfGameCanBeRecreatedFromFile()
     {

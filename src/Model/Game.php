@@ -9,6 +9,7 @@ use App\Model\Piece\Pawn;
 use App\Model\Piece\Quenn;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Knight;
+use App\Model\OpeningModule\MatchOpening;
 
 class Game 
 {
@@ -20,12 +21,15 @@ class Game
 
 	private array $result;
 
+	private object $matchOpening;
+
 	public function __construct()
 	{
 		$this->moves = [];
 		$this->positions = [];
 		$this->result = ['result' => '', 'type' => ''];
 		$this->board = (new Board())->getBoard();
+		$this->matchOpening = new MatchOpening();
 	}
 
 	public function makeMove(object $piece, array $cords): void
@@ -157,19 +161,29 @@ class Game
 		/* Get all pieces of given side with their possible moves */
 		$movingSidePiecesWithPossibleMoves = $this->getGivenSidePiecesWithPossibleMoves($movingSide);
 
-		/* Get random move from random piece */
-		do {
-			$movingPiece = $movingSidePiecesWithPossibleMoves[array_rand($movingSidePiecesWithPossibleMoves)];
+		$move = null;
 
-			$move = null;
+		$matchedOpeningsNodes = $this->matchOpening->getMatchingOpeningsNodes($this->getMoves());
+		
+		if (!empty($matchedOpeningsNodes)) {
+			$move = $this->matchOpening->getNextMoveForGivenOpenings($matchedOpeningsNodes);
+
+			$movingPiece = $this->getBoard()[$move[0][0]][$move[0][1]]->getPiece();
+
+			$move = $move[1];
+		}
+
+		/* Get random move from random piece */
+		while (is_null($move)) {
+			$movingPiece = $movingSidePiecesWithPossibleMoves[array_rand($movingSidePiecesWithPossibleMoves)];
 
 			if (!empty($movingPiece['possible_moves'])) {
 				$move = $movingPiece['possible_moves'][array_rand($movingPiece['possible_moves'])];
+				$movingPiece = $movingPiece['piece'];
 			}
 		}
-		while (is_null($move));
 
-		$this->makeMove($movingPiece['piece'], $move);
+		$this->makeMove($movingPiece, $move);
 	}
 
 	public function playGame(int $movesToPlay = 10000)
