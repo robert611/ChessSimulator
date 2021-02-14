@@ -68,8 +68,6 @@ class MatchOpening
 
         foreach($nodeChildren as $child)
         {
-            if (!isset($moves[$iteration - 1])) return null;
-
             if ($child->getData() == $moves[$iteration - 1])
             {
                 /* If it is the last played move, then return node children as the next possible moves, and if not look further into opening theory */
