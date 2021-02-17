@@ -158,8 +158,8 @@ class Game
 		/* First check which side is to move */
 		$movingSide = $this->getSideToMove();
 
-		/* Get all pieces of given side with their possible moves */
-		$movingSidePiecesWithPossibleMoves = $this->getGivenSidePiecesWithPossibleMoves($movingSide);
+		/* Get all pieces of given side */
+		$movingSidePieces = $this->getGivenSidePieces($movingSide);
 
 		$move = null;
 
@@ -175,11 +175,10 @@ class Game
 
 		/* Get random move from random piece */
 		while (is_null($move)) {
-			$movingPiece = $movingSidePiecesWithPossibleMoves[array_rand($movingSidePiecesWithPossibleMoves)];
+			$movingPiece = $movingSidePieces[array_rand($movingSidePieces)];
 
-			if (!empty($movingPiece['possible_moves'])) {
-				$move = $movingPiece['possible_moves'][array_rand($movingPiece['possible_moves'])];
-				$movingPiece = $movingPiece['piece'];
+			if (!empty($movingPiece->getPossibleMoves($this))) {
+				$move = $movingPiece->getPossibleMoves($this)[array_rand($movingPiece->getPossibleMoves($this))];
 			}
 		}
 
@@ -480,27 +479,6 @@ class Game
 
         if (!$repeatedPosition) $this->positions[] = ['occurance' => 1, 'position' => $position];
     }
-	
-	public function getGivenSidePiecesWithPossibleMoves(string $side): array
-    {
-        $board = $this->getBoard();
-
-        $squaresAttackedByGivenSide = array();
-
-        foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
-			{
-                $pieceOnSquare = $square->getPiece();
-
-				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {
-                    $squaresAttackedByGivenSide[] = ['piece' => $pieceOnSquare, 'possible_moves' => $pieceOnSquare->getPossibleMoves($this)];
-				}
-			}
-        }
-        
-        return $squaresAttackedByGivenSide;
-    }
 
 	public function getGivenSidePieces(string $side): array
 	{
@@ -527,11 +505,11 @@ class Game
     {
         $piecesAttackingGivenSquare = array();
 
-        $squaresAttackedByGivenSidePieces = $this->getGivenSidePiecesWithPossibleMoves($side);
+        $squaresAttackedByGivenSidePieces = $this->getGivenSidePieces($side);
 
         foreach ($squaresAttackedByGivenSidePieces as $piece) {
-            if (in_array($square->getCords(), $piece['possible_moves'])) {
-                $piecesAttackingGivenSquare[] = $piece['piece'];
+            if (in_array($square->getCords(), $piece->getPossibleMoves($this))) {
+                $piecesAttackingGivenSquare[] = $piece;
             }
         }
 
@@ -540,12 +518,12 @@ class Game
 	
 	public function getGivenSidePossibleMoves(string $side): array
     {
-        $squaresAttackedByGivenSidePieces = $this->getGivenSidePiecesWithPossibleMoves($side);
+        $squaresAttackedByGivenSidePieces = $this->getGivenSidePieces($side);
 
         $possibleMoves = array();
 
         foreach ($squaresAttackedByGivenSidePieces as $piece) {
-            $possibleMoves = array_merge($possibleMoves, $piece['possible_moves']);
+            $possibleMoves = array_merge($possibleMoves, $piece->getPossibleMoves($this));
         }
 
         return $possibleMoves;
