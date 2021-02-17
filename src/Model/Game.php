@@ -502,6 +502,27 @@ class Game
         return $squaresAttackedByGivenSide;
     }
 
+	public function getGivenSidePieces(string $side): array
+	{
+		$board = $this->getBoard();
+
+		$pieces = array();
+
+        foreach ($board as $horizontalColumn) {
+			foreach ($horizontalColumn as $square)
+			{
+                $pieceOnSquare = $square->getPiece();
+
+				/* If there is as piece on that square */
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {
+                    $pieces[] = $pieceOnSquare;
+				}
+			}
+        }
+        
+        return $pieces;
+	}
+
     public function getPiecesAttackingGivenSquare(BoardSquare $square, string $side)
     {
         $piecesAttackingGivenSquare = array();
@@ -589,7 +610,7 @@ class Game
 		return $lastMove;
 	}
 
-	public function getSideToMove()
+	public function getSideToMove(): string
 	{
 		$lastMove = $this->getLastMove();
 
@@ -602,6 +623,11 @@ class Game
 		$sideToMove = is_null($lastMove) || $lastMovePiece->getSide() == 'white' ? 'black' : 'white';
 
 		return $sideToMove;
+	}
+
+	public function getOpponentSide(string $side): string 
+	{
+		return $side == 'white' ? 'black' : 'white';
 	}
 
 	/**
