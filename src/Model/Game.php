@@ -501,6 +501,17 @@ class Game
         return $pieces;
 	}
 
+	public function getSideSpecificPiecesByName(string $side, string $name): array
+	{
+		$sideAllPieces = $this->getGivenSidePieces($side);
+
+		$specificPieces = array_filter($sideAllPieces, function($piece) use ($name){
+            return strtolower($piece->getName()) == $name ? true : false; 
+        });
+
+        return $specificPieces;
+	}
+
     public function getPiecesAttackingGivenSquare(BoardSquare $square, string $side)
     {
         $piecesAttackingGivenSquare = array();
