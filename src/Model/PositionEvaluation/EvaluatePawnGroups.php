@@ -20,7 +20,7 @@ class EvaluatePawnGroups implements EvaluationInterface
         $advantageGivenByOnePawnGroupLessWithTheSameNumberOfPawns = 0.20;
         $advantageGivenByOnePawnGroupLessWithDiffrentNumberOfPawns = 0.10;
 
-        $advanatageToUseInThisCase = null;
+        $advantageToUseInThisCase = null;
 
         $whitePawnsCount = count($this->game->getSideSpecificPiecesByName('white', 'pawn'));
         $blackPawnsCount = count($this->game->getSideSpecificPiecesByName('black', 'pawn'));
@@ -32,16 +32,19 @@ class EvaluatePawnGroups implements EvaluationInterface
 
         $diffrence < 0 ? $diffrence = - $diffrence : null;
 
-        $whitePawnsCount == $blackPawnsCount ? $advanatageToUseInThisCase = $advantageGivenByOnePawnGroupLessWithTheSameNumberOfPawns 
-            : $advanatageToUseInThisCase = $advantageGivenByOnePawnGroupLessWithDiffrentNumberOfPawns; 
+        $whitePawnsCount == $blackPawnsCount ? $advantageToUseInThisCase = $advantageGivenByOnePawnGroupLessWithTheSameNumberOfPawns 
+            : $advantageToUseInThisCase = $advantageGivenByOnePawnGroupLessWithDiffrentNumberOfPawns; 
         
-        if ($whitePawnGroupsCount < $blackPawnGroupsCount)
+        /* If one side has no pawns at all then having one pawn group more is not a disadvantage */
+        if (($whitePawnGroupsCount < $blackPawnGroupsCount) && ($whitePawnsCount !== 0 or $diffrence > 1))
         {
-            $evaluation += $diffrence * $advanatageToUseInThisCase;
+            $whitePawnsCount == 0 ? $diffrence -= 1 : null;
+            $evaluation += $diffrence * $advantageToUseInThisCase;
         }
-        else if ($whitePawnGroupsCount > $blackPawnGroupsCount)
-        {
-            $evaluation -= $diffrence * $advanatageToUseInThisCase;
+        else if (($whitePawnGroupsCount > $blackPawnGroupsCount) && ($blackPawnsCount !== 0 or $diffrence > 1))
+        { 
+            $blackPawnsCount == 0 ? $diffrence -= 1 : null;
+            $evaluation -= $diffrence * $advantageToUseInThisCase;
         }
 
         return $evaluation;
