@@ -393,28 +393,4 @@ class EvaluatePawnGroupsTest extends TestCase
             $this->assertEquals($test['expected'], $test['actual']);
         }
     }
-
-    public function testSortPawnsByVerticalColumn()
-    {
-        $game = new Game();
-
-        $game->getBoard()[2][3]->setPiece(null);
-
-        $pawns = $game->getSideSpecificPiecesByName('white', 'pawn');
-
-        $evaluatePawnGroups = new EvaluatePawnGroups($game);
-        
-        shuffle($pawns);
-
-        $sortedPawns = $evaluatePawnGroups->sortPawnsByVerticalColumn($pawns);
-
-        foreach ($sortedPawns as $key => $pawn)
-        {
-            if ($key == 0) continue;
-
-            $previousPawnVerticalColumn = $sortedPawns[$key - 1]->getCords()[1];
-
-            $this->assertTrue($pawn->getCords()[1] > $previousPawnVerticalColumn);
-        }
-    }
 }

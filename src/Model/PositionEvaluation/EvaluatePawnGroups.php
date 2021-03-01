@@ -3,9 +3,12 @@
 namespace App\Model\PositionEvaluation;
 
 use App\Model\PositionEvaluation\EvaluationInterface;
+use App\Model\PositionEvaluation\SortPawns;
 
 class EvaluatePawnGroups implements EvaluationInterface
 {
+    use SortPawns;
+
     private \App\Model\Game $game;
 
     public function __construct(\App\Model\Game $game)
@@ -77,14 +80,5 @@ class EvaluatePawnGroups implements EvaluationInterface
         }
 
         return $pawnGroupsCount;
-    }
-
-    public function sortPawnsByVerticalColumn(?array $pawns): ?array
-    {
-        usort($pawns, function($a, $b) {
-            return ($a->getCords()[1] < $b->getCords()[1]) ? -1 : 1;
-        });
-
-        return $pawns;
     }
 }
