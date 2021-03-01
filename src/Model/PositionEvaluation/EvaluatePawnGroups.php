@@ -64,16 +64,16 @@ class EvaluatePawnGroups implements EvaluationInterface
 
         foreach ($pawns as $pawn)
         {
-            $pawnVerticalColumn = $pawn->getCords()[1];
+            $currentPawnVerticalColumn = $pawn->getCords()[1];
 
             if ($lastPawnVerticalColumn == null) {
-                $lastPawnVerticalColumn = $pawnVerticalColumn;
+                $lastPawnVerticalColumn = $currentPawnVerticalColumn;
                 continue;
             }
             
-            if ($pawnVerticalColumn !== $lastPawnVerticalColumn + 1) $pawnGroupsCount++;
+            if ($lastPawnVerticalColumn <= $currentPawnVerticalColumn - 2) $pawnGroupsCount++;
 
-            $lastPawnVerticalColumn = $pawnVerticalColumn;
+            $lastPawnVerticalColumn = $currentPawnVerticalColumn;
         }
 
         return $pawnGroupsCount;
