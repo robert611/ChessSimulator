@@ -143,6 +143,22 @@ class Pawn extends Piece
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
+	public function isPawnDoubled(\App\Model\Game $game): bool
+	{
+		$pawns = $game->getSideSpecificPiecesByName($this->side, 'pawn');
+
+		$pawnVerticalColumn = $this->getCords()[1];
+
+		$pawnsOnThatColumn = 0;
+
+        foreach ($pawns as $pawn)
+		{
+			if ($pawn->getCords()[1] == $pawnVerticalColumn) $pawnsOnThatColumn++;
+		}
+
+		return $pawnsOnThatColumn > 1 ? true : false;
+	}
+
 	public function getPicture(): string
 	{
 		return $this->side . "-" . $this->name . ".png";
