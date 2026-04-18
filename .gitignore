@@ -19,3 +19,8 @@
 /public/assets/games/
 
 .idea/
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###

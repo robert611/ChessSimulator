@@ -1,17 +1,18 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
 
-use App\Model\Board;
+namespace App\Tests\Model\Opening;
+
 use App\Model\Game;
-use PHPUnit\Framework\TestCase;
 use App\Model\OpeningModule\MatchOpening;
+use PHPUnit\Framework\TestCase;
 
 class MatchOpeningTest extends TestCase
 {
     private $matchOpening;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->matchOpening = new MatchOpening();
     }

@@ -2,6 +2,8 @@
 
 namespace App\Model\Piece;
 
+use App\Model\Game;
+
 class Bishop extends Piece
 {
 	private string $id;
@@ -21,11 +23,9 @@ class Bishop extends Piece
 		$this->side = $side;
 	}
 
-	public function move(object $game)
-	{
-		$possibleMoves = $this->getPossibleMoves($game);
-
-		return $possibleMoves;
+	public function move(Game $game): array
+    {
+        return $this->getPossibleMoves($game);
 	}
 
 	public function findOutPossibleMovesAndProtectedSquares(object $game): array

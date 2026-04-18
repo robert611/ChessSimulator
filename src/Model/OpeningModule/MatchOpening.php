@@ -3,7 +3,6 @@
 namespace App\Model\OpeningModule;
 
 use App\Model\OpeningModule\Openings\English;
-use App\Model\OpeningModule\TreeNode;
 
 class MatchOpening 
 {
@@ -81,7 +80,7 @@ class MatchOpening
 
     public function getMovesCords($moves): array
     {
-        $movesCords = array();
+        $movesCords = [];
 
         foreach ($moves as $key => $move) {
             $movesCords[$key] = [$move['previous_cords'], $move['new_cords_square']->getCords()];
@@ -92,11 +91,11 @@ class MatchOpening
 
     private function fillOpeningsArray(): void
     {
-        $this->openings['english'] = (new English())->getOpeningTree();
+        $this->openings['english'] = new English()->getOpeningTree();
     }
 
     public function getOpenings(): array
     {
-        return $this->openings;   
+        return $this->openings;
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -16,10 +18,8 @@ use App\Model\GameAgainstComputer;
 
 class GameController extends AbstractController
 {
-    /**
-     * @Route("api/game/play/beetwen/computers", name="game_beetwen_computers")
-     */
-    public function playGameBeetwenComputers(): Response
+    #[Route('/game/play/between/computers', name: 'game_between_computers')]
+    public function playGameBetweenComputers(): Response
     {
         $game = new Game();
 
@@ -37,9 +37,7 @@ class GameController extends AbstractController
         return new JsonResponse($serializer->serialize($game, 'json'));
     }
 
-    /**
-     * @Route("api/game/play/with/computer/{humanPiecesColor}", name="game_beetwen_human_and_computer")
-     */
+    #[Route('/game/play/with/computer/{humanPiecesColor}', name: 'game_beetwen_human_and_computer')]
     public function playGameWithComputer($humanPiecesColor, GameAgainstComputer $gameModel): Response 
     {
         $gameFileName = $gameModel->startGame();
@@ -60,9 +58,7 @@ class GameController extends AbstractController
         return new JsonResponse($serializer->serialize(['game_file_name' => $gameFileName, 'moves' => $game->getMoves()], 'json'));
     }
 
-    /**
-     * @Route("api/game/play/move/against/computer", name="play_move_against_computer")
-     */
+    #[Route("/api/game/play/move/against/computer", name: 'play_move_against_computer')]
     public function playMoveAgainstComputer(Request $request, GameAgainstComputer $gameModel)
     {
         $defaultContext = [

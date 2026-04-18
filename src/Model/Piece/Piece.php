@@ -3,8 +3,6 @@
 namespace App\Model\Piece;
 
 use App\Model\Game;
-use App\Model\Piece\Piece;
-use App\Model\BoardSquare;
 
 abstract class Piece 
 {
