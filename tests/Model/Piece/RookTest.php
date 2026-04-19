@@ -1,16 +1,16 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
 
-use App\Model\Piece\Rook;
+namespace App\Tests\Model\Piece;
+
 use App\Model\Board;
 use App\Model\Game;
-
 use PHPUnit\Framework\TestCase;
 
 class RookTest extends TestCase 
 {
-    public function testPossibleMoves()
+    public function testPossibleMoves(): void
     {
         $game = new Game();
 
@@ -87,7 +87,7 @@ class RookTest extends TestCase
         }
     }
 
-    public function testGetPossibleMovesAgainstWrongData()
+    public function testGetPossibleMovesAgainstWrongData(): void
     {
         $game = new Game();
 
@@ -142,7 +142,7 @@ class RookTest extends TestCase
         }
     }
 
-    public function testIfRookCannnotMoveLeavingKingInCheck()
+    public function testIfRookCannotMoveLeavingKingInCheck(): void
     {
         $game = new Game();
 
@@ -210,7 +210,7 @@ class RookTest extends TestCase
         }
     }
 
-    public function testGetProtectedSquares()
+    public function testGetProtectedSquares(): void
     {
         $game = new Game();
 
@@ -261,11 +261,11 @@ class RookTest extends TestCase
         }
     }
 
-    public function testGetPotentialMovesCoordinates()
+    public function testGetPotentialMovesCoordinates(): void
     {
-        $board = (new Board())->getBoard();
+        $board = new Board()->getBoard();
 
-        /* It's a starting position so rooks will be [1,1], [1, 8], [8, 1], [8, 8] */
+        /* It's a starting position, so rooks will be [1,1], [1, 8], [8, 1], [8, 8] */
 
         $correctSet[0]['piece'] = $board[8][8]->getPiece();
         $correctSet[0]['expected_moves']['left'] = [[8, 7], [8, 6], [8, 5], [8, 4], [8, 3], [8, 2], [8, 1]]; 
@@ -313,4 +313,3 @@ class RookTest extends TestCase
         }
     }
 }
-

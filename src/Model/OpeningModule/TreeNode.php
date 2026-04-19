@@ -4,15 +4,15 @@ namespace App\Model\OpeningModule;
 
 class TreeNode
 {
-    public $data = NULL;
-    public $children = [];
+    public ?array $data = NULL;
+    public array $children = [];
 
-    public function __construct(array $data = NULL)
+    public function __construct(?array $data = NULL)
     {
         $this->data = $data;
     }
 
-    public function addChildren(TreeNode $node) 
+    public function addChildren(TreeNode $node): void
     {
         $this->children[] = $node;
     }

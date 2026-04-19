@@ -4,7 +4,6 @@ namespace App\Model\OpeningModule\Openings;
 
 use App\Model\OpeningModule\Tree;
 use App\Model\OpeningModule\TreeNode;
-use App\Model\OpeningModule\Openings\OpeningInterface;
 
 class English implements OpeningInterface
 {

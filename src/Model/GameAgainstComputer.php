@@ -2,15 +2,12 @@
 
 namespace App\Model;
 
-use App\Model\SecretGenerator;
-use App\Model\Game;
-
 class GameAgainstComputer
 {
-    private $secretGenerator;
-    private $gameFolder;
-    
-    public function __construct($gameFolder)
+    private SecretGenerator $secretGenerator;
+    private string $gameFolder;
+
+    public function __construct(string $gameFolder)
     {
         $this->secretGenerator = new SecretGenerator();
         $this->gameFolder = $gameFolder;
@@ -24,12 +21,16 @@ class GameAgainstComputer
 
         $file = fopen("{$this->gameFolder}/{$gameFileName}.txt", "w");
 
+        if (false !== $file) {
+            fclose($file);
+        }
+
         return $gameFileName;
     }
 
     public function saveMove(string $gameFileName, array $move): void
-    {        
-        $gameFile = fopen("{$this->gameFolder}${gameFileName}.txt", "a+");
+    {
+        $gameFile = fopen("{$this->gameFolder}{$gameFileName}.txt", "a+");
 
         fwrite($gameFile, json_encode($move) . "\n");
 
@@ -42,7 +43,7 @@ class GameAgainstComputer
 
         if ($castle == 'long' or $castle == 'short') {
             $castleMoves = [];
-            
+
             $sideToMoveKing = $game->getPieceSquare('king', $sideToMove)->getPiece();
 
             foreach ($sideToMoveKing->getPossibleMoves($game) as $move) {
@@ -58,7 +59,7 @@ class GameAgainstComputer
                     if ($castleMoves[0][0]['to'] == [1, 7] or $castleMoves[0][0]['to'] == [8, 7]) return true;
                 } else if ($castle == 'long') {
                     if ($castleMoves[0][0]['to'] == [1, 3] or $castleMoves[0][0]['to'] == [8, 3]) return true;
-                } 
+                }
 
                 return false;
             } else if (count($castleMoves) == 2) {
@@ -104,7 +105,7 @@ class GameAgainstComputer
 
             $humanMove = [['from' => $kingPositionBefore, 'to' => $kingPosition[$castle]['king']['after']],
                 ['from' => $rookPosition[$castle]['rook']['before'], 'to' => $rookPosition[$castle]['rook']['after']]];
-            
+
             $game->makeMove($game->getBoard()[$kingPositionBefore[0]][$kingPositionBefore[1]]->getPiece(), $humanMove);
 
         } else $game->makeMove($game->getBoard()[$humanMove[0][0]][$humanMove[0][1]]->getPiece(), $humanMove[1]);
@@ -131,17 +132,17 @@ class GameAgainstComputer
         }
     }
 
-    public function recreateGameFromFile($gameFileName)
+    public function recreateGameFromFile(string $gameFileName): Game
     {
         $game = new Game();
 
-        $gameFile = fopen("{$this->gameFolder}${gameFileName}.txt", "r");
+        $gameFile = fopen($this->gameFolder . $gameFileName . '.txt', "r");
 
         while (!feof($gameFile)) {
             $move = json_decode(fgets($gameFile), true);
 
             if ($move == null) continue;
-            
+
             if (isset($move[0]['from'])) {
                 $game->makeMove($game->getBoard()[$move[0]['from'][0]][$move[0]['from'][1]]->getPiece(), $move);
                 continue;

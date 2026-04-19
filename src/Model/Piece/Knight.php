@@ -7,8 +7,9 @@ class Knight extends Piece
 	private string $id;
 
 	private string $name = 'knight';
-	
-	private string $picture;
+
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 	
 	private array $cords;
 	

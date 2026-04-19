@@ -1,5 +1,7 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Tests\Model\PositionEvaluation;
 
 use App\Model\Game;
@@ -8,7 +10,7 @@ use App\Model\PositionEvaluation\EvaluatePawnGroups;
 
 class EvaluatePawnGroupsTest extends TestCase
 {
-    public function testGetEvaluation()
+    public function testGetEvaluation(): void
     {
         $tests = array();
 
@@ -93,7 +95,7 @@ class EvaluatePawnGroupsTest extends TestCase
         }
     }
 
-    public function testEvaluationWhenOneSideHasNoPawns()
+    public function testEvaluationWhenOneSideHasNoPawns(): void
     {
         $tests = array();
 
@@ -182,7 +184,7 @@ class EvaluatePawnGroupsTest extends TestCase
         }
     }
 
-    public function testGetPawnGorupsCountWithDoubledPawns()
+    public function testGetPawnGroupsCountWithDoubledPawns(): void
     {
         $tests = array();
 
@@ -291,7 +293,7 @@ class EvaluatePawnGroupsTest extends TestCase
         }
     }
 
-    public function testGetPawnGroupsCount()
+    public function testGetPawnGroupsCount(): void
     {
         $tests = array();
 

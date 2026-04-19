@@ -1,6 +1,8 @@
 <?php 
 
-namespace App\Tests\Model\King;
+declare(strict_types=1);
+
+namespace App\Tests\Model\Piece\King;
 
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
@@ -8,14 +10,12 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-use App\Model\Board;
 use App\Model\Game;
-
 use PHPUnit\Framework\TestCase;
 
 class ShortCastleTest extends TestCase
 {
-    public function testIfKingCanCastle()
+    public function testIfKingCanCastle(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -85,7 +85,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[7][7]->setPiece(new Pawn('4324GD', [7, 7], 'black'));
         $game->getBoard()[7][8]->setPiece(new Pawn('ASDFAS', [7, 8], 'black'));
 
-        /* Quenns */
+        /* Queens */
         $game->getBoard()[1][4]->setPiece(new Quenn('CAD3R4', [1, 4], 'white'));
         $game->getBoard()[8][4]->setPiece(new Quenn('32423F', [8, 4], 'black'));
 
@@ -157,7 +157,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[1][2]->setPiece(new Knight('C234VW', [1, 2], 'white'));
         $game->getBoard()[3][6]->setPiece(new Knight('QWD5HW', [3, 6], 'white'));
 
-        /* Quenns */
+        /* Queens */
         $game->getBoard()[8][3]->setPiece(new Quenn('QWD5HW', [8, 3], 'black'));
 
         $games[4]['game'] = $game;
@@ -168,7 +168,12 @@ class ShortCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
+            $kingFrom = null;
+            $kingTo = null;
+            $rookFrom = null;
+            $rookTo = null;
+
+            /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {
                 if (isset($move[0]['from'])) {
@@ -205,7 +210,7 @@ class ShortCastleTest extends TestCase
         }
     }
 
-    public function testIfKingCannnotCastleCauseThereIsAPieceBeetwenKingAndRook()
+    public function testIfKingCannotCastleCauseThereIsAPieceBetweenKingAndRook(): void
     {
         /* Position 1 Short castle by white King */
         $game = new Game();
@@ -332,7 +337,7 @@ class ShortCastleTest extends TestCase
         }  
     }
 
-    public function testIfKingCannnotCastleCauseSquareBeetwenKingAndRookIsAttacked()
+    public function testIfKingCannotCastleCauseSquareBetweenKingAndRookIsAttacked(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -442,7 +447,7 @@ class ShortCastleTest extends TestCase
         } 
     }
 
-    public function testIfKingCannnotCastleCauseRookMoved()
+    public function testIfKingCannotCastleCauseRookMoved(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -566,7 +571,7 @@ class ShortCastleTest extends TestCase
         }   
     }
 
-    public function testIfKingCannnotCastleCauseKingMoved()
+    public function testIfKingCannotCastleCauseKingMoved(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -655,7 +660,7 @@ class ShortCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
+            /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {
                 if (isset($move[0]['from'])) $isThereCastleMove = true;
@@ -665,7 +670,7 @@ class ShortCastleTest extends TestCase
         }  
     }
 
-    public function testIfKingCannnotCastleCauseKingIsInCheck()
+    public function testIfKingCannotCastleCauseKingIsInCheck(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -747,7 +752,7 @@ class ShortCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
+            /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {
                 if (isset($move[0]['from'])) $isThereCastleMove = true;

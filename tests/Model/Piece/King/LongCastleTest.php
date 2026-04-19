@@ -1,6 +1,8 @@
-<?php 
+<?php
 
-namespace App\Tests\Model\King;
+declare(strict_types=1);
+
+namespace App\Tests\Model\Piece\King;
 
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
@@ -8,14 +10,13 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-use App\Model\Board;
 use App\Model\Game;
 
 use PHPUnit\Framework\TestCase;
 
 class LongCastleTest extends TestCase
 {
-    public function testIfKingCanCastle()
+    public function testIfKingCanCastle(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -92,9 +93,13 @@ class LongCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
-            foreach ($moves as $move)
-            {
+            $kingFrom = null;
+            $kingTo = null;
+            $rookFrom = null;
+            $rookTo = null;
+
+            /* Only during castle player makes two moves in a row */
+            foreach ($moves as $move) {
                 if (isset($move[0]['from'])) {
                     $isThereCastleMove = true;
                     $kingFrom = $move[0]['from'];
@@ -105,16 +110,12 @@ class LongCastleTest extends TestCase
                 }
             }
 
-            if ($game['king']->getSide() == 'white') 
-            {
+            if ($game['king']->getSide() == 'white') {
                 $expectedKingFrom = [1, 5];
                 $expectedKingTo = [1, 3];
                 $expectedRookFrom = [1, 1];
                 $expectedRookTo = [1, 4];
-
-            }
-            else 
-            {
+            } else {
                 $expectedKingFrom = [8, 5];
                 $expectedKingTo = [8, 3];
                 $expectedRookFrom = [8, 1];
@@ -129,7 +130,7 @@ class LongCastleTest extends TestCase
         }
     }
 
-    public function testIfKingCannnotCastleCauseThereIsAPieceBeetwenKingAndRook()
+    public function testIfKingCannotCastleCauseThereIsAPieceBetweenKingAndRook(): void
     {
         /* Position 1 white King */
         $game = new Game();
@@ -238,7 +239,7 @@ class LongCastleTest extends TestCase
         } 
     }
 
-    public function testIfKingCannnotCastleCauseSquareBeetwenKingAndRookIsAttacked()
+    public function testIfKingCannotCastleCauseSquareBetweenKingAndRookIsAttacked(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -327,7 +328,7 @@ class LongCastleTest extends TestCase
         }
     }
 
-    public function testIfKingCannnotCastleCauseRookMoved()
+    public function testIfKingCannotCastleCauseRookMoved(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -412,7 +413,7 @@ class LongCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
+            /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {
                 if (isset($move[0][0])) $isThereCastleMove = true;
@@ -422,7 +423,7 @@ class LongCastleTest extends TestCase
         }
     }
 
-    public function testIfKingCannnotCastleCauseKingMoved()
+    public function testIfKingCannotCastleCauseKingMoved(): void
     {
         /* Position 1 White King */
         $game = new Game();
@@ -507,7 +508,7 @@ class LongCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
-            /* Only durgin castle player makes two moves in a row */
+            /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {
                 if (isset($move[0]['from'])) $isThereCastleMove = true;
@@ -517,7 +518,7 @@ class LongCastleTest extends TestCase
         }
     }
 
-    public function testIfKingCannnotCastleCauseKingIsInCheck()
+    public function testIfKingCannotCastleCauseKingIsInCheck(): void
     {
         /* Position 1 White King */
         $game = new Game();

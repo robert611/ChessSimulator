@@ -10,7 +10,8 @@ class King extends Piece
 
 	private string $name = 'king';
 
-	private string $picture;
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	private array $cords;
 
@@ -23,14 +24,12 @@ class King extends Piece
 		$this->side = $side;
 	}
 
-	public function move(object $game) 
-	{
-		$possibleMoves = $this->getPossibleMoves($game);
-
-		return $possibleMoves;
+	public function move(Game $game): array
+    {
+        return $this->getPossibleMoves($game);
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(object $game): array
+	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
 		$board = $game->getBoard();
 
@@ -74,9 +73,9 @@ class King extends Piece
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
-	private function ifKingCanMakeShortCastleReturnMove($game)
-	{
-		/* Requirments,
+	private function ifKingCanMakeShortCastleReturnMove(Game $game): array
+    {
+		/* Requirements,
 			A - The king is not currently in check - Done
 			B - There are no pieces between the king and the chosen rook - Done
 			C - King has not previously moved - Done
@@ -138,9 +137,9 @@ class King extends Piece
 		return $shortCastleMoves;
 	}
 
-	private function ifKingCanMakeLongCastleReturnMove($game)
-	{
-		/* Requirments,
+	private function ifKingCanMakeLongCastleReturnMove(Game $game): array
+    {
+		/* Requirements,
 			A - The king is not currently in check - Done
 			B - There are no pieces between the king and the chosen rook - Done
 			C - King has not previously moved - Done
@@ -155,13 +154,14 @@ class King extends Piece
 		if ($this->checkIfKingIsInCheck($game)) return [];
 
 		/* Requirement B There are no pieces between the king and the chosen rook */
-		$areSquaresBeetwenKingAndRookOccupied = true;
+		$areSquaresBetweenKingAndRookOccupied = true;
 
-		$cordsBeetwenKingAndRook = $this->side == 'white' ? [[1, 4], [1, 3], [1, 2]] : [[8, 4], [8, 3], [8, 2]];
+		$cordsBetweenKingAndRook = $this->side == 'white' ? [[1, 4], [1, 3], [1, 2]] : [[8, 4], [8, 3], [8, 2]];
 
-		foreach ($cordsBeetwenKingAndRook as $cords)
-		{
-			if (is_object($game->getBoard()[$cords[0]][$cords[1]]->getPiece())) return [];
+		foreach ($cordsBetweenKingAndRook as $cords) {
+			if (is_object($game->getBoard()[$cords[0]][$cords[1]]->getPiece())) {
+                return [];
+            }
 		}
 
 		/* Requirement C King has not previously moved */
@@ -187,8 +187,7 @@ class King extends Piece
 		/* Requirements E && F The king does not pass through a square that is attacked by an enemy piece, note that if king will end up in check after castle it will be always spotted here */
 		$protectedSquaresByOpponent = $game->getGivenSideProtectedSquares($this->getSide(), '\App\Model\Piece\King');
 
-		foreach ($cordsBeetwenKingAndRook as $cords)
-		{
+		foreach ($cordsBetweenKingAndRook as $cords) {
 			if (in_array($cords, $protectedSquaresByOpponent)) {
 				return [];
 			}
@@ -233,7 +232,7 @@ class King extends Piece
 
 		$pieceOnSquare = $board[$cords[0]][$cords[1]]->getPiece();
 
-		/* If on this square is placed our piece then we can't move there */
+		/* If on this square is placed our piece, then we can't move there */
 		if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $this->getSide())
 		{
 			return false;
@@ -270,7 +269,7 @@ class King extends Piece
 
 		$opponentProtectedSquaresCoords = array();
 	
-		/* I could go through all of the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
+		/* I could go through all the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
 		foreach ($board as $horizontalColumn) {
 			foreach ($horizontalColumn as $square)
 			{
@@ -311,9 +310,9 @@ class King extends Piece
 		}
 
 		/* Check if opponent's king is bordering with given square, I omit kings in previous loop to avoid infinite loop */
-		$cordsOnWhichOpponentKingCannnotBe = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard);
+		$cordsOnWhichOpponentKingCannotBe = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard);
 
-		if (in_array($opponentKingPositionOnBoard, $cordsOnWhichOpponentKingCannnotBe)) 
+		if (in_array($opponentKingPositionOnBoard, $cordsOnWhichOpponentKingCannotBe)) 
 		{
 			$isInCheck = true;
 		}
@@ -321,18 +320,18 @@ class King extends Piece
 		return $isInCheck;
 	}
 
-	public function checkIfKingIsInCheckmate(Game $game)
-	{
+	public function checkIfKingIsInCheckmate(Game $game): bool
+    {
 		/* If king is in check and has no possible moves, check if some piece can capture or block attacking piece */
 		if ($this->checkIfKingIsInCheck($game) && empty($this->getPossibleMoves($game))) {
 			
 			/* Check if one of ours pieces can capture attacking piece */
-			/* Więc tak muszę gdzieś zdobyć, figury które atakują dane pole to znaczy ich pozycję a później sprawdzić czy jedna z moich figur może ją zbić */
+			/* Więc tak, muszę gdzieś zdobyć figury, które atakują dane pole to znaczy ich pozycję a później sprawdzić czy jedna z moich figur może ją zbić */
 			$kingSquare = $game->getBoard()[$this->cords[0]][$this->cords[1]];
 
-			$oponnentSide = $this->getSide() == 'white' ? 'black' : 'white';
+			$opponentSide = $this->getSide() == 'white' ? 'black' : 'white';
 
-			$attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $oponnentSide);
+			$attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $opponentSide);
 
 			if (count($attackingPieces) == 1) {
 				$attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];

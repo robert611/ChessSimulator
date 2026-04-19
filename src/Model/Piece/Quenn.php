@@ -10,8 +10,9 @@ class Quenn extends Piece
 	private string $id;
 
 	private string $name = 'quenn';
-	
-	private string $picture;
+
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	private array $cords;
 

@@ -3,21 +3,9 @@
 namespace App\Model\Piece;
 
 use App\Model\Game;
-use App\Model\Piece\Piece;
-use App\Model\BoardSquare;
 
 abstract class Piece 
 {
-    private string $id;
-    
-    private string $name;
-
-    private string $picture;
-    
-    private array $cords;
-    
-    private string $side;
-    
     abstract function move(Game $game);
 
     public function getPotentialPossibleMovesWithoutCheckingIfTheyLeaveKingInCheck($game)
@@ -128,9 +116,9 @@ abstract class Piece
 		return true;
     }
 
-    public function isProtectingGivenSquare(array $board, array $squareToProtect): bool
+    public function isProtectingGivenSquare(Game $game, array $squareToProtect): bool
 	{
-		$protectedSquares =  $this->findOutPossibleMovesAndProtectedSquares($board)['protected_squares'];
+		$protectedSquares = $this->findOutPossibleMovesAndProtectedSquares($game)['protected_squares'];
 
 		if (in_array($squareToProtect, $protectedSquares)) {
 			return true;

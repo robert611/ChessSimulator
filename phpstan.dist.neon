@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - src/
+        - tests/
+    bootstrapFiles:
+        - vendor/autoload.php
+    excludePaths:
+        - tests/bootstrap.php

@@ -1,6 +1,8 @@
-<?php 
+<?php
 
-namespace App\Tests\Model;
+declare(strict_types=1);
+
+namespace App\Tests\Model\PositionEvaluation;
 
 use App\Model\Game;
 use PHPUnit\Framework\TestCase;
@@ -8,7 +10,7 @@ use App\Model\PositionEvaluation\EvaluateMaterial;
 
 class EvaluateMaterialTest extends TestCase
 {
-    public function testGetEvaluation()
+    public function testGetEvaluation(): void
     {
         $tests = array();
 
@@ -84,7 +86,7 @@ class EvaluateMaterialTest extends TestCase
         }
     }
 
-    public function testGetSideMaterialCount()
+    public function testGetSideMaterialCount(): void
     {
         $tests = array();
 
@@ -167,7 +169,7 @@ class EvaluateMaterialTest extends TestCase
         }
     }
 
-    public function testGetSideMaterialCountAgainstWrongData()
+    public function testGetSideMaterialCountAgainstWrongData(): void
     {
         $game = new Game();
 
@@ -181,7 +183,7 @@ class EvaluateMaterialTest extends TestCase
         $whiteMaterial = $evaluateMaterial->getSideMaterialCount('white');
         $blackMaterial = $evaluateMaterial->getSideMaterialCount('black');
 
-        $this->assertNotEquals($whiteMaterial, 40.5);
-        $this->assertNotEquals($blackMaterial, 12);
+        $this->assertNotEquals(40.5, $whiteMaterial);
+        $this->assertNotEquals(12, $blackMaterial);
     }
 }

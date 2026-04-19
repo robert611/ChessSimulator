@@ -153,9 +153,9 @@ class Game
 		$this->addNewPosition();
 	}
 
-	public function playComputerMove()
-	{
-		/* First check which side is to move */
+	public function playComputerMove(): void
+    {
+		/* First, check which side is to move */
 		$movingSide = $this->getSideToMove();
 
 		/* Get all pieces of given side */
@@ -171,16 +171,20 @@ class Game
 			$movingPiece = $this->getBoard()[$move[0][0]][$move[0][1]]->getPiece();
 
 			$move = $move[1];
-		}
+
+            $this->makeMove($movingPiece, $move);
+
+            return;
+        }
 
 		/* Get random move from random piece */
-		while (is_null($move)) {
-			$movingPiece = $movingSidePieces[array_rand($movingSidePieces)];
+        do {
+            $movingPiece = $movingSidePieces[array_rand($movingSidePieces)];
 
-			if (!empty($movingPiece->getPossibleMoves($this))) {
-				$move = $movingPiece->getPossibleMoves($this)[array_rand($movingPiece->getPossibleMoves($this))];
-			}
-		}
+            if (!empty($movingPiece->getPossibleMoves($this))) {
+                $move = $movingPiece->getPossibleMoves($this)[array_rand($movingPiece->getPossibleMoves($this))];
+            }
+        } while (is_null($move));
 
 		$this->makeMove($movingPiece, $move);
 	}
@@ -436,8 +440,7 @@ class Game
 	{
  		$board = $this->getBoard();
 
-        $squaresWithPieces['white'] = array();
-        $squaresWithPieces['black'] = array();
+        $pieces = [];
 
         foreach ($board as $horizontalColumn) {
 			foreach ($horizontalColumn as $square)
@@ -609,9 +612,7 @@ class Game
 
 		$lastMovePiece = is_array($lastMove['piece']) ? $lastMove['piece'][0] : $lastMove['piece'];
 
-		$sideToMove = is_null($lastMove) || $lastMovePiece->getSide() == 'white' ? 'black' : 'white';
-
-		return $sideToMove;
+        return $lastMovePiece->getSide() == 'white' ? 'black' : 'white';
 	}
 
 	public function getOpponentSide(string $side): string 
