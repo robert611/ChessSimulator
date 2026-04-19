@@ -62,7 +62,11 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd"
-        }
+        },
+        "code-check": [
+            "./vendor/bin/phpstan analyse",
+            "./vendor/bin/phpunit"
+        ]
     },
     "autoload": {
         "psr-4": {
