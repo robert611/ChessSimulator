@@ -8,7 +8,8 @@ class Pawn extends Piece
 
 	private string $name = 'pawn';
 
-	private string $picture;
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	private array $cords;
 
@@ -77,7 +78,7 @@ class Pawn extends Piece
 
             /* If on that square is a piece either ours or our opponent's then pawn can't move there, also it must be the first move of that pawn to be able to move two squares at the same time, if the white pawn is on second and black pawn on seventh line then it is first move */
 			/* Also we must check if there is some piece on a square up then we can't jump through it */
-            if (!is_object($moveOneSquareUpOnBoard) && !is_object($moveTwoSquaresUpOnBoard) && $pawnStartingLine == $this->cords[0]) {
+            if ((!isset($moveOneSquareUpOnBoard) || !is_object($moveOneSquareUpOnBoard)) && !is_object($moveTwoSquaresUpOnBoard) && $pawnStartingLine == $this->cords[0]) {
                 $possibleMoves[] = $moveTwoSquaresUpCords;
             }
         }

@@ -10,7 +10,8 @@ class King extends Piece
 
 	private string $name = 'king';
 
-	private string $picture;
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	private array $cords;
 

@@ -168,6 +168,11 @@ class ShortCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
+            $kingFrom = null;
+            $kingTo = null;
+            $rookFrom = null;
+            $rookTo = null;
+
             /* Only during castle player makes two moves in a row */
             foreach ($moves as $move)
             {

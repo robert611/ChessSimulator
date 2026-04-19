@@ -93,9 +93,13 @@ class LongCastleTest extends TestCase
             $isThereCastleMove = false;
             $moves = $game['king']->getPossibleMoves($game['game']);
 
+            $kingFrom = null;
+            $kingTo = null;
+            $rookFrom = null;
+            $rookTo = null;
+
             /* Only during castle player makes two moves in a row */
-            foreach ($moves as $move)
-            {
+            foreach ($moves as $move) {
                 if (isset($move[0]['from'])) {
                     $isThereCastleMove = true;
                     $kingFrom = $move[0]['from'];
@@ -106,16 +110,12 @@ class LongCastleTest extends TestCase
                 }
             }
 
-            if ($game['king']->getSide() == 'white') 
-            {
+            if ($game['king']->getSide() == 'white') {
                 $expectedKingFrom = [1, 5];
                 $expectedKingTo = [1, 3];
                 $expectedRookFrom = [1, 1];
                 $expectedRookTo = [1, 4];
-
-            }
-            else 
-            {
+            } else {
                 $expectedKingFrom = [8, 5];
                 $expectedKingTo = [8, 3];
                 $expectedRookFrom = [8, 1];

@@ -8,7 +8,8 @@ class Rook extends Piece
 
 	private string $name = 'rook';
 
-	private string $picture;
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	private array $cords;
 

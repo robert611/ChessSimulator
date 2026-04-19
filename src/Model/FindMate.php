@@ -2,18 +2,16 @@
 
 namespace App\Model;
 
-use App\Model\Game;
-
 class FindMate
 {
     private Game $game;
 
-    private $sideToCheckmate;
+    private string $sideToCheckmate;
 
     public function __construct(Game $game)
     {
         $this->game = $game;
-        $this->sideToChecmkate = $this->game->getOpponentSide($this->game->getSideToMove());
+        $this->sideToCheckmate = $this->game->getOpponentSide($this->game->getSideToMove());
     }
 
     public function findMate(int $depth): ?array

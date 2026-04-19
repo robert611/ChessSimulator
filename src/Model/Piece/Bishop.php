@@ -9,7 +9,8 @@ class Bishop extends Piece
 	private string $id;
 
 	private string $name = 'bishop';
-	
+
+    /** @phpstan-ignore-next-line */
 	private string $picture;
 	
 	private array $cords; /* $cords[0] -> number, $cords[1] -> letter, for instance: $cords[0] = 2, $cords[1] = a */ 
