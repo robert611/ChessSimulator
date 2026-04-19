@@ -1,6 +1,8 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
+
+namespace App\Tests\Model\Piece;
 
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
@@ -8,14 +10,12 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-use App\Model\Board;
 use App\Model\Game;
-
 use PHPUnit\Framework\TestCase;
 
 class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
 {
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnHorizontalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnHorizontalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -118,7 +118,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnVerticalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnVerticalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -216,7 +216,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnUpLeftDiagonalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnUpLeftDiagonalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -314,7 +314,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnDownLeftDiagonalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnDownLeftDiagonalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -411,7 +411,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnUpRightDiagonalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnUpRightDiagonalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -506,7 +506,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfSquaresOnWhichPieceCanBlockCheckOnDownRightDiagonalColumnAreCorrect()
+    public function testIfSquaresOnWhichPieceCanBlockCheckOnDownRightDiagonalColumnAreCorrect(): void
     {
         $game = new Game();
 
@@ -601,7 +601,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnHorizontalColumnFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnHorizontalColumnFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -629,7 +629,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertNotEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnVerticalColumnFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnVerticalColumnFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -657,7 +657,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertNotEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnUpLeftDiagonalFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnUpLeftDiagonalFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -685,7 +685,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertNotEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnDownLeftDiagonalFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnDownLeftDiagonalFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -713,7 +713,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertNotEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnUpRightDiagonalFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnUpRightDiagonalFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -741,7 +741,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $this->assertNotEquals($squares, $expectedSquares);
     }
 
-    public function testIfWrongPositionsOnDownRightDiagonalFailToMatchExpectedSquares()
+    public function testIfWrongPositionsOnDownRightDiagonalFailToMatchExpectedSquares(): void
     {
         /* Position 1 */
         $game = new Game();

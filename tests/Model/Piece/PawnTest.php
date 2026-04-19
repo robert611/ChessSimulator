@@ -1,21 +1,19 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
+
+namespace App\Tests\Model\Piece;
 
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
-use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
-use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-use App\Model\Board;
 use App\Model\Game;
-
 use PHPUnit\Framework\TestCase;
 
 class PawnTest extends TestCase
 {
-    public function testIfPawnIsPromotedToAQuennDuringTheGame()
+    public function testIfPawnIsPromotedToAQueenDuringTheGame(): void
     {
         $game = new Game();
 

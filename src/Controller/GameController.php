@@ -18,7 +18,7 @@ use App\Model\GameAgainstComputer;
 
 class GameController extends AbstractController
 {
-    #[Route('/game/play/between/computers', name: 'game_between_computers')]
+    #[Route('/api/game/play/between/computers', name: 'game_between_computers')]
     public function playGameBetweenComputers(): Response
     {
         $game = new Game();
@@ -37,7 +37,7 @@ class GameController extends AbstractController
         return new JsonResponse($serializer->serialize($game, 'json'));
     }
 
-    #[Route('/game/play/with/computer/{humanPiecesColor}', name: 'game_beetwen_human_and_computer')]
+    #[Route('/api/game/play/with/computer/{humanPiecesColor}', name: 'game_beetwen_human_and_computer')]
     public function playGameWithComputer($humanPiecesColor, GameAgainstComputer $gameModel): Response 
     {
         $gameFileName = $gameModel->startGame();
@@ -59,7 +59,7 @@ class GameController extends AbstractController
     }
 
     #[Route("/api/game/play/move/against/computer", name: 'play_move_against_computer')]
-    public function playMoveAgainstComputer(Request $request, GameAgainstComputer $gameModel)
+    public function playMoveAgainstComputer(Request $request, GameAgainstComputer $gameModel): JsonResponse
     {
         $defaultContext = [
             AbstractNormalizer::IGNORED_ATTRIBUTES => []

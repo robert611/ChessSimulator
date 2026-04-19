@@ -1,10 +1,10 @@
-let playGameBeetwenComputersButton = document.getElementById('play-game-beetwen-computers-button');
+let playGameBetweenComputersButton = document.getElementById('play-game-beetwen-computers-button');
 let playNextMoveButton = document.getElementById('play-next-move-button');
 let containerForMoves = document.getElementById('container-for-moves');
 
-function playGameBeetwenComputers()
+function playGameBetweenComputers()
 {
-    fetch('/api/game/play/beetwen/computers')
+    fetch('/api/game/play/between/computers')
         .then(response => response.json())
         .then(response => JSON.parse(response))
         .then(response => {
@@ -51,7 +51,7 @@ function recreatePlayNextMoveButton()
 {
     playNextMoveButton.remove();
 
-    let container = playGameBeetwenComputersButton.parentElement;
+    let container = playGameBetweenComputersButton.parentElement;
 
     let newButton = document.createElement('button');
     newButton.setAttribute('class', 'btn btn-primary');
@@ -63,4 +63,4 @@ function recreatePlayNextMoveButton()
     playNextMoveButton = document.getElementById('play-next-move-button');
 }
 
-playGameBeetwenComputersButton.addEventListener('click', playGameBeetwenComputers);
+playGameBetweenComputersButton.addEventListener('click', playGameBetweenComputers);

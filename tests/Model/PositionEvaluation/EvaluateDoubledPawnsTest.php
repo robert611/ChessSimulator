@@ -1,5 +1,7 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Tests\Model\PositionEvaluation;
 
 use App\Model\Game;
@@ -8,7 +10,7 @@ use App\Model\PositionEvaluation\EvaluateDoubledPawns;
 
 class EvaluateDoubledPawnsTest extends TestCase
 {
-    public function testGetEvaluation()
+    public function testGetEvaluation(): void
     {
         $tests = array();
 
@@ -98,7 +100,7 @@ class EvaluateDoubledPawnsTest extends TestCase
         }
     }
 
-    public function testGetNumberOfDoubledPawns()
+    public function testGetNumberOfDoubledPawns(): void
     {
         $tests = array();
 

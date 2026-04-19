@@ -1,5 +1,7 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Tests\Model\PositionEvaluation;
 
 use App\Model\Game;
@@ -8,7 +10,7 @@ use App\Model\PositionEvaluation\EvaluatePawnGroups;
 
 class SortPawnsTest extends TestCase
 {
-    public function testSortPawnsByVerticalColumn()
+    public function testSortPawnsByVerticalColumn(): void
     {
         $game = new Game();
 

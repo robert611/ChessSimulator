@@ -1,22 +1,23 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
 
-use App\Model\Piece\Quenn;
+namespace App\Tests\Model\Piece;
+
 use App\Model\Board;
 use App\Model\Game;
 
 use PHPUnit\Framework\TestCase;
 
-class QuennTest extends TestCase
+class QueenTest extends TestCase
 {
-    public function testGetPossibleMoves()
+    public function testGetPossibleMoves(): void
     {
         $game = new Game();
 
         $board = $game->getBoard();
 
-        /* It is starting position, there should be no possible moves for a quenn */
+        /* It is starting position, there should be no possible moves for a queen */
         $correctSet[0]['piece'] = $board[1][4]->getPiece();
         $correctSet[0]['possible_moves'] = [];
         $correctSet[0]['game'] = $game;
@@ -43,7 +44,7 @@ class QuennTest extends TestCase
         ];
         $correctSet[2]['game'] = $game;
 
-        /* It is a black quenn */
+        /* It is a black queen */
         $game = new Game();
         $board = $game->getBoard();
         $game->makeMove($board[8][4]->getPiece(), [5, 5]);
@@ -77,17 +78,17 @@ class QuennTest extends TestCase
         }
     }
 
-    public function testIfQuennCannnotMoveLeavingKingInCheck()
+    public function testIfQueenCannotMoveLeavingKingInCheck(): void
     {
         $game = new Game();
 
         $board = $game->getBoard();
 
-        /* White king and quenn */
+        /* White king and queen */
         $game->makeMove($board[1][4]->getPiece(), [4, 4]);
         $game->makeMove($board[1][5]->getPiece(), [3, 5]);
 
-        /* Black bishop pinning quenn */
+        /* Black bishop pinning queen */
         $game->makeMove($board[8][6]->getPiece(), [6, 2]);
 
         /* It is starting position */
@@ -95,7 +96,7 @@ class QuennTest extends TestCase
         $correctSet[0]['possible_moves'] = [[5, 3], [6, 2]];
         $correctSet[0]['game'] = $game;
 
-        /* Set 2 with rook attacking our quenn behind which is placed our king */
+        /* Set 2 with rook attacking our queen behind which is placed our king */
         $game = new Game();
         $board = $game->getBoard();
 
@@ -103,7 +104,7 @@ class QuennTest extends TestCase
         $game->makeMove($board[1][4]->getPiece(), [4, 5]);
         $game->makeMove($board[1][5]->getPiece(), [3, 5]);
 
-        /* Black rook pinning quenn */
+        /* Black rook pinning queen */
         $game->makeMove($board[8][8]->getPiece(), [6, 5]);
 
         $correctSet[1]['piece'] = $board[4][5]->getPiece();
@@ -112,15 +113,15 @@ class QuennTest extends TestCase
         ];
         $correctSet[1]['game'] = $game;
 
-        /* Set 3 white square bishop pins our quenn */
+        /* Set 3 white square bishop pins our queen */
         $game = new Game();
         $board = $game->getBoard();
 
-        /* White king and quenn */
+        /* White king and queen */
         $game->makeMove($board[1][4]->getPiece(), [4, 3]);
         $game->makeMove($board[1][5]->getPiece(), [3, 4]);
 
-        /* Black bishop pinning quenn */
+        /* Black bishop pinning queen */
         $game->makeMove($board[8][3]->getPiece(), [6, 1]);
 
         $correctSet[2]['piece'] = $board[4][3]->getPiece();
@@ -143,7 +144,7 @@ class QuennTest extends TestCase
         }
     }
 
-    public function testGetProtectedSquares()
+    public function testGetProtectedSquares(): void
     {
         $game = new Game();
 
@@ -166,7 +167,7 @@ class QuennTest extends TestCase
         $game = new Game();
         $board = $game->getBoard();
 
-        /* It is a white quenn */
+        /* It is a white queen */
         $game->makeMove($board[1][4]->getPiece(), [4, 3]);
 
         $correctSet[2]['piece'] = $board[4][3]->getPiece();
@@ -179,13 +180,13 @@ class QuennTest extends TestCase
             [5, 4], [6, 5], [7, 6],
             [3, 2], 
             [3, 4],
-            [2, 3], /* My proctected pieces are at the end of an array */
+            [2, 3], /* My protected pieces are at the end of an array */
             [2, 1],
             [2, 5]
         ];
         $correctSet[2]['game'] = $game;
 
-        /* It is a black quenn */
+        /* It is a black queen */
         $game->makeMove($board[8][4]->getPiece(), [4, 3]);
 
         $correctSet[3]['piece'] = $board[4][3]->getPiece();
@@ -211,9 +212,9 @@ class QuennTest extends TestCase
         }
     }
 
-    public function testGetPotentialMovesCoordinates()
+    public function testGetPotentialMovesCoordinates(): void
     {
-        $board = (new Board())->getBoard();
+        $board = new Board()->getBoard();
 
         $board[4][4]->setPiece(clone $board[1][4]->getPiece());
         $board[4][4]->getPiece()->setCords([4, 4]);

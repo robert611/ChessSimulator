@@ -1,36 +1,42 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
+
+namespace App\Tests\Model\PositionEvaluation;
 
 use App\Model\GameAgainstComputer;
-
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Model\OpeningModule\MatchOpening;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class GameAgainstComputerTest extends WebTestCase
+class GameAgainstComputerTest extends KernelTestCase
 {
-    private $gameAgainstComputer;
+    private GameAgainstComputer $gameAgainstComputer;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->client = static::createClient();
-        $this->gameAgainstComputer = new GameAgainstComputer(static::$container->getParameter('games_directory'));
+        $this->gameAgainstComputer = self::getContainer()->get(GameAgainstComputer::class);
     }
 
-    public function testIfGameCanBeStarted()
+    protected function tearDown(): void
     {
-        $gameFolder = static::$container->get('kernel')->getProjectDir() . "/public/assets/games/";
-
-        $gameFileName = $this->gameAgainstComputer->startGame($gameFolder);
-
-        $this->assertTrue(file_exists("{$gameFolder}/{$gameFileName}.txt"));
+        parent::tearDown();
+        self::ensureKernelShutdown();
     }
 
-    public function testIfMoveCanBeSaved()
+    public function testIfGameCanBeStarted(): void
     {
-        $gameFolder = static::$container->get('kernel')->getProjectDir() . "/public/assets/games/";
+        $gameFolder = self::getContainer()->get('kernel')->getProjectDir() . "/public/assets/games/";
 
-        $gameFileName = $this->gameAgainstComputer->startGame($gameFolder);
+        $gameFileName = $this->gameAgainstComputer->startGame();
+
+        $this->assertTrue(file_exists("$gameFolder/$gameFileName.txt"));
+    }
+
+    public function testIfMoveCanBeSaved(): void
+    {
+        $gameFolder = self::getContainer()->get('kernel')->getProjectDir() . "/public/assets/games/";
+
+        $gameFileName = $this->gameAgainstComputer->startGame();
 
         $move = [[2, 4], [4, 4]];
 
@@ -43,7 +49,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertEquals($actualMove, $move);
     }
 
-    public function testIfHumanMoveIsValid()
+    public function testIfHumanMoveIsValid(): void
     {
         $gameFileName = $this->gameAgainstComputer->startGame();
 
@@ -64,7 +70,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertTrue($this->gameAgainstComputer->isHumanMoveValid($game, [[1, 1], [2, 1]], null));
     }
 
-    public function testIfCastleMoveIsValid()
+    public function testIfCastleMoveIsValid(): void
     {
         $gameFileName = $this->gameAgainstComputer->startGame();
 
@@ -98,7 +104,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertFalse($this->gameAgainstComputer->isHumanMoveValid($game, [], 'long'));
     }
 
-    public function testIfHumanMoveIsInvalid()
+    public function testIfHumanMoveIsInvalid(): void
     {
         $gameFileName = $this->gameAgainstComputer->startGame();
 
@@ -114,7 +120,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertFalse($this->gameAgainstComputer->isHumanMoveValid($game, [[8, 2], [6, 3]], null));
     }
 
-    public function testIfHumanMoveCanBePlayed()
+    public function testIfHumanMoveCanBePlayed(): void
     {
         $gameFileName = $this->gameAgainstComputer->startGame();
 
@@ -132,7 +138,7 @@ class GameAgainstComputerTest extends WebTestCase
 
     }
 
-    public function testIfComputerMoveCanBePlayed()
+    public function testIfComputerMoveCanBePlayed(): void
     {
         $gameFileName = $this->gameAgainstComputer->startGame();
 
@@ -153,7 +159,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertTrue($recreatedMove['piece']->getName() == $gameMove['piece']->getName());
     }
 
-    public function testIfComputerMoveFromOpeningTheoryCanBePlayed()
+    public function testIfComputerMoveFromOpeningTheoryCanBePlayed(): void
     {
         $matchOpening = new MatchOpening();
 
@@ -177,9 +183,9 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertTrue(in_array($playedMove, $potentialMoves));
     } 
 
-    public function testIfGameCanBeRecreatedFromFile()
+    public function testIfGameCanBeRecreatedFromFile(): void
     {
-        $gameAgainstComputer = new GameAgainstComputer(static::$container->getParameter('games_directory') . "test/");
+        $gameAgainstComputer = new GameAgainstComputer(self::getContainer()->getParameter('games_directory') . "test/");
 
         $gameFileName = "TESTGAME";
         
@@ -188,7 +194,7 @@ class GameAgainstComputerTest extends WebTestCase
         $this->assertTrue(count($game->getMoves()) == 13);
         $this->assertTrue($game->getBoard()[5][4]->getPiece()->getSide() == 'black');
         $this->assertTrue($game->getBoard()[2][7]->getPiece()->getName() == 'bishop');
-        $this->assertTrue(strpos($game->getPositions()[12]['position'][5][3],  'App\Model\Piece\Bishop') !== false);
+        $this->assertTrue(str_contains($game->getPositions()[12]['position'][5][3], 'App\Model\Piece\Bishop'));
         $this->assertTrue($game->getResult()['result'] == '');
         $this->assertTrue($game->getResult()['type'] == '');
     }

@@ -1,16 +1,16 @@
 <?php 
 
-namespace App\Tests\Model;
+declare(strict_types=1);
 
-use App\Model\Piece\Rook;
+namespace App\Tests\Model\Piece;
+
 use App\Model\Board;
 use App\Model\Game;
-
 use PHPUnit\Framework\TestCase;
 
 class KnightTest extends TestCase 
 {
-    public function testGetPossibleMoves()
+    public function testGetPossibleMoves(): void
     {
         $game = new Game();
 
@@ -92,7 +92,7 @@ class KnightTest extends TestCase
         }
     }
 
-    public function testIfQuennCannnotMoveLeavingKingInCheck()
+    public function testIfQueenCannotMoveLeavingKingInCheck(): void
     {
         $game = new Game();
 
@@ -156,7 +156,7 @@ class KnightTest extends TestCase
         }
     }
 
-    public function testGetProtectedSquares()
+    public function testGetProtectedSquares(): void
     {
         $game = new Game();
 
@@ -213,9 +213,9 @@ class KnightTest extends TestCase
         }
     }
 
-    public function testGetPotentialMovesCoordinates()
+    public function testGetPotentialMovesCoordinates(): void
     {
-        $board = (new Board())->getBoard();
+        $board = new Board()->getBoard();
 
         $correctSet[0]['piece'] = $board[1][2]->getPiece();
         $correctSet[0]['expected_moves']['two_up_and_left'] = [3, 1]; 

@@ -1,8 +1,9 @@
 <?php 
 
-namespace App\Tests\Model\King;
+declare(strict_types=1);
 
-use App\Model\Board;
+namespace App\Tests\Model\Piece\King;
+
 use App\Model\Game;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
@@ -10,12 +11,11 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-
 use PHPUnit\Framework\TestCase;
 
 class CheckIfKingIsInCheckmateTest extends TestCase
 {
-    public function testIfKingIsInCheckmate()
+    public function testIfKingIsInCheckmate(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -198,7 +198,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         }
     }
 
-    public function testIfKingIsNotInCheckmate()
+    public function testIfKingIsNotInCheckmate(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -349,7 +349,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         }
     }
 
-    public function checkIfKingIsNotInCheckmateBecauseCheckCanBeBlocked()
+    public function checkIfKingIsNotInCheckmateBecauseCheckCanBeBlocked(): void
     {
         /* Position 1 */
         $game = new Game();

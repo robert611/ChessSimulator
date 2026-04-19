@@ -1,8 +1,9 @@
-<?php 
+<?php
 
-namespace App\Tests\Model;
+declare(strict_types=1);
 
-use App\Model\Board;
+namespace App\Tests\Model\Piece;
+
 use App\Model\Game;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Quenn;
@@ -10,12 +11,11 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
-
 use PHPUnit\Framework\TestCase;
 
 class CheckIfGameIsNotDrawnTest extends TestCase
 {
-    public function testIfKingAndKnightAgainstKingAndKnightIsNotADraw()
+    public function testIfKingAndKnightAgainstKingAndKnightIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -74,7 +74,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfKingAndBishopAgainstKingAndBishopOfDiffrentColorIsNotADraw()
+    public function testIfKingAndBishopAgainstKingAndBishopOfDifferentColorIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -133,7 +133,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfKingAndBishopAgainstKingAndManyBishopsOfTheSameColorIsNotADraw()
+    public function testIfKingAndBishopAgainstKingAndManyBishopsOfTheSameColorIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -198,7 +198,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfTwoHoldRepetitionIsNotADraw()
+    public function testIfTwoHoldRepetitionIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -236,7 +236,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
 
         $game->makeMove($game->getBoard()[2][1]->getPiece(), [3, 2]); /* White king [3, 2] Black King [7, 6] */
 
-        $game->makeMove($game->getBoard()[7][6]->getPiece(), [6, 6]); /* White king [3, 2] Black King [6, 6] -- Second Occurance */
+        $game->makeMove($game->getBoard()[7][6]->getPiece(), [6, 6]); /* White king [3, 2] Black King [6, 6] -- Second Occurence */
 
         $game->makeMove($game->getBoard()[3][2]->getPiece(), [2, 2]); /* White king [2, 2] Black King [6, 6] */
 
@@ -292,7 +292,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfFiftyMovesWithPawnMoveIsNotADraw()
+    public function testIfFiftyMovesWithPawnMoveIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -391,7 +391,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfFiftyMovesWithCaptureIsNotADraw()
+    public function testIfFiftyMovesWithCaptureIsNotADraw(): void
     {
         /* Position 1 */
         $game = new Game();
@@ -494,7 +494,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         }
     }
 
-    public function testIfPositionWithOnePossibleMoveIsNoTaStalemate()
+    public function testIfPositionWithOnePossibleMoveIsNoTaStalemate(): void
     {
         /* Position 1 */
         $game = new Game();
