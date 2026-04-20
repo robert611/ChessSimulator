@@ -1,5 +1,7 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Model;
 
 class BoardSquare 
@@ -17,22 +19,16 @@ class BoardSquare
 
     public function __clone()
     {
-        if (is_object($this->piece)) $this->piece = clone $this->piece;
+        if (is_object($this->piece)) {
+            $this->piece = clone $this->piece;
+        }
     }
-    
-    /**
-     * Get the value of cords
-     */ 
-    public function getCords()
+
+    public function getCords(): array
     {
         return $this->cords;
     }
 
-    /**
-     * Set the value of piece
-     *
-     * @return  self
-     */ 
     public function setPiece(?object $piece): self
     {
         $this->piece = $piece;
@@ -40,17 +36,11 @@ class BoardSquare
         return $this;
     }
 
-    /**
-     * Get the value of piece
-     */ 
     public function getPiece(): ?object
     {
         return $this->piece;
     }
 
-    /**
-     * Get the value of color
-     */ 
     public function getColor(): ?string
     {
         return $this->color;
