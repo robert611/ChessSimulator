@@ -1,9 +1,9 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Model;
 
-use App\Model\BoardSquare;
-use App\Model\SecretGenerator;
 use App\Model\Piece\Pawn;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Knight;
@@ -15,7 +15,7 @@ class Board
 {
     private array $board;
 
-    private $secretGenerator;
+    private SecretGenerator $secretGenerator;
     
     public function __construct()
     {
@@ -23,17 +23,15 @@ class Board
         $this->makeBoard();
     }
 
-    private function makeBoard()
+    private function makeBoard(): void
     {
         for ($i = 1; $i <= 8; $i++) {
             for ($j = 1; $j <= 8; $j++) {
                 if ($i % 2 == 0 && $j % 2 !== 0) {
                     $color = 'white';
-                }
-                else if($i % 2 !== 0 && $j % 2 == 0) {
+                } else if($i % 2 !== 0 && $j % 2 == 0) {
                     $color = 'white';
-                }
-                else {
+                } else {
                     $color = 'black';
                 }
 
@@ -44,7 +42,7 @@ class Board
         $this->fillBoard();
     }
 
-    private function fillBoard()
+    private function fillBoard(): void
     {
         $this->board[1][1]->setPiece(new Rook($this->secretGenerator->generate(), [1,1], 'white'));
         $this->board[1][2]->setPiece(new Knight($this->secretGenerator->generate(), [1,2], 'white'));
@@ -79,10 +77,7 @@ class Board
         $this->board[8][8]->setPiece(new Rook($this->secretGenerator->generate(), [8,8], 'black'));
     }
 
-    /**
-     * Get the value of board
-     */ 
-    public function getBoard()
+    public function getBoard(): array
     {
         return $this->board;
     }
