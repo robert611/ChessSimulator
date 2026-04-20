@@ -189,8 +189,8 @@ class Game
 		$this->makeMove($movingPiece, $move);
 	}
 
-	public function playGame(int $movesToPlay = 10000)
-	{
+	public function playGame(int $movesToPlay = 10000): void
+    {
 		/* Start from one, since loop first executes and then checks conditions */
 		$iteration = 1;
 
@@ -203,7 +203,7 @@ class Game
 	}
 
 	/* Note that only kings, queens and bishops can be recognized */
-	public function getPieceSquare($name, $side, $squareColor = null): ?object
+	public function getPieceSquare(string $name, string $side, $squareColor = null): ?object
 	{
 		foreach ($this->getBoard() as $horizontalColumn) {
 			foreach ($horizontalColumn as $square)
@@ -211,16 +211,13 @@ class Game
 				/* First compare name of piece */
 				if (is_object($square->getPiece()) && $square->getPiece()->getName() == $name)
 				{
-					/* Secondly compare piece's side */
+					/* Secondly, compare piece's side */
 					if ($square->getPiece()->getSide() == $side) {
 
-						/* If it is a bishop then square color is important */
-						if (!is_null($squareColor) && $square->getColor() == $squareColor)
-						{
+						/* If it is a bishop, then square color is important */
+						if (!is_null($squareColor) && $square->getColor() == $squareColor)  {
 							return $square;
-						}
-						else 
-						{
+						} else {
 							return $square; 
 						}
 					}
@@ -231,42 +228,46 @@ class Game
 		return null;
 	}
 
-	public function checkIfGameHasEnded()
-	{
+	public function checkIfGameHasEnded(): bool
+    {
 		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
 		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
 
-		if($whiteKing->checkIfKingIsInCheckmate($this) or $blackKing->checkIfKingIsInCheckmate($this) or $this->checkIfGameIsDrawn())
-		{
-			return true;
-		}
+        if ($whiteKing->checkIfKingIsInCheckmate($this)) {
+            return true;
+        }
+
+        if ($blackKing->checkIfKingIsInCheckmate($this)) {
+            return true;
+        }
+
+        if ($this->checkIfGameIsDrawn()) {
+            return true;
+        }
 
 		return false;
 	}
 
-	public function saveResultInCaseOfCheckmate()
-	{
+	public function saveResultInCaseOfCheckmate(): void
+    {
 		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
 		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
 
-		if ($whiteKing->checkIfKingIsInCheckmate($this))
-		{
+		if ($whiteKing->checkIfKingIsInCheckmate($this)) {
 			$this->result = ['result' => 'black_win', 'type' => 'checkmate'];
-		}
-		else if ($blackKing->checkIfKingIsInCheckmate($this))
-		{
+		} else if ($blackKing->checkIfKingIsInCheckmate($this)) {
 			$this->result = ['result' => 'white_win', 'type' => 'checkmate'];
 		}
 	}
 
 	public function checkIfGameIsDrawn(): bool
 	{
-		/* Three Hold repetition of a position not necesserly moves */
+		/* Three Hold repetition of a position not necessarily moves */
 		/* Insufficient material */
 		/*
 			a - There are two kings 
 			b - King + one or more bishops OF THE SAME COLOR against king
-			c - King + Knight againts King 
+			c - King + Knight against King
 			d - King + one or more bishops of the same color against king + bishop or bishop of the same color as other side
 		*/
 		/* Stalemate, also including dead positions like one in which there are 6 pawns 3 white and 3 black, but neither king can ever capture one */
@@ -457,8 +458,8 @@ class Game
         return $pieces;
 	}
 
-	private function addNewPosition() 
-	{
+	private function addNewPosition(): void
+    {
 		$repeatedPosition = false;
         $position = array();
 
@@ -590,8 +591,8 @@ class Game
 	/**
 	 * Get the value of moves
 	 */ 
-	public function getMoves()
-	{
+	public function getMoves(): array
+    {
 		return $this->moves;
 	}
 
