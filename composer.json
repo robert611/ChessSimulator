@@ -41,7 +41,8 @@
         "symfony/var-dumper": "8.0.*",
         "symfony/web-profiler-bundle": "8.0.*",
         "phpunit/phpunit": "^13.1",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "extra": {
         "symfony": {
@@ -64,6 +65,7 @@
             "cache:clear": "symfony-cmd"
         },
         "code-check": [
+            "./vendor/bin/phpcs",
             "./vendor/bin/phpstan analyse",
             "./vendor/bin/phpunit"
         ]
