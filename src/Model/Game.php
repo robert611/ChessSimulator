@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use App\Dictionary\Coord;
 use App\Model\Board;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
@@ -32,8 +33,13 @@ class Game
 		$this->matchOpening = new MatchOpening();
 	}
 
-	public function makeMove(object $piece, array $cords): void
+	public function makeMove(object $piece, array|Coord $cords): void
 	{
+        // TODO, temporary solution until full migration to Coord enum
+        if ($cords instanceof Coord) {
+            $cords = $cords->toArray();
+        }
+
 		if (isset($cords[0]['from'])) {
 			$this->makeCastleMove($piece, $cords);
 			return;
