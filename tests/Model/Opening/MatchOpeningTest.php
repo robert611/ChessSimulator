@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Model\Opening;
 
+use App\Dictionary\Coord;
 use App\Model\Game;
 use App\Model\OpeningModule\MatchOpening;
 use PHPUnit\Framework\TestCase;
@@ -32,9 +33,9 @@ class MatchOpeningTest extends TestCase
         $game = new Game();
 
         // and given
-        $game->makeMove($game->getBoard()[2][3]->getPiece(), [4, 3]);
-        $game->makeMove($game->getBoard()[7][5]->getPiece(), [5, 5]);
-        $game->makeMove($game->getBoard()[1][2]->getPiece(), [3, 3]);
+        $game->makeMove($game->getBoard()[2][3]->getPiece(), Coord::C4);
+        $game->makeMove($game->getBoard()[7][5]->getPiece(), Coord::E5);
+        $game->makeMove($game->getBoard()[1][2]->getPiece(), Coord::C3);
 
         // when
         $matchingNodes = $this->matchOpening->getMatchingOpeningsNodes($game->getMoves());
