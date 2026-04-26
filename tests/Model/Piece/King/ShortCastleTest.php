@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Model\Piece\King;
 
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
@@ -86,8 +86,8 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[7][8]->setPiece(new Pawn('ASDFAS', [7, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[1][4]->setPiece(new Quenn('CAD3R4', [1, 4], 'white'));
-        $game->getBoard()[8][4]->setPiece(new Quenn('32423F', [8, 4], 'black'));
+        $game->getBoard()[1][4]->setPiece(new Queen('CAD3R4', [1, 4], 'white'));
+        $game->getBoard()[8][4]->setPiece(new Queen('32423F', [8, 4], 'black'));
 
         $games[1]['game'] = $game;
         $games[1]['king'] = $game->getBoard()[1][5]->getPiece();
@@ -158,7 +158,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[3][6]->setPiece(new Knight('QWD5HW', [3, 6], 'white'));
 
         /* Queens */
-        $game->getBoard()[8][3]->setPiece(new Quenn('QWD5HW', [8, 3], 'black'));
+        $game->getBoard()[8][3]->setPiece(new Queen('QWD5HW', [8, 3], 'black'));
 
         $games[4]['game'] = $game;
         $games[4]['king'] = $game->getBoard()[8][5]->getPiece();
@@ -389,7 +389,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[1][5]->setPiece(new King('3FDS3S', [1, 5], 'white'));
 
         $game->getBoard()[1][8]->setPiece(new Rook('Q26VSD', [1, 8], 'white'));
-        $game->getBoard()[8][7]->setPiece(new Quenn('DASD4D', [8, 7], 'black'));
+        $game->getBoard()[8][7]->setPiece(new Queen('DASD4D', [8, 7], 'black'));
         $game->getBoard()[2][4]->setPiece(new Knight('233FRD', [2, 4], 'black'));
 
         $games[2]['game'] = $game;
@@ -546,7 +546,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[1][5]->setPiece(new King('QE32VW', [1, 5], 'white'));
 
         $game->getBoard()[8][8]->setPiece(new Rook('AQ23FS', [8, 8], 'black'));
-        $game->getBoard()[8][2]->setPiece(new Quenn('FFERRS', [8, 2], 'black'));
+        $game->getBoard()[8][2]->setPiece(new Queen('FFERRS', [8, 2], 'black'));
         $game->getBoard()[1][8]->setPiece(new Rook('FSD42S', [1, 8], 'white'));
         $game->getBoard()[4][6]->setPiece(new Bishop('SWFGVS', [4, 6], 'white'));
         
@@ -704,7 +704,7 @@ class ShortCastleTest extends TestCase
 
         $game->getBoard()[1][8]->setPiece(new Rook('DF3423', [1, 8], 'white'));
         $game->getBoard()[2][6]->setPiece(new Knight('DSD23D', [2, 6], 'black'));
-        $game->getBoard()[3][7]->setPiece(new Quenn('USTERS', [3, 7], 'black'));
+        $game->getBoard()[3][7]->setPiece(new Queen('USTERS', [3, 7], 'black'));
 
         $game->makeMove($game->getBoard()[2][6]->getPiece(), [3, 4]);
 
@@ -742,7 +742,7 @@ class ShortCastleTest extends TestCase
         $game->getBoard()[1][5]->setPiece(new King('DSE332', [1, 5], 'white'));
 
         $game->getBoard()[8][8]->setPiece(new Rook('DF34UU', [8, 8], 'black'));
-        $game->getBoard()[6][3]->setPiece(new Quenn('DSD23D', [6, 3], 'white'));
+        $game->getBoard()[6][3]->setPiece(new Queen('DSD23D', [6, 3], 'white'));
         
         $games[2]['game'] = $game;
         $games[2]['king'] = $game->getBoard()[8][5]->getPiece();

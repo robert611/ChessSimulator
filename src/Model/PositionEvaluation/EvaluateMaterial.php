@@ -44,7 +44,7 @@ class EvaluateMaterial implements EvaluationInterface
     public function getSideMaterialCount(string $side): float
     {
         $materialCount = 0;
-        $piecesValues = ['pawn' => 1, 'king' => 3.5, 'bishop' => 3, 'knight' => 3, 'rook' => 5, 'quenn' => 9];
+        $piecesValues = ['pawn' => 1, 'king' => 3.5, 'bishop' => 3, 'knight' => 3, 'rook' => 5, 'queen' => 9];
 
         $pieces = $this->game->getGivenSidePieces($side);
 

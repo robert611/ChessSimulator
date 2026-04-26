@@ -6,7 +6,7 @@ namespace App\Tests\Model\Piece\King;
 
 use App\Model\Game;
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
@@ -47,7 +47,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         $game->getBoard()[5][1]->setPiece(new King('SOPEDF', [5, 1], 'black'));
         $game->getBoard()[4][3]->setPiece(new King('SOPEDF', [4, 3], 'white'));
 
-        $game->getBoard()[5][2]->setPiece(new Quenn('SOPEDF', [5, 2], 'white'));
+        $game->getBoard()[5][2]->setPiece(new Queen('SOPEDF', [5, 2], 'white'));
         
         $correctSet[1]['king'] = $game->getBoard()[5][1]->getPiece();
         $correctSet[1]['game'] = $game;
@@ -212,7 +212,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         $game->getBoard()[8][2]->setPiece(new King('SOPEDF', [8, 2], 'black'));
         $game->getBoard()[6][2]->setPiece(new King('SOPEDF', [6, 2], 'white'));
 
-        $game->getBoard()[8][3]->setPiece(new Quenn('SOPEDF', [8, 3], 'white'));
+        $game->getBoard()[8][3]->setPiece(new Queen('SOPEDF', [8, 3], 'white'));
         $game->getBoard()[7][2]->setPiece(new Pawn('SOPEDF', [7, 2], 'black'));
         
         $wrongSet[0]['king'] = $game->getBoard()[8][2]->getPiece();
@@ -230,7 +230,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         $game->getBoard()[8][5]->setPiece(new King('SOPEDF', [8, 5], 'black'));
         $game->getBoard()[6][5]->setPiece(new King('SOPEDF', [6, 5], 'white'));
 
-        $game->getBoard()[6][4]->setPiece(new Quenn('SOPEDF', [6, 4], 'white'));
+        $game->getBoard()[6][4]->setPiece(new Queen('SOPEDF', [6, 4], 'white'));
         
         $wrongSet[1]['king'] = $game->getBoard()[8][5]->getPiece();
         $wrongSet[1]['game'] = $game;
@@ -314,7 +314,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         $game->getBoard()[6][2]->setPiece(new Bishop('SOPEDF', [6, 2], 'black'));
 
         /* Queen */
-        $game->getBoard()[5][7]->setPiece(new Quenn('SOPEDF', [5, 7], 'black'));
+        $game->getBoard()[5][7]->setPiece(new Queen('SOPEDF', [5, 7], 'black'));
 
         $wrongSet[3]['king'] = $game->getBoard()[8][7]->getPiece();
         $wrongSet[3]['game'] = $game;
@@ -388,7 +388,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         $game->getBoard()[2][3]->setPiece(new King('SOPEDF', [2, 3], 'white'));
 
         /* Rooks && Queens */
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
         $game->getBoard()[7][2]->setPiece(new Rook('SOPEDF', [7, 2], 'white'));
 
         /* Bishop */
@@ -415,7 +415,7 @@ class CheckIfKingIsInCheckmateTest extends TestCase
 
 
         /* Rooks && Queens */
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
         $game->getBoard()[7][2]->setPiece(new Rook('SOPEDF', [7, 2], 'white'));
 
         /* Bishop */
@@ -443,8 +443,8 @@ class CheckIfKingIsInCheckmateTest extends TestCase
 
 
         /* Rooks && Queens */
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
-        $game->getBoard()[8][7]->setPiece(new Quenn('SOPEDF', [8, 7], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[8][7]->setPiece(new Queen('SOPEDF', [8, 7], 'white'));
 
         $game->getBoard()[7][2]->setPiece(new Rook('SOPEDF', [7, 2], 'white'));
         $game->getBoard()[8][4]->setPiece(new Rook('SOPEDF', [8, 4], 'black'));

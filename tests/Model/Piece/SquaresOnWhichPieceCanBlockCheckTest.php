@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Model\Piece;
 
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
@@ -53,11 +53,11 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[8][5]->setPiece(new Rook('SOPEDF', [8, 5], 'black'));
 
         /* Queens */
-        $game->getBoard()[2][5]->setPiece(new Quenn('SOPEDF', [2, 5], 'white'));
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[2][5]->setPiece(new Queen('SOPEDF', [2, 5], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
-        $game->getBoard()[4][2]->setPiece(new Quenn('SOPEDF', [4, 2], 'black'));
-        $game->getBoard()[1][7]->setPiece(new Quenn('SOPEDF', [1, 7], 'black'));
+        $game->getBoard()[4][2]->setPiece(new Queen('SOPEDF', [4, 2], 'black'));
+        $game->getBoard()[1][7]->setPiece(new Queen('SOPEDF', [1, 7], 'black'));
 
         $squares = $game->getBoard()[1][3]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([1, 3], [1, 7]);
         sort($squares);
@@ -151,11 +151,11 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[4][8]->setPiece(new Knight('SOPEDF', [4, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[2][5]->setPiece(new Quenn('SOPEDF', [2, 5], 'white'));
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[2][5]->setPiece(new Queen('SOPEDF', [2, 5], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
-        $game->getBoard()[4][2]->setPiece(new Quenn('SOPEDF', [4, 2], 'black'));
-        $game->getBoard()[4][3]->setPiece(new Quenn('SOPEDF', [4, 3], 'black'));
+        $game->getBoard()[4][2]->setPiece(new Queen('SOPEDF', [4, 2], 'black'));
+        $game->getBoard()[4][3]->setPiece(new Queen('SOPEDF', [4, 3], 'black'));
 
         $squares = $game->getBoard()[1][3]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([1, 3], [4, 3]);
         sort($squares);
@@ -249,11 +249,11 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[4][8]->setPiece(new Knight('SOPEDF', [4, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[2][5]->setPiece(new Quenn('SOPEDF', [2, 5], 'white'));
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[2][5]->setPiece(new Queen('SOPEDF', [2, 5], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
-        $game->getBoard()[4][2]->setPiece(new Quenn('SOPEDF', [4, 2], 'black'));
-        $game->getBoard()[3][1]->setPiece(new Quenn('SOPEDF', [3, 1], 'black'));
+        $game->getBoard()[4][2]->setPiece(new Queen('SOPEDF', [4, 2], 'black'));
+        $game->getBoard()[3][1]->setPiece(new Queen('SOPEDF', [3, 1], 'black'));
 
         $squares = $game->getBoard()[1][3]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([1, 3], [3, 1]);
         sort($squares);
@@ -303,7 +303,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[1][8]->setPiece(new King('SOPEDF', [1, 8], 'white'));
         $game->getBoard()[8][7]->setPiece(new King('SOPEDF', [8, 7], 'black'));
         
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'black'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'black'));
         
         $squares = $game->getBoard()[1][8]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([1, 8], [8, 1]);
         sort($squares);
@@ -347,10 +347,10 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[4][8]->setPiece(new Knight('SOPEDF', [4, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[2][5]->setPiece(new Quenn('SOPEDF', [2, 5], 'white'));
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[2][5]->setPiece(new Queen('SOPEDF', [2, 5], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
-        $game->getBoard()[1][1]->setPiece(new Quenn('SOPEDF', [1, 1], 'black'));
+        $game->getBoard()[1][1]->setPiece(new Queen('SOPEDF', [1, 1], 'black'));
 
         $squares = $game->getBoard()[4][4]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([4, 4], [1, 1]);
         sort($squares);
@@ -400,7 +400,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[5][8]->setPiece(new King('SOPEDF', [5, 8], 'white'));
         $game->getBoard()[8][8]->setPiece(new King('SOPEDF', [8, 8], 'black'));
         
-        $game->getBoard()[1][4]->setPiece(new Quenn('SOPEDF', [1, 4], 'black'));
+        $game->getBoard()[1][4]->setPiece(new Queen('SOPEDF', [1, 4], 'black'));
         
         $squares = $game->getBoard()[5][8]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([5, 8], [1, 4]);
         sort($squares);
@@ -444,8 +444,8 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[4][8]->setPiece(new Knight('SOPEDF', [4, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[2][5]->setPiece(new Quenn('SOPEDF', [2, 5], 'white'));
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[2][5]->setPiece(new Queen('SOPEDF', [2, 5], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
         $squares = $game->getBoard()[1][2]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([1, 2], [5, 6]);
         sort($squares);
@@ -540,7 +540,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[4][8]->setPiece(new Knight('SOPEDF', [4, 8], 'black'));
 
         /* Queens */
-        $game->getBoard()[8][1]->setPiece(new Quenn('SOPEDF', [8, 1], 'white'));
+        $game->getBoard()[8][1]->setPiece(new Queen('SOPEDF', [8, 1], 'white'));
 
         $squares = $game->getBoard()[6][2]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([6, 2], [2, 6]);
         sort($squares);
@@ -590,7 +590,7 @@ class SquaresOnWhichPieceCanBlockCheckTest extends TestCase
         $game->getBoard()[6][6]->setPiece(new King('SOPEDF', [6, 6], 'black'));
         $game->getBoard()[8][8]->setPiece(new King('SOPEDF', [8, 8], 'white'));
         
-        $game->getBoard()[4][8]->setPiece(new Quenn('SOPEDF', [4, 8], 'white'));
+        $game->getBoard()[4][8]->setPiece(new Queen('SOPEDF', [4, 8], 'white'));
         
         $squares = $game->getBoard()[6][6]->getPiece()->getSquaresOnWhichMyPieceWouldBlockCheck([6, 6], [4, 8]);
         sort($squares);

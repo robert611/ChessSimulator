@@ -2,14 +2,11 @@
 
 namespace App\Model\Piece;
 
-use App\Model\Piece\Rook;
-use App\Model\Piece\Bishop;
-
-class Quenn extends Piece
+class Queen extends Piece
 {
 	private string $id;
 
-	private string $name = 'quenn';
+	private string $name = 'queen';
 
     /** @phpstan-ignore-next-line */
     private string $picture;
@@ -40,7 +37,7 @@ class Quenn extends Piece
 
 		$protectedSquares = [];
 
-		/* Quenn can move horizontally, vertically and on all diagonals */
+		/* Queen can move horizontally, vertically and on all diagonals */
 
 		$potentialMoves = $this->getPotentialMovesCoordinates();
 

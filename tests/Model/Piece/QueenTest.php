@@ -26,7 +26,7 @@ class QueenTest extends TestCase
         $correctSet[1]['possible_moves'] = [];
         $correctSet[1]['game'] = $game;
 
-        /* It is a white quenn */
+        /* It is a white queen */
         $game = new Game();
         $board = $game->getBoard();
         $game->makeMove($board[1][4]->getPiece(), [4, 4]);

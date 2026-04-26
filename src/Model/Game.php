@@ -6,7 +6,7 @@ use App\Model\Board;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Pawn;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Knight;
 use App\Model\OpeningModule\MatchOpening;
@@ -54,9 +54,9 @@ class Game
 
 		$piecePreviousCords = $piece->getCords();
 
-		/* Check if pawn should be promoted after that move, for now it will promote to quenn as a default */
+		/* Check if pawn should be promoted after that move, for now it will promote to queen as a default */
 		if ($piece instanceof Pawn && (($piece->getSide() == 'white' && $cords[0] == 8) or ($piece->getSide() == 'black' && $cords[0] == 1))) {
-			$newPiece = new Quenn($piece->getId(), $cords, $piece->getSide());
+			$newPiece = new Queen($piece->getId(), $cords, $piece->getSide());
 			$promotion = true;
 
 			$this->getBoard()[$cords[0]][$cords[1]]->setPiece($newPiece);
@@ -301,14 +301,14 @@ class Game
 				if ($piece instanceof Bishop) {
 					$bishopsSquares[] = $square;
 				}
-				else if (($piece instanceof Rook) or ($piece instanceof Pawn) or ($piece instanceof Quenn)) {
+				else if (($piece instanceof Rook) or ($piece instanceof Pawn) or ($piece instanceof Queen)) {
 					$insufficientMaterial = false;
 					break;
 				} 
 			}
 
-			/* If there are only three pieces first part of the check will always be true, it's enough that none of them is rook, pawn or quenn to a draw so insufficientMaterial must be equal to true */
-			/* If none of the pieces is rook, pawn or quenn and one side has only one piece without counting king it's draw, unless each side has one knight or each side has one bishop of diffrent color then opponent, then it is not a draw */
+			/* If there are only three pieces first part of the check will always be true, it's enough that none of them is rook, pawn or queen to a draw so insufficientMaterial must be equal to true */
+			/* If none of the pieces is rook, pawn or queen and one side has only one piece without counting king it's draw, unless each side has one knight or each side has one bishop of diffrent color then opponent, then it is not a draw */
 			if ($knights !== 2 && !(count($bishopsSquares) == 2 && ($bishopsSquares[0]->getColor() != $bishopsSquares[1]->getColor())))
 			{
 				if ((count($squaresWithPiecesOnTheBoard['white']) < 3 && count($squaresWithPiecesOnTheBoard['black']) < 3) && $insufficientMaterial == true)

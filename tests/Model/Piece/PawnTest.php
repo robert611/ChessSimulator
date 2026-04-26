@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Model\Piece;
 
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\King;
 use App\Model\Piece\Pawn;
 use App\Model\Game;
@@ -32,7 +32,7 @@ class PawnTest extends TestCase
 
         $game->makeMove($game->getBoard()[7][1]->getPiece(), [8, 1]);
 
-        $this->assertTrue($game->getBoard()[8][1]->getPiece() instanceof Quenn);
+        $this->assertTrue($game->getBoard()[8][1]->getPiece() instanceof Queen);
 
         $gameWithCaptureAndPromotion = new Game();
 
@@ -52,6 +52,6 @@ class PawnTest extends TestCase
 
         $gameWithCaptureAndPromotion->makeMove($gameWithCaptureAndPromotion->getBoard()[7][1]->getPiece(), [8, 1]);
 
-        $this->assertTrue($gameWithCaptureAndPromotion->getBoard()[8][1]->getPiece() instanceof Quenn);
+        $this->assertTrue($gameWithCaptureAndPromotion->getBoard()[8][1]->getPiece() instanceof Queen);
     }
 }

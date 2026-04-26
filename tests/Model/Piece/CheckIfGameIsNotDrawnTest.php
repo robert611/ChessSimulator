@@ -6,7 +6,7 @@ namespace App\Tests\Model\Piece;
 
 use App\Model\Game;
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
@@ -527,7 +527,7 @@ class CheckIfGameIsNotDrawnTest extends TestCase
         $game->getBoard()[8][1]->setPiece(new King('SOPEDF', [8, 1], 'black'));
         $game->getBoard()[1][7]->setPiece(new King('SOPEDF', [1, 7], 'white'));
 
-        $game->getBoard()[6][3]->setPiece(new Quenn('SOPEDF', [6, 3], 'white'));
+        $game->getBoard()[6][3]->setPiece(new Queen('SOPEDF', [6, 3], 'white'));
         $game->getBoard()[5][3]->setPiece(new Bishop('SOPEDF', [5, 3], 'white'));
 
         $game->makeMove($game->getBoard()[1][7]->getPiece(), [1, 8]);

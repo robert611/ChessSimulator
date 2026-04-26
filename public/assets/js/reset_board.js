@@ -81,16 +81,16 @@ function getBoardEighthRowElements()
 
     eightRowFirstBishop.appendChild(blackBishopImg);
 
-    /* Black Quenn on [8, 4] */
-    const blackQuenn = document.createElement('td');
-    blackQuenn.setAttribute('class', 'bg-green-board-square');
-    blackQuenn.setAttribute('id', 'cord-84');
+    /* Black Queen on [8, 4] */
+    const blackQueen = document.createElement('td');
+    blackQueen.setAttribute('class', 'bg-green-board-square');
+    blackQueen.setAttribute('id', 'cord-84');
 
-    const blackQuennImg = document.createElement('img');
-    blackQuennImg.setAttribute('class', 'piece-board-img');
-    blackQuennImg.setAttribute('src', '/assets/images/black-quenn.png');
+    const blackQueenImg = document.createElement('img');
+    blackQueenImg.setAttribute('class', 'piece-board-img');
+    blackQueenImg.setAttribute('src', '/assets/images/black-queen.png');
 
-    blackQuenn.appendChild(blackQuennImg);
+    blackQueen.appendChild(blackQueenImg);
 
     /* Black King on [8, 5] */
     const blackKing = document.createElement('td');
@@ -124,7 +124,7 @@ function getBoardEighthRowElements()
 
     blackSecondRook.appendChild(blackRookImg.cloneNode());
 
-    return [eightRowNumber, eightRowFirstRook, eightRowFirstKnight, eightRowFirstBishop, blackQuenn, blackKing, blackSecondBishop, blackSecondKnight, blackSecondRook];
+    return [eightRowNumber, eightRowFirstRook, eightRowFirstKnight, eightRowFirstBishop, blackQueen, blackKing, blackSecondBishop, blackSecondKnight, blackSecondRook];
 }
 
 function getBoardSeventhRowElements()
@@ -277,16 +277,16 @@ function getBoardFirstRowElements()
 
     firstRowFirstBishop.appendChild(whiteBishopImg);
 
-    /* White Quenn on [1, 4] */
-    const whiteQuenn = document.createElement('td');
-    whiteQuenn.setAttribute('class', 'bg-white');
-    whiteQuenn.setAttribute('id', 'cord-14');
+    /* White Queen on [1, 4] */
+    const whiteQueen = document.createElement('td');
+    whiteQueen.setAttribute('class', 'bg-white');
+    whiteQueen.setAttribute('id', 'cord-14');
 
-    const whiteQuennImg = document.createElement('img');
-    whiteQuennImg.setAttribute('class', 'piece-board-img');
-    whiteQuennImg.setAttribute('src', '/assets/images/white-quenn.png');
+    const whiteQueenImg = document.createElement('img');
+    whiteQueenImg.setAttribute('class', 'piece-board-img');
+    whiteQueenImg.setAttribute('src', '/assets/images/white-queen.png');
 
-    whiteQuenn.appendChild(whiteQuennImg);
+    whiteQueen.appendChild(whiteQueenImg);
 
     /* White King on [1, 5] */
     const whiteKing = document.createElement('td');
@@ -320,7 +320,7 @@ function getBoardFirstRowElements()
 
     whiteSecondRook.appendChild(whiteRookImg.cloneNode());
 
-    return [firstRowNumber, firstRowFirstRook, firstRowFirstKnight, firstRowFirstBishop, whiteQuenn, whiteKing, whiteSecondBishop, whiteSecondKnight, whiteSecondRook];
+    return [firstRowNumber, firstRowFirstRook, firstRowFirstKnight, firstRowFirstBishop, whiteQueen, whiteKing, whiteSecondBishop, whiteSecondKnight, whiteSecondRook];
 }
 
 function getColumnNameRowElements() {

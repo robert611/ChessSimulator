@@ -6,6 +6,7 @@ namespace App\Tests\Model\Piece;
 
 use App\Model\Board;
 use App\Model\Game;
+use App\Model\Piece\Queen;
 use PHPUnit\Framework\TestCase;
 
 class KnightTest extends TestCase 
@@ -118,7 +119,7 @@ class KnightTest extends TestCase
         $game->makeMove($board[1][2]->getPiece(), [4, 5]);
         $game->makeMove($board[1][5]->getPiece(), [3, 5]);
 
-        /* Black rook pinning quenn */
+        /* Black rook pinning Queen */
         $game->makeMove($board[8][8]->getPiece(), [6, 5]);
 
         $correctSet[1]['piece'] = $board[4][5]->getPiece();
@@ -129,7 +130,7 @@ class KnightTest extends TestCase
         $game = new Game();
         $board = $game->getBoard();
 
-        /* White king and quenn */
+        /* White king and queen */
         $game->makeMove($board[1][7]->getPiece(), [4, 3]);
         $game->makeMove($board[1][5]->getPiece(), [3, 4]);
 

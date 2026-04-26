@@ -6,7 +6,7 @@ namespace App\Tests\Model\Piece;
 
 use App\Model\Game;
 use App\Model\Piece\Rook;
-use App\Model\Piece\Quenn;
+use App\Model\Piece\Queen;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
@@ -352,7 +352,7 @@ class CheckIfGameIsDrawnTest extends TestCase
 
         $game->getBoard()[5][8]->setPiece(new Knight('SOPEDF', [5, 8], 'black'));
 
-        $game->getBoard()[4][1]->setPiece(new Quenn('SOPEDF', [4, 1], 'black'));
+        $game->getBoard()[4][1]->setPiece(new Queen('SOPEDF', [4, 1], 'black'));
 
         $game->getBoard()[2][1]->setPiece(new Pawn('SOPEDF', [2, 1], 'white'));
 
@@ -428,7 +428,7 @@ class CheckIfGameIsDrawnTest extends TestCase
         $game->getBoard()[5][7]->setPiece(new King('SOPEDF', [5, 7], 'white'));
 
         $game->getBoard()[2][1]->setPiece(new Pawn('SOPEDF', [2, 1], 'black'));
-        $game->getBoard()[8][7]->setPiece(new Quenn('SOPEDF', [8, 7], 'white'));
+        $game->getBoard()[8][7]->setPiece(new Queen('SOPEDF', [8, 7], 'white'));
 
         $game->makeMove($game->getBoard()[8][7]->getPiece(), [3, 2]); /* Stalemate is checked only if at least one moved was played in a game */
 

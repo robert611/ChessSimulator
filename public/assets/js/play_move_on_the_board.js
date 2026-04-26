@@ -33,7 +33,7 @@ function playMoveOnTheBoard(move, counter, containerForMoves)
 
         if (move.piece.name == 'pawn' && ((move.piece.side == 'white' && newCords[0] == 8) || (move.piece.side == 'black' && newCords[0] == 1))) 
         {
-            move.piece.picture = move.piece.side + '-quenn.png';
+            move.piece.picture = move.piece.side + '-queen.png';
         }
 
         squareWithThePiece.firstChild.classList.add('opacity-0');
