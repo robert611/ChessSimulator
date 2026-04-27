@@ -2,31 +2,57 @@
 
 namespace App\Model\Piece;
 
+use App\Model\Game;
+
 class Knight extends Piece
 {
 	private string $id;
 
 	private string $name = 'knight';
-
-    /** @phpstan-ignore-next-line */
-    private string $picture;
 	
 	private array $cords;
 	
 	private string $side;
 
-	public function __construct(string $id, array $cords, string $side)
+    /** @phpstan-ignore-next-line */
+    private string $picture;
+
+    public function __construct(string $id, array $cords, string $side)
 	{
 		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
+        $this->picture = $this->side . "-" . $this->name . ".png";
 	}
 
-	public function move(object $game)
-	{
-		$possibleMoves = $this->getPossibleMoves($game);
+    public function getId(): string
+    {
+        return $this->id;
+    }
 
-		return $possibleMoves;
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getCords(): array
+    {
+        return $this->cords;
+    }
+
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    public function getPicture(): string
+    {
+        return $this->picture;
+    }
+
+    public function move(Game $game): array
+    {
+        return $this->getPossibleMoves($game);
 	}
 
 	public function findOutPossibleMovesAndProtectedSquares(object $game): array
@@ -103,57 +129,4 @@ class Knight extends Piece
 		
 		return $sorted;
     }
-
-	public function getPicture(): string
-	{
-		return $this->side . "-" . $this->name . ".png";
-	}
-
-	public function setPicture(string $picture): self
-	{
-		$this->picture = $picture;
-
-		return $this;
-	}
-
-	public function getSide(): string
-	{
-		return $this->side;
-	}
-
-	public function setSide(string $side): self
-	{
-		$this->side = $side;
-
-		return $this;
-	}
- 
-	public function getCords(): array
-	{
-		return $this->cords;
-	}
- 
-	public function setCords(array $cords): self
-	{
-		$this->cords = $cords;
-
-		return $this;
-	}
-
-	public function getName(): string
-	{
-		return $this->name;
-	}
-
-	public function setName(string $name): self
-	{
-		$this->name = $name;
-
-		return $this;
-	}
-
-	public function getId(): string
-	{
-		return $this->id;
-	}
 }

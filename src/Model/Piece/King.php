@@ -10,19 +10,45 @@ class King extends Piece
 
 	private string $name = 'king';
 
-    /** @phpstan-ignore-next-line */
-    private string $picture;
-
 	private array $cords;
 
 	private string $side;
+
+    /** @phpstan-ignore-next-line */
+    private string $picture;
 
 	public function __construct(string $id, array $cords, string $side)
 	{
 		$this->id = $id;
 		$this->cords = $cords;
 		$this->side = $side;
+        $this->picture = $this->side . "-" . $this->name . ".png";
 	}
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getCords(): array
+    {
+        return $this->cords;
+    }
+
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    public function getPicture(): string
+    {
+        return $this->picture;
+    }
 
 	public function move(Game $game): array
     {
@@ -497,58 +523,5 @@ class King extends Piece
 			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1] + 1], /* Right and up on diagonal */
 			[$kingCordsOnBoard[0] + 1, $kingCordsOnBoard[1]] /* Up */
 		];
-	}
-
-	public function getPicture(): string
-	{
-		return $this->side . "-" . $this->name . ".png";
-	}
-
-	public function setPicture(string $picture): self
-	{
-		$this->picture = $picture;
-
-		return $this;
-	}
-
-	public function getSide(): string
-	{
-		return $this->side;
-	}
-
-	public function setSide(string $side): self
-	{
-		$this->side = $side;
-
-		return $this;
-	}
- 
-	public function getCords(): array
-	{
-		return $this->cords;
-	}
- 
-	public function setCords(array $cords): self
-	{
-		$this->cords = $cords;
-
-		return $this;
-	}
-
-	public function getName(): string
-	{
-		return $this->name;
-	}
-
-	public function setName(string $name): self
-	{
-		$this->name = $name;
-
-		return $this;
-	}
-
-	public function getId(): string
-	{
-		return $this->id;
 	}
 }

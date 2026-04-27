@@ -2,11 +2,24 @@
 
 namespace App\Model\Piece;
 
+use App\Model\Board;
 use App\Model\Game;
 
 abstract class Piece 
 {
+    abstract function getId(): string;
+
+    abstract function getName(): string;
+
+    abstract function getCords(): array;
+
+    abstract function getSide(): string;
+
+    abstract function getPicture(): string;
+
     abstract function move(Game $game);
+
+    abstract function findOutPossibleMovesAndProtectedSquares(Game $game): array;
 
     public function getPotentialPossibleMovesWithoutCheckingIfTheyLeaveKingInCheck($game)
     {
@@ -45,7 +58,7 @@ abstract class Piece
                 continue;
             }
 
-            $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
+            $recreatedBoard = (new Board)->recreateBoard($game->getBoard());
 
             /* Make move and check if in that situation my king is in check */
 			$gameWithPawnMove = clone $game;
@@ -64,7 +77,7 @@ abstract class Piece
     
     public function checkIfGivenMoveSequenceLeavesKingInCheck(Game $game, Piece $piece, array $moves): bool
     {
-        $recreatedBoard = (new \App\Model\Board)->recreateBoard($game->getBoard());
+        $recreatedBoard = (new Board)->recreateBoard($game->getBoard());
 
         /* Do not change state of piece which plays in actual game */
         $piece = clone $piece;
@@ -91,27 +104,11 @@ abstract class Piece
         return $isInCheck;
     }
 
-    abstract function findOutPossibleMovesAndProtectedSquares(Game $game): array;
-
-    abstract function getPicture(): string;
-
-    abstract function setPicture(string $picture): self;
-
-    abstract function getSide(): string;
-
-    abstract function setSide(string $side): self;
-
-    abstract function getCords(): array;
-
-    abstract function setCords(array $cords): self;
-
-    abstract function getName(): string;
-
-    abstract function setName(string $name): self;
-
-    protected function checkIfCoordinatesAreInsideOfBoard($horizontal, $vertical): bool
+    protected function checkIfCoordinatesAreInsideOfBoard(int $horizontal, int $vertical): bool
 	{
-		if (($vertical > 8 or $horizontal > 8) or ($vertical < 1 or $horizontal < 1)) return false;
+		if (($vertical > 8 || $horizontal > 8) || ($vertical < 1 || $horizontal < 1)) {
+            return false;
+        }
 		
 		return true;
     }
