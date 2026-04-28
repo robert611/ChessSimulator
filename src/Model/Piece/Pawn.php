@@ -35,6 +35,11 @@ class Pawn extends Piece
         return $this->name;
     }
 
+    public function setCords(array $cords): void
+    {
+        $this->cords = $cords;
+    }
+
     public function getCords(): array
     {
         return $this->cords;

@@ -11,6 +11,8 @@ abstract class Piece
 
     abstract function getName(): string;
 
+    abstract function setCords(array $cords): void;
+
     abstract function getCords(): array;
 
     abstract function getSide(): string;
