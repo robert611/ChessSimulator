@@ -3,10 +3,10 @@
 namespace App\Model;
 
 use App\Dictionary\Coord;
-use App\Model\Board;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Pawn;
+use App\Model\Piece\Piece;
 use App\Model\Piece\Queen;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Knight;
@@ -491,6 +491,9 @@ class Game
         if (!$repeatedPosition) $this->positions[] = ['occurance' => 1, 'position' => $position];
     }
 
+    /**
+     * @return Piece[]
+     */
 	public function getGivenSidePieces(string $side): array
 	{
 		$board = $this->getBoard();
@@ -498,12 +501,13 @@ class Game
 		$pieces = array();
 
         foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
+            /** @var BoardSquare $square */
+            foreach ($horizontalColumn as $square)
 			{
                 $pieceOnSquare = $square->getPiece();
 
 				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() == $side) {
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() === $side) {
                     $pieces[] = $pieceOnSquare;
 				}
 			}
@@ -512,18 +516,22 @@ class Game
         return $pieces;
 	}
 
+    /**
+     * @return Piece[]
+     */
 	public function getSideSpecificPiecesByName(string $side, string $name): array
 	{
 		$sideAllPieces = $this->getGivenSidePieces($side);
 
-		$specificPieces = array_filter($sideAllPieces, function($piece) use ($name){
-            return strtolower($piece->getName()) == $name ? true : false; 
+        return array_filter($sideAllPieces, function($piece) use ($name){
+            return strtolower($piece->getName()) === $name;
         });
-
-        return $specificPieces;
 	}
 
-    public function getPiecesAttackingGivenSquare(BoardSquare $square, string $side)
+    /**
+     * @return Piece[]
+     */
+    public function getPiecesAttackingGivenSquare(BoardSquare $square, string $side): array
     {
         $piecesAttackingGivenSquare = array();
 

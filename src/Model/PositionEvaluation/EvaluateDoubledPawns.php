@@ -2,16 +2,16 @@
 
 namespace App\Model\PositionEvaluation;
 
-use App\Model\PositionEvaluation\EvaluationInterface;
-use App\Model\PositionEvaluation\SortPawns;
+use App\Model\Game;
+use App\Model\Piece\Pawn;
 
 class EvaluateDoubledPawns implements EvaluationInterface
 {
     use SortPawns;
 
-    private \App\Model\Game $game;
+    private Game $game;
 
-    public function __construct(\App\Model\Game $game)
+    public function __construct(Game $game)
     {
         $this->game = $game;
     }
@@ -47,6 +47,7 @@ class EvaluateDoubledPawns implements EvaluationInterface
 
         $pawns = $this->game->getSideSpecificPiecesByName($side, 'pawn');
 
+        /** @var Pawn[] $pawns */
         $pawns = $this->sortPawnsByVerticalColumn($pawns);
 
         $lastPawnVerticalColumn = null;
@@ -60,7 +61,9 @@ class EvaluateDoubledPawns implements EvaluationInterface
                 continue;
             }
             
-            if ($lastPawnVerticalColumn == $currentPawnVerticalColumn) $numberOfDoubledPawns++;
+            if ($lastPawnVerticalColumn == $currentPawnVerticalColumn) {
+                $numberOfDoubledPawns++;
+            }
 
             $lastPawnVerticalColumn = $currentPawnVerticalColumn;
         }

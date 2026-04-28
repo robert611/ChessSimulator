@@ -60,7 +60,7 @@ class Pawn extends Piece
         return $this->getPossibleMoves($game);
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(object $game): array
+	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
 		$gameMoves = $game->getMoves();
 		$board = $game->getBoard();
@@ -175,7 +175,7 @@ class Pawn extends Piece
 		return ['possible_moves' => $possibleMoves, 'protected_squares' => $protectedSquares];
 	}
 
-	public function isPawnDoubled(\App\Model\Game $game): bool
+	public function isPawnDoubled(Game $game): bool
 	{
 		$pawns = $game->getSideSpecificPiecesByName($this->side, 'pawn');
 
@@ -185,9 +185,11 @@ class Pawn extends Piece
 
         foreach ($pawns as $pawn)
 		{
-			if ($pawn->getCords()[1] == $pawnVerticalColumn) $pawnsOnThatColumn++;
+			if ($pawn->getCords()[1] == $pawnVerticalColumn) {
+                $pawnsOnThatColumn++;
+            }
 		}
 
-		return $pawnsOnThatColumn > 1 ? true : false;
+		return $pawnsOnThatColumn > 1;
 	}
 }

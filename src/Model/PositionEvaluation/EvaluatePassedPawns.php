@@ -2,16 +2,16 @@
 
 namespace App\Model\PositionEvaluation;
 
-use App\Model\PositionEvaluation\EvaluationInterface;
-use App\Model\PositionEvaluation\SortPawns;
+use App\Model\Game;
+use App\Model\Piece\Pawn;
 
 class EvaluatePassedPawns implements EvaluationInterface
 {
     use SortPawns;
 
-    private \App\Model\Game $game;
+    private Game $game;
 
-    public function __construct(\App\Model\Game $game)
+    public function __construct(Game $game)
     {
         $this->game = $game;
     }
@@ -38,33 +38,45 @@ class EvaluatePassedPawns implements EvaluationInterface
         return $evaluation;
     }
 
+    /**
+     * @return Pawn[]
+     */
     public function getPassedPawns(string $side): array
     {
         $passedPawns = array();
 
+        /** @var Pawn[] $myPawns */
         $myPawns = $this->game->getSideSpecificPiecesByName($side, 'pawn');
+        /** @var Pawn[] $opponentPawns */
         $opponentPawns = $this->game->getSideSpecificPiecesByName($this->game->getOpponentSide($side), 'pawn');
 
         $mapOfOpponentPawnsOnVerticalColumn = $this->getPawnsOnVerticalColumnsMap($opponentPawns);
 
-        foreach ($myPawns as $pawn)
-        {
+        foreach ($myPawns as $pawn) {
             $currentPawnVerticalColumn = $pawn->getCords()[1];
 
             $previousColumn = $currentPawnVerticalColumn - 1;
             $nextColumn = $currentPawnVerticalColumn + 1;
 
-            if ($currentPawnVerticalColumn == 1) $previousColumn = 1;
-            if ($currentPawnVerticalColumn == 8) $nextColumn = 8;
+            if ($currentPawnVerticalColumn === 1) {
+                $previousColumn = 1;
+            }
+            if ($currentPawnVerticalColumn === 8) {
+                $nextColumn = 8;
+            }
 
             $isPassedPawn = true;
 
             foreach ([$previousColumn, $currentPawnVerticalColumn, $nextColumn] as $column)
             {
-                if ($mapOfOpponentPawnsOnVerticalColumn[$column] > 0) $isPassedPawn = false; 
+                if ($mapOfOpponentPawnsOnVerticalColumn[$column] > 0) {
+                    $isPassedPawn = false;
+                }
             }
 
-            if ($isPassedPawn) $passedPawns[] = $pawn;
+            if ($isPassedPawn) {
+                $passedPawns[] = $pawn;
+            }
         }
 
         return $passedPawns;
@@ -84,22 +96,27 @@ class EvaluatePassedPawns implements EvaluationInterface
         return $map;
     }
 
-    public function getDoubledPassedPawnsNumber(?array $passedPawns): int
+    /**
+     * @param Pawn[] $passedPawns
+     */
+    public function getDoubledPassedPawnsNumber(array $passedPawns): int
     {
         $doubledPassedPawns = 0;
         $columnsOfPassedPawns = array_fill(1, 8, 0);
 
-        foreach ($passedPawns as $pawn)
-        {
-            if ($pawn->isPawnDoubled($this->game)) $doubledPassedPawns++;
+        foreach ($passedPawns as $pawn) {
+            if ($pawn->isPawnDoubled($this->game)) {
+                $doubledPassedPawns++;
+            }
 
             $columnsOfPassedPawns[$pawn->getCords()[1]]++;
         }
 
         /* If there are two or more doubled pawns on the same column, than treat one as a normal pawn */
-        foreach ($columnsOfPassedPawns as $column)
-        {
-            if ($column > 1) $doubledPassedPawns -= 1;
+        foreach ($columnsOfPassedPawns as $column) {
+            if ($column > 1) {
+                $doubledPassedPawns -= 1;
+            }
         }
 
         return $doubledPassedPawns;
