@@ -29,7 +29,7 @@ class Game
 		$this->moves = [];
 		$this->positions = [];
 		$this->result = ['result' => '', 'type' => ''];
-		$this->board = (new Board())->getBoard();
+		$this->board = new Board()->getBoard();
 		$this->matchOpening = new MatchOpening();
 	}
 
@@ -209,10 +209,11 @@ class Game
 	}
 
 	/* Note that only kings, queens and bishops can be recognized */
-	public function getPieceSquare(string $name, string $side, $squareColor = null): ?object
+	public function getPieceSquare(string $name, string $side, $squareColor = null): ?BoardSquare
 	{
 		foreach ($this->getBoard() as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
+            /** @var BoardSquare $square */
+            foreach ($horizontalColumn as $square)
 			{
 				/* First compare name of piece */
 				if (is_object($square->getPiece()) && $square->getPiece()->getName() == $name)

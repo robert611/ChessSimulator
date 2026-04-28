@@ -2,6 +2,7 @@
 
 namespace App\Model\Piece;
 
+use App\Model\BoardSquare;
 use App\Model\Game;
 
 class King extends Piece
@@ -302,7 +303,8 @@ class King extends Piece
 	
 		/* I could go through all the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
 		foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
+            /** @var BoardSquare $square */
+            foreach ($horizontalColumn as $square)
 			{
 				$piece = $square->getPiece();
 

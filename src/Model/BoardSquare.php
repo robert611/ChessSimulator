@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class BoardSquare 
+use App\Model\Piece\Piece;
+
+class BoardSquare
 {
     private array $cords;
-    public ?object $piece;
+    public ?Piece $piece;
     private string $color;
 
-    public function __construct(array $cords, ?object $piece, string $color)
+    public function __construct(array $cords, ?Piece $piece, string $color)
     {
         $this->cords = $cords;
         $this->piece = $piece;
@@ -29,14 +31,14 @@ class BoardSquare
         return $this->cords;
     }
 
-    public function setPiece(?object $piece): self
+    public function setPiece(?Piece $piece): self
     {
         $this->piece = $piece;
 
         return $this;
     }
 
-    public function getPiece(): ?object
+    public function getPiece(): ?Piece
     {
         return $this->piece;
     }

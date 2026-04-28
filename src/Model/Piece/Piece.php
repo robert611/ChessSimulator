@@ -23,11 +23,6 @@ abstract class Piece
 
     abstract function findOutPossibleMovesAndProtectedSquares(Game $game): array;
 
-    public function getPotentialPossibleMovesWithoutCheckingIfTheyLeaveKingInCheck($game)
-    {
-		return $this->findOutPossibleMovesAndProtectedSquares($game)['possible_moves'];
-    }
-
     public function getPossibleMoves(Game $game): array
 	{
         $possibleMoves = $this->findOutPossibleMovesAndProtectedSquares($game)['possible_moves'];
@@ -101,9 +96,7 @@ abstract class Piece
 
         $myKing = $gameWithNewMoves->getPieceSquare('king', $piece->getSide())->getPiece();
 
-        $isInCheck = $myKing->checkIfKingIsInCheck($gameWithNewMoves, $myKing->getCords());
-
-        return $isInCheck;
+        return $myKing->checkIfKingIsInCheck($gameWithNewMoves, $myKing->getCords());
     }
 
     protected function checkIfCoordinatesAreInsideOfBoard(int $horizontal, int $vertical): bool
@@ -113,16 +106,5 @@ abstract class Piece
         }
 		
 		return true;
-    }
-
-    public function isProtectingGivenSquare(Game $game, array $squareToProtect): bool
-	{
-		$protectedSquares = $this->findOutPossibleMovesAndProtectedSquares($game)['protected_squares'];
-
-		if (in_array($squareToProtect, $protectedSquares)) {
-			return true;
-		}
-
-		return false;
     }
 }
