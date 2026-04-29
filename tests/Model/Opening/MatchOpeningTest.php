@@ -39,10 +39,10 @@ class MatchOpeningTest extends TestCase
 
         // when
         $matchingNodes = $this->matchOpening->getMatchingOpeningsNodes($game->getMoves());
+        $potentialMoves = $this->matchOpening->getPositionPotentialMoves($matchingNodes[0][0]->getChildren());
 
         // then
         $expectedNodes = [[[8, 6], [4, 2]], [[8, 7], [6, 6]]];
-        $potentialMoves = $this->matchOpening->getPositionPotentialMoves($matchingNodes[0][0]->getChildren());
         self::assertTrue(in_array($matchingNodes[0][0]->getData(), $expectedNodes));
         self::assertTrue(in_array($matchingNodes[0][1]->getData(), $expectedNodes));
         self::assertTrue(in_array([[1, 4], [2, 3]], $potentialMoves));

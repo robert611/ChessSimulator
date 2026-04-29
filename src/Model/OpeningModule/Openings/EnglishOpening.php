@@ -5,7 +5,7 @@ namespace App\Model\OpeningModule\Openings;
 use App\Model\OpeningModule\Tree;
 use App\Model\OpeningModule\TreeNode;
 
-class English implements OpeningInterface
+class EnglishOpening implements OpeningInterface
 {
     public function getOpeningTree(): Tree
     {

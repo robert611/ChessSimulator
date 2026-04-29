@@ -2,35 +2,34 @@
 
 namespace App\Model\OpeningModule;
 
-use App\Model\OpeningModule\Openings\English;
+use App\Model\OpeningModule\Openings\EnglishOpening;
+use App\Model\OpeningModule\Openings\OpeningInterface;
 
 class MatchOpening 
 {
-    private array $openings;
-
-    public function __construct()
-    {
-        $this->fillOpeningsArray();
-    }
-
     public function getMatchingOpeningsNodes(array $moves): ?array
     {
-        if (count($moves) == 0) return null;
+        if (count($moves) === 0) {
+            return null;
+        }
 
         /* Get moves in format: [['from_cords'], ['to_cords']] */
         $moves = $this->getMovesCords($moves);
 
         /* If move sequence matched some opening, then return the nodes with moves that can be played after last played move */
-        $matchingOpeningsNodes = array();
+        $matchingOpeningsNodes = [];
 
-        foreach ($this->openings as $opening)
-        {
-            if ($opening->getRoot()->getData() == $moves[0]) {
+        $openings = $this->getOpenings();
 
-                if (count($moves) == 1) $matchingOpeningsNodes[] = $opening->getRoot()->getChildren();
-                else {
-                    $matchingNode = $this->traverseOpeningTreeAndCompareMoves($opening, $moves, 2);
-                    is_array($matchingNode) ? $matchingOpeningsNodes[] = $matchingNode : null;
+        foreach ($openings as $opening) {
+            if ($opening->getOpeningTree()->getRoot()->getData() === $moves[0]) {
+                if (count($moves) === 1) {
+                    $matchingOpeningsNodes[] = $opening->getOpeningTree()->getRoot()->getChildren();
+                } else {
+                    $matchingNode = $this->traverseOpeningTreeAndCompareMoves($opening->getOpeningTree(), $moves, 2);
+                    if (is_array($matchingNode)) {
+                        $matchingOpeningsNodes[] = $matchingNode;
+                    }
                 }
             }
         }
@@ -61,16 +60,19 @@ class MatchOpening
         return $potentialMoves;
     }
 
-    private function traverseOpeningTreeAndCompareMoves($openingNode, $moves, $iteration = 2): ?array
+    private function traverseOpeningTreeAndCompareMoves(TreeNode|Tree $openingNode, $moves, $iteration = 2): ?array
     {
-        $nodeChildren = isset($openingNode->root) ? $openingNode->getRoot()->getChildren() : $openingNode->getChildren();
+        $nodeChildren = isset($openingNode->root)
+            ? $openingNode->getRoot()->getChildren()
+            : $openingNode->getChildren();
 
-        foreach($nodeChildren as $child)
-        {
-            if ($child->getData() == $moves[$iteration - 1])
-            {
+        foreach($nodeChildren as $child) {
+            if ($child->getData() == $moves[$iteration - 1]) {
                 /* If it is the last played move, then return node children as the next possible moves, and if not look further into opening theory */
-                if (count($moves) == $iteration) return !empty($child->getChildren()) ? $child->getChildren(): null;
+                if (count($moves) == $iteration) {
+                    return !empty($child->getChildren()) ? $child->getChildren(): null;
+                }
+
                 return $this->traverseOpeningTreeAndCompareMoves($child, $moves, $iteration + 1);
             }
         }
@@ -78,24 +80,22 @@ class MatchOpening
         return null;
     }
 
-    public function getMovesCords($moves): array
+    public function getMovesCords(array $moves): array
     {
-        $movesCords = [];
-
-        foreach ($moves as $key => $move) {
-            $movesCords[$key] = [$move['previous_cords'], $move['new_cords_square']->getCords()];
-        }
-
-        return $movesCords;
+        return array_map(function ($move) {
+            return [$move['previous_cords'], $move['new_cords_square']->getCords()];
+        }, $moves);
     }
 
-    private function fillOpeningsArray(): void
-    {
-        $this->openings['english'] = new English()->getOpeningTree();
-    }
-
+    /**
+     * @return OpeningInterface[]
+     */
     public function getOpenings(): array
     {
-        return $this->openings;
+        $openings = [];
+
+        $openings['english'] = new EnglishOpening();
+
+        return $openings;
     }
 }
