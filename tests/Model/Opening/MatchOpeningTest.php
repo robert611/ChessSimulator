@@ -33,9 +33,9 @@ class MatchOpeningTest extends TestCase
         $game = new Game();
 
         // and given
-        $game->makeMove($game->getBoard()[2][3]->getPiece(), Coord::C4);
-        $game->makeMove($game->getBoard()[7][5]->getPiece(), Coord::E5);
-        $game->makeMove($game->getBoard()[1][2]->getPiece(), Coord::C3);
+        $game->makeMove($game->getBoard()->getSquare('C2')->getPiece(), Coord::C4);
+        $game->makeMove($game->getBoard()->getSquare('E7')->getPiece(), Coord::E5);
+        $game->makeMove($game->getBoard()->getSquare('B2')->getPiece(), Coord::C3);
 
         // when
         $matchingNodes = $this->matchOpening->getMatchingOpeningsNodes($game->getMoves());

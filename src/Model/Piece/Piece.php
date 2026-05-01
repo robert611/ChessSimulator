@@ -40,7 +40,7 @@ abstract class Piece
         $filteredMoves = array();
 
         $opponentKingColor = $this->getSide() == 'white' ? 'black' : 'white';
-        $opponentKing = $game->getPieceSquare('king', $opponentKingColor)->getPiece();
+        $opponentKing = $game->getKingSquare($opponentKingColor)->getPiece();
         
         /* In this case that method is called from king method checkIfKingIsInCheckmate to find out king attacking pieces, we do not want to actually capture oponnent's king in loop below */
         if ($opponentKing->checkIfKingIsInCheck($game, $opponentKing->getCords())) {
@@ -55,14 +55,14 @@ abstract class Piece
                 continue;
             }
 
-            $recreatedBoard = (new Board)->recreateBoard($game->getBoard());
+            $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
 
             /* Make move and check if in that situation my king is in check */
 			$gameWithPawnMove = clone $game;
             $gameWithPawnMove->setBoard($recreatedBoard);
 			$gameWithPawnMove->makeMove($recreatedBoard[$this->getCords()[0]][$this->getCords()[1]]->getPiece(), $move);
 
-            $myKing = $gameWithPawnMove->getPieceSquare('king', $this->getSide())->getPiece();
+            $myKing = $gameWithPawnMove->getKingSquare($this->getSide())->getPiece();
 
             $isInCheck = $myKing->checkIfKingIsInCheck($gameWithPawnMove, $myKing->getCords());
 
@@ -74,7 +74,7 @@ abstract class Piece
     
     public function checkIfGivenMoveSequenceLeavesKingInCheck(Game $game, Piece $piece, array $moves): bool
     {
-        $recreatedBoard = (new Board)->recreateBoard($game->getBoard());
+        $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
 
         /* Do not change state of piece which plays in actual game */
         $piece = clone $piece;
@@ -94,7 +94,7 @@ abstract class Piece
             $gameWithNewMoves->makeMove($piece, $move);
         }
 
-        $myKing = $gameWithNewMoves->getPieceSquare('king', $piece->getSide())->getPiece();
+        $myKing = $gameWithNewMoves->getKingSquare($piece->getSide())->getPiece();
 
         return $myKing->checkIfKingIsInCheck($gameWithNewMoves, $myKing->getCords());
     }

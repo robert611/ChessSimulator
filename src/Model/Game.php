@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Dictionary\Coord;
+use App\Dictionary\MoveType;
 use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Pawn;
@@ -14,7 +15,7 @@ use App\Model\OpeningModule\MatchOpening;
 
 class Game 
 {
-	private array $board;
+	private Board $board;
 	
 	private array $moves;
 
@@ -29,11 +30,11 @@ class Game
 		$this->moves = [];
 		$this->positions = [];
 		$this->result = ['result' => '', 'type' => ''];
-		$this->board = new Board()->getBoard();
+		$this->board = new Board();
 		$this->matchOpening = new MatchOpening();
 	}
 
-	public function makeMove(object $piece, array|Coord $cords): void
+	public function makeMove(Piece $piece, array|Coord $cords): void
 	{
         // TODO, temporary solution until full migration to Coord enum
         if ($cords instanceof Coord) {
@@ -45,14 +46,13 @@ class Game
 			return;
 		}
 
-		/* ['default', 'capture', 'check', 'check_with_capture'] */
-		$type = 'default';
+		$type = MoveType::DEFAULT;
 
 		/* Remove moving piece from square from which piece moved */
-		$this->getBoard()[$piece->getCords()[0]][$piece->getCords()[1]]->setPiece(null);
+        $this->getBoard()->getSquareByNumericalCoords($piece->getCords())->setPiece(null);
 
 		/* Get piece which was on that square before */
-		$squareToWhichMoveIsMade = $this->getBoard()[$cords[0]][$cords[1]];
+		$squareToWhichMoveIsMade = $this->getBoard()->getSquare(Coord::toString($cords[0], $cords[1]));
 		$pieceOnSquareToWhichMoveIsMade = $squareToWhichMoveIsMade->getPiece();
 
 		/* Make sure that new_cords_square index will have state of the square before that move was made */
@@ -61,48 +61,45 @@ class Game
 		$piecePreviousCords = $piece->getCords();
 
 		/* Check if pawn should be promoted after that move, for now it will promote to queen as a default */
-		if ($piece instanceof Pawn && (($piece->getSide() == 'white' && $cords[0] == 8) or ($piece->getSide() == 'black' && $cords[0] == 1))) {
-			$newPiece = new Queen($piece->getId(), $cords, $piece->getSide());
+		if ($piece instanceof Pawn && (($piece->getSide() === 'white' && $cords[0] == 8) or ($piece->getSide() === 'black' && $cords[0] == 1))) {
+			$newPiece = new Queen($cords, $piece->getSide(), $piece->getId());
 			$promotion = true;
 
-			$this->getBoard()[$cords[0]][$cords[1]]->setPiece($newPiece);
+			$this->getBoard()->getSquare(Coord::toString($cords[0], $cords[1]))->setPiece($newPiece);
 		} else {
 			/* Assign piece to a square to which piece moved */
-			$this->getBoard()[$cords[0]][$cords[1]]->setPiece($piece);
+			$this->getBoard()->getSquare(Coord::toString($cords[0], $cords[1]))->setPiece($piece);
 		}
 
 		$piece->setCords($cords);
 
 		/* Determine type of this move */
 		$opponentKingColor = $piece->getSide() == 'white' ? 'black' : 'white';
-		$opponentKing = $this->getPieceSquare('king', $opponentKingColor)->getPiece();
+		$opponentKing = $this->getKingSquare($opponentKingColor)->getPiece();
 
 		$isOpponentKingInCheck = $opponentKing->checkIfKingIsInCheck($this);
 
 		if (is_null($pieceOnSquareToWhichMoveIsMade)) {
 			if ($isOpponentKingInCheck && isset($promotion)) {
-				$type = 'promotion_with_check';
-			} else if(isset($promotion)) {
-				$type = 'promotion';
-			}
-			else if ($isOpponentKingInCheck) {
-				$type = 'check';
-			}
-		}
-		else {
-			if ($isOpponentKingInCheck && isset($promotion)) {
-				$type = 'promotion_with_capture_and_check';
-			} else if ($isOpponentKingInCheck) {
-				$type = 'check_with_capture';
+				$type = MoveType::PROMOTION_WITH_CAPTURE;
 			} else if (isset($promotion)) {
-				$type = 'promotion_with_capture';
+				$type = MoveType::PROMOTION;
+			}  else if ($isOpponentKingInCheck) {
+				$type = MoveType::CHECK;
 			}
-			else {
-				$type = 'capture';
+		} else {
+			if ($isOpponentKingInCheck && isset($promotion)) {
+                $type = MoveType::PROMOTION_WITH_CAPTURE_AND_CHECK;
+			} else if ($isOpponentKingInCheck) {
+                $type = MoveType::CHECK_WITH_CAPTURE;
+			} else if (isset($promotion)) {
+                $type = MoveType::PROMOTION_WITH_CAPTURE;
+			} else {
+                $type = MoveType::CAPTURE;
 			}
 		}
 
-		$this->moves[] = ['piece' => $piece, 'previous_cords' => $piecePreviousCords, 'new_cords_square' => $cloneOfSquareWithNewCords, 'type' => $type];
+		$this->moves[] = ['piece' => $piece, 'previous_cords' => $piecePreviousCords, 'new_cords_square' => $cloneOfSquareWithNewCords, 'type' => $type->value];
 
 		$this->addNewPosition();
 	}
@@ -136,7 +133,7 @@ class Game
 
 		/* Determine type of this move */
 		$opponentKingColor = $piece->getSide() == 'white' ? 'black' : 'white';
-		$opponentKing = $this->getPieceSquare('king', $opponentKingColor)->getPiece();
+		$opponentKing = $this->getKingSquare($opponentKingColor)->getPiece();
 
 		$isOpponentKingInCheck = $opponentKing->checkIfKingIsInCheck($this);
 
@@ -208,26 +205,18 @@ class Game
 		$this->saveResultInCaseOfCheckmate();
 	}
 
-	/* Note that only kings, queens and bishops can be recognized */
-	public function getPieceSquare(string $name, string $side, $squareColor = null): ?BoardSquare
+	public function getKingSquare(string $side): ?BoardSquare
 	{
-		foreach ($this->getBoard() as $horizontalColumn) {
+        $board = $this->getBoard()->getBoardInNumericalNotation();
+
+		foreach ($board as $horizontalColumn) {
             /** @var BoardSquare $square */
             foreach ($horizontalColumn as $square)
 			{
-				/* First compare name of piece */
-				if (is_object($square->getPiece()) && $square->getPiece()->getName() == $name)
-				{
-					/* Secondly, compare piece's side */
-					if ($square->getPiece()->getSide() == $side) {
-
-						/* If it is a bishop, then square color is important */
-						if (!is_null($squareColor) && $square->getColor() == $squareColor)  {
-							return $square;
-						} else {
-							return $square; 
-						}
-					}
+				if ($square->getPiece() instanceof King) {
+					if ($square->getPiece()->getSide() === $side) {
+                        return $square;
+                    }
 				}
 			}
 		}
@@ -237,8 +226,8 @@ class Game
 
 	public function checkIfGameHasEnded(): bool
     {
-		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
-		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+		$whiteKing = $this->getKingSquare('white')->getPiece();
+		$blackKing = $this->getKingSquare('black')->getPiece();
 
         if ($whiteKing->checkIfKingIsInCheckmate($this)) {
             return true;
@@ -257,8 +246,8 @@ class Game
 
 	public function saveResultInCaseOfCheckmate(): void
     {
-		$whiteKing = $this->getPieceSquare('king', 'white')->getPiece();
-		$blackKing = $this->getPieceSquare('king', 'black')->getPiece();
+		$whiteKing = $this->getKingSquare('white')->getPiece();
+		$blackKing = $this->getKingSquare('black')->getPiece();
 
 		if ($whiteKing->checkIfKingIsInCheckmate($this)) {
 			$this->result = ['result' => 'black_win', 'type' => 'checkmate'];
@@ -636,19 +625,11 @@ class Game
 		return $side == 'white' ? 'black' : 'white';
 	}
 
-	/**
-	 * Get the value of board
-	 */ 
-	public function getBoard(): array
+	public function getBoard(): Board
 	{
 		return $this->board;
 	}
 
-	/**
-	 * Set the value of board
-	 *
-	 * @return  self
-	 */ 
 	public function setBoard(array $board): self
 	{
 		$this->board = $board;

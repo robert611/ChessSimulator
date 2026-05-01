@@ -43,7 +43,7 @@ class FindMate
 
             foreach ($possibleMoves as $move)
             { 
-                $recreatedBoard = (new Board)->recreateBoard($game->getBoard());
+                $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
 
                 $gameWithNewMove = clone $game;
                 $gameWithNewMove->setBoard($recreatedBoard);

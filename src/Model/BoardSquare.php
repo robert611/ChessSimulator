@@ -4,26 +4,16 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use App\Dictionary\PieceColor;
 use App\Model\Piece\Piece;
 
 class BoardSquare
 {
-    private array $cords;
-    public ?Piece $piece;
-    private string $color;
-
-    public function __construct(array $cords, ?Piece $piece, string $color)
-    {
-        $this->cords = $cords;
-        $this->piece = $piece;
-        $this->color = $color;
-    }
-
-    public function __clone()
-    {
-        if (is_object($this->piece)) {
-            $this->piece = clone $this->piece;
-        }
+    public function __construct(
+        private readonly array $cords,
+        private readonly PieceColor $color,
+        private ?Piece $piece = null,
+    ) {
     }
 
     public function getCords(): array
@@ -31,11 +21,14 @@ class BoardSquare
         return $this->cords;
     }
 
-    public function setPiece(?Piece $piece): self
+    public function getColor(): string
+    {
+        return $this->color->value;
+    }
+
+    public function setPiece(?Piece $piece): void
     {
         $this->piece = $piece;
-
-        return $this;
     }
 
     public function getPiece(): ?Piece
@@ -43,8 +36,10 @@ class BoardSquare
         return $this->piece;
     }
 
-    public function getColor(): ?string
+    public function __clone(): void
     {
-        return $this->color;
+        if (is_object($this->piece)) {
+            $this->piece = clone $this->piece;
+        }
     }
 }

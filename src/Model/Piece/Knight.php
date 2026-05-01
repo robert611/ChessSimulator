@@ -3,6 +3,7 @@
 namespace App\Model\Piece;
 
 use App\Model\Game;
+use App\Model\SecretGenerator;
 
 class Knight extends Piece
 {
@@ -14,15 +15,11 @@ class Knight extends Piece
 	
 	private string $side;
 
-    /** @phpstan-ignore-next-line */
-    private string $picture;
-
-    public function __construct(string $id, array $cords, string $side)
+    public function __construct(array $cords, string $side)
 	{
-		$this->id = $id;
+		$this->id = SecretGenerator::generate();
 		$this->cords = $cords;
 		$this->side = $side;
-        $this->picture = $this->side . "-" . $this->name . ".png";
 	}
 
     public function getId(): string
@@ -52,7 +49,7 @@ class Knight extends Piece
 
     public function getPicture(): string
     {
-        return $this->picture;
+        return $this->side . "-" . $this->name . ".png";
     }
 
     public function move(Game $game): array

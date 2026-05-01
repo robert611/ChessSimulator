@@ -6,9 +6,9 @@ namespace App\Model;
 
 class SecretGenerator 
 {
-    private array $secrets = [];
+    private static array $secrets = [];
 
-    public function generate(): string
+    public static function generate(): string
     {
         $alphabet = range('A', 'Z');
 
@@ -19,16 +19,16 @@ class SecretGenerator
                 $letterOrNumber = ceil(rand(0, 1));
                 $secret .= $letterOrNumber == 1 ? $alphabet[rand(0, count($alphabet) - 1)] : ceil(rand(0, 8));
             } 
-        } while(!$this->isSecretAvailable($secret));
+        } while (false === self::isSecretAvailable($secret));
 
-        $this->secrets[] = $secret;
+        self::$secrets[] = $secret;
 
         return $secret;
     }
 
-    public function isSecretAvailable(string $secret): bool
+    public static function isSecretAvailable(string $secret): bool
     {
-        if (in_array($secret, $this->secrets)) {
+        if (in_array($secret, self::$secrets)) {
             return false;
         }
 
