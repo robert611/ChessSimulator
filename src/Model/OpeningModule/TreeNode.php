@@ -26,4 +26,9 @@ class TreeNode
     {
         return $this->children;
     }
+
+    public function hasChildren(): bool
+    {
+        return count($this->children) > 0;
+    }
 }

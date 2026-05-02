@@ -60,7 +60,7 @@ class Pawn extends Piece
 	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
 		$gameMoves = $game->getMoves();
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 
 		$possibleMoves = [];
 

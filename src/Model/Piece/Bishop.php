@@ -15,9 +15,9 @@ class Bishop extends Piece
 	
 	private string $side;
 
-	public function __construct(array $cords, string $side)
+	public function __construct(array $cords, string $side, ?string $id = null)
 	{
-		$this->id = SecretGenerator::generate();
+        $this->id = $id ?: SecretGenerator::generate();
 		$this->cords = $cords;
 		$this->side = $side;
 	}
@@ -57,9 +57,9 @@ class Bishop extends Piece
         return $this->getPossibleMoves($game);
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(object $game): array
+	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{	
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 		
 		$possibleMoves = [];
 

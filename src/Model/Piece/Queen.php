@@ -57,9 +57,9 @@ class Queen extends Piece
         return $this->getPossibleMoves($game);
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(object $game): array
+	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 
 		$possibleMoves = [];
 
@@ -111,8 +111,8 @@ class Queen extends Piece
 		$potentialMoves = ['left' => [], 'up' => [], 'right' => [], 'down' => [], 'up_and_left' => [], 'up_and_right' => [], 'down_and_left' => [], 'down_and_right' => []];
 
 		/* Queen is a combination of rook and bishop, so a queen can move where rook and bishop can move in current position */
-		$rook = new Rook('TYS23J', [$this->getCords()[0], $this->getCords()[1]], $this->getSide());
-		$bishop = new Bishop('OPERS2', [$this->getCords()[0], $this->getCords()[1]], $this->getSide());
+		$rook = new Rook([$this->getCords()[0], $this->getCords()[1]], $this->getSide(), 'TYS23J');
+		$bishop = new Bishop([$this->getCords()[0], $this->getCords()[1]], $this->getSide(), 'OPERS2');
 
 		$potentialMoves = array_merge($potentialMoves, $rook->getPotentialMovesCoordinates());
 		$potentialMoves = array_merge($potentialMoves, $bishop->getPotentialMovesCoordinates());

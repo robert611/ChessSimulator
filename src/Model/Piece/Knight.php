@@ -57,9 +57,9 @@ class Knight extends Piece
         return $this->getPossibleMoves($game);
 	}
 
-	public function findOutPossibleMovesAndProtectedSquares(object $game): array
+	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 
 		$possibleMoves = [];
 

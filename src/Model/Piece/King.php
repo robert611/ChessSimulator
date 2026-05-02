@@ -276,7 +276,7 @@ class King extends Piece
 
 	public function checkIfKingIsInCheck(Game $game, $kingCordsOnBoard = null): bool
 	{
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 
 		/* That function can be used from outside this class in situation which we check coordinates in which king is currently placed not the coordinates to which we want to move */
 		/* So it can check square which already has a king or a square to which king wants to move */

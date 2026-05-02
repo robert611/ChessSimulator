@@ -35,17 +35,26 @@ class MatchOpeningTest extends TestCase
         // and given
         $game->makeMove($game->getBoard()->getSquare('C2')->getPiece(), Coord::C4);
         $game->makeMove($game->getBoard()->getSquare('E7')->getPiece(), Coord::E5);
-        $game->makeMove($game->getBoard()->getSquare('B2')->getPiece(), Coord::C3);
+        $game->makeMove($game->getBoard()->getSquare('B1')->getPiece(), Coord::C3);
 
         // when
         $matchingNodes = $this->matchOpening->getMatchingOpeningsNodes($game->getMoves());
-        $potentialMoves = $this->matchOpening->getPositionPotentialMoves($matchingNodes[0][0]->getChildren());
+        $potentialMoves = $this->matchOpening->getPositionPotentialMoves($matchingNodes[0]->getChildren());
 
         // then
-        $expectedNodes = [[[8, 6], [4, 2]], [[8, 7], [6, 6]]];
-        self::assertTrue(in_array($matchingNodes[0][0]->getData(), $expectedNodes));
-        self::assertTrue(in_array($matchingNodes[0][1]->getData(), $expectedNodes));
-        self::assertTrue(in_array([[1, 4], [2, 3]], $potentialMoves));
+        $expectedNodes = [
+            [
+                Coord::F8->toArray(),
+                Coord::B4->toArray(),
+            ],
+            [
+                Coord::G8->toArray(),
+                Coord::F6->toArray(),
+            ],
+        ];
+        self::assertTrue(in_array($matchingNodes[0]->getData(), $expectedNodes));
+        self::assertTrue(in_array($matchingNodes[1]->getData(), $expectedNodes));
+        self::assertTrue(in_array([Coord::D1->toArray(), Coord::C2->toArray()], $potentialMoves));
     }
 
     public function testGetNextMoveForGivenOpenings(): void
