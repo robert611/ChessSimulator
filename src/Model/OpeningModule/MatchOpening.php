@@ -1,13 +1,18 @@
 <?php 
 
+declare(strict_types=1);
+
 namespace App\Model\OpeningModule;
 
 use App\Model\OpeningModule\Openings\EnglishOpening;
 use App\Model\OpeningModule\Openings\OpeningInterface;
 
-class MatchOpening 
+class MatchOpening
 {
     /**
+     * This method returns opening tree nodes matching already played moves, starting from moves
+     * that can be played next.
+     *
      * @return TreeNode[]|null
      */
     public function getMatchingOpeningsNodes(array $moves): ?array
@@ -19,24 +24,15 @@ class MatchOpening
         /* Get moves in format: [['from_cords'], ['to_cords']] */
         $moves = $this->getMovesCords($moves);
 
-        /* If move sequence matched some opening, then return the nodes with moves that can be played after last played move */
         $matchingOpeningsNodes = [];
 
         $openings = $this->getOpenings();
 
         foreach ($openings as $opening) {
-            if ($opening->getOpeningTree()->getRoot()->getData() === $moves[0]) {
-                if (count($moves) === 1) {
-                    $matchingOpeningsNodes = array_merge(
-                        $opening->getOpeningTree()->getRoot()->getChildren(),
-                        $matchingOpeningsNodes,
-                    );
-                } else {
-                    $matchingNode = $this->traverseOpeningTreeAndCompareMoves($opening->getOpeningTree(), $moves);
-                    if (is_array($matchingNode)) {
-                        $matchingOpeningsNodes = array_merge($matchingNode, $matchingOpeningsNodes);
-                    }
-                }
+            $matchingNode = $this->traverseOpeningTreeAndCompareMoves($opening->getOpeningTree()->getRoot(), $moves);
+
+            if (is_array($matchingNode)) {
+                $matchingOpeningsNodes = array_merge($matchingNode, $matchingOpeningsNodes);
             }
         }
 
@@ -67,16 +63,25 @@ class MatchOpening
         return $potentialMoves;
     }
 
-    private function traverseOpeningTreeAndCompareMoves(TreeNode|Tree $openingNode, array $moves, int $iteration = 2): ?array
-    {
-        /** @var TreeNode[] $nodeChildren */
-        $nodeChildren = isset($openingNode->root)
-            ? $openingNode->getRoot()->getChildren()
-            : $openingNode->getChildren();
+    private function traverseOpeningTreeAndCompareMoves(
+        TreeNode $openingNode,
+        array $moves,
+        int $iteration = 1,
+    ): ?array {
+        if ($iteration === 1) {
+            if ($openingNode->getData() === $moves[$iteration - 1]) {
+                return $this->traverseOpeningTreeAndCompareMoves($openingNode, $moves, $iteration + 1);
+            }
 
-        foreach($nodeChildren as $child) {
+            return null;
+        }
+
+        $nodeChildren = $openingNode->getChildren();
+
+        foreach ($nodeChildren as $child) {
             if ($child->getData() === $moves[$iteration - 1]) {
-                /* If it is the last played move, then return node children as the next possible moves, and if not look further into opening theory */
+                // If it is the last played move, then return node children as the next possible moves,
+                // and if not look further into opening theory
                 if (count($moves) === $iteration) {
                     return $child->hasChildren() ? $child->getChildren(): null;
                 }

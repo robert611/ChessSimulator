@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Model\OpeningModule;
 
@@ -22,6 +24,9 @@ class TreeNode
         return $this->data;
     }
 
+    /**
+     * @return TreeNode[]
+     */
     public function getChildren(): array
     {
         return $this->children;

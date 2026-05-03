@@ -7,6 +7,7 @@ namespace App\Tests\Model\Opening;
 use App\Dictionary\Coord;
 use App\Model\Game;
 use App\Model\OpeningModule\MatchOpening;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class MatchOpeningTest extends TestCase
@@ -27,7 +28,8 @@ class MatchOpeningTest extends TestCase
         self::assertTrue(isset($openings['english']));
     }
 
-    public function testGetMatchingOpeningsNodes(): void
+    #[Test]
+    public function it_matches_opening_moves(): void
     {
         // given
         $game = new Game();
@@ -57,36 +59,43 @@ class MatchOpeningTest extends TestCase
         self::assertTrue(in_array([Coord::D1->toArray(), Coord::C2->toArray()], $potentialMoves));
     }
 
-    public function testGetNextMoveForGivenOpenings(): void
+    #[Test]
+    public function it_returns_next_moves_in_giving_opening(): void
     {
         // given
         $game = new Game();
 
         // and given
-        $game->makeMove($game->getBoard()[2][3]->getPiece(), [4, 3]);
-        $game->makeMove($game->getBoard()[7][5]->getPiece(), [5, 5]);
-        $game->makeMove($game->getBoard()[1][2]->getPiece(), [3, 3]);
-        $game->makeMove($game->getBoard()[8][6]->getPiece(), [4, 2]);
-        $game->makeMove($game->getBoard()[3][3]->getPiece(), [5, 4]);
+        $game->makeMove($game->getBoard()->getSquare('C2')->getPiece(), Coord::C4);
+        $game->makeMove($game->getBoard()->getSquare('E7')->getPiece(), Coord::E5);
+        $game->makeMove($game->getBoard()->getSquare('B1')->getPiece(), Coord::C3);
+        $game->makeMove($game->getBoard()->getSquare('F8')->getPiece(), Coord::B4);
+        $game->makeMove($game->getBoard()->getSquare('C3')->getPiece(), Coord::D5);
 
         // when
         $matchingNodes = $this->matchOpening->getMatchingOpeningsNodes($game->getMoves());
         $nextMove = $this->matchOpening->getNextMoveForGivenOpenings($matchingNodes);
 
         // then
-        $expectedMoves = [[[8, 2], [6, 3]]];
+        $expectedMoves = [
+            [
+                Coord::B8->toArray(),
+                Coord::C6->toArray(),
+            ],
+        ];
         self::assertTrue(in_array($nextMove, $expectedMoves));
     }
 
-    public function testGetMovesCords(): void
+    #[Test]
+    public function it_transforms_move_cords_to_format_understandable_by_opening_matcher(): void
     {
         // given
         $game = new Game();
 
         // and given
-        $game->makeMove($game->getBoard()[2][3]->getPiece(), [4, 3]);
-        $game->makeMove($game->getBoard()[7][5]->getPiece(), [5, 5]);
-        $game->makeMove($game->getBoard()[1][2]->getPiece(), [3, 3]);
+        $game->makeMove($game->getBoard()->getSquare('C2')->getPiece(), Coord::C4);
+        $game->makeMove($game->getBoard()->getSquare('E7')->getPiece(), Coord::E5);
+        $game->makeMove($game->getBoard()->getSquare('B1')->getPiece(), Coord::C3);
 
         // when
         $movesCords = $this->matchOpening->getMovesCords($game->getMoves());

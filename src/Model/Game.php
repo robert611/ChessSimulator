@@ -109,10 +109,10 @@ class Game
 		$moveData = ['piece' => [], 'previous_cords' => [], 'new_cords_square' => [], 'type' => null];
 
 		foreach ($moves as $move) {
-			$piece = $this->getBoard()[$move['from'][0]][$move['from'][1]]->getPiece();
+			$piece = $this->getBoard()->getBoardInNumericalNotation()[$move['from'][0]][$move['from'][1]]->getPiece();
 
 			/* Remove moving piece from square from which piece moved */
-			$this->getBoard()[$move['from'][0]][$move['from'][1]]->setPiece(null);
+			$this->getBoard()->getBoardInNumericalNotation()[$move['from'][0]][$move['from'][1]]->setPiece(null);
 
 			$squareToWhichMoveIsMade = $this->getBoard()[$move['to'][0]][$move['to'][1]];
 			
@@ -433,20 +433,20 @@ class Game
 		return false;		
 	}
 
+    /**
+     * @return array{white: BoardSquare[], black: BoardSquare[]}
+     */
 	public function getAllSquaresOfThePiecesOnTheBoard(): array
 	{
- 		$board = $this->getBoard();
+ 		$board = $this->getBoard()->getBoardInNumericalNotation();
 
         $pieces = [];
 
         foreach ($board as $horizontalColumn) {
-			foreach ($horizontalColumn as $square)
-			{
-                $pieceOnSquare = $square->getPiece();
-
-				/* If there is as piece on that square */
-				if (is_object($pieceOnSquare)) {
-                    $pieces[$pieceOnSquare->getSide()][] = $square;
+            /** @var BoardSquare $square */
+            foreach ($horizontalColumn as $square) {
+				if ($square->getPiece()) {
+                    $pieces[$square->getPiece()->getSide()][] = $square;
 				}
 			}
         }
@@ -485,7 +485,7 @@ class Game
      */
 	public function getGivenSidePieces(string $side): array
 	{
-		$board = $this->getBoard();
+		$board = $this->getBoard()->getBoardInNumericalNotation();
 
 		$pieces = array();
 
@@ -630,7 +630,7 @@ class Game
 		return $this->board;
 	}
 
-	public function setBoard(array $board): self
+	public function setBoard(Board $board): self
 	{
 		$this->board = $board;
 

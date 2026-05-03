@@ -60,8 +60,6 @@ class King extends Piece
 
 	public function findOutPossibleMovesAndProtectedSquares(Game $game): array
 	{
-		$board = $game->getBoard();
-
 		$possibleMoves = [];
 
 		$protectedSquares = [];
@@ -116,19 +114,23 @@ class King extends Piece
 		/* Short Castle */
 
 		/* Requirement A The king is not currently in check */
-		if ($this->checkIfKingIsInCheck($game)) return [];
+		if ($this->checkIfKingIsInCheck($game)) {
+            return [];
+        }
 
 		/* Requirement B There are no pieces between the king and the chosen rook */
-		$areSquaresBeetwenKingAndRookOccupied = true;
+		$areSquaresBetweenKingAndRookOccupied = true;
 
-		$cordsBeetwenKingAndRook = $this->side == 'white' ? [[1, 6], [1, 7]] : [[8, 6], [8, 7]];
+		$cordsBetweenKingAndRook = $this->side == 'white' ? [[1, 6], [1, 7]] : [[8, 6], [8, 7]];
 
-		if (is_object($game->getBoard()[$cordsBeetwenKingAndRook[0][0]][$cordsBeetwenKingAndRook[0][1]]->getPiece()) || is_object($game->getBoard()[$cordsBeetwenKingAndRook[1][0]][$cordsBeetwenKingAndRook[1][1]]->getPiece())) {
+        $board = $game->getBoard()->getBoardInNumericalNotation();
+
+		if (is_object($board[$cordsBetweenKingAndRook[0][0]][$cordsBetweenKingAndRook[0][1]]->getPiece()) || is_object($board[$cordsBetweenKingAndRook[1][0]][$cordsBetweenKingAndRook[1][1]]->getPiece())) {
 			return [];
 		}
 
 		/* Requirement C King has not previously moved */
-		$king = $game->getBoard()[$this->cords[0]][$this->cords[1]]->getPiece();
+		$king = $board[$this->cords[0]][$this->cords[1]]->getPiece();
 		$didKingPreviouslyMoved = !empty($game->getPieceMoves($king->getId()));
 
 		if ($didKingPreviouslyMoved) {
@@ -138,11 +140,11 @@ class King extends Piece
 		/* Requirement D Rook has not previously moved */
 		$rookStartingPosition = $this->side == 'white' ? [1, 8] : [8, 8];
 
-		$pieceOnRookStartingPositionSquare = $game->getBoard()[$rookStartingPosition[0]][$rookStartingPosition[1]];
+		$pieceOnRookStartingPositionSquare = $board[$rookStartingPosition[0]][$rookStartingPosition[1]];
 		
 		/* Check if rook actually moved */
 		/* Note that for this if to pass, on this square can't be second rook which moved to rookStartingPosition, cause that rook would have to move in order to do it and second part of if would never pass, so using id of any rook here is ok */
-		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof \App\Model\Piece\Rook or !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
+		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof Rook || !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
 		{
 			return [];
 		} 
@@ -150,7 +152,7 @@ class King extends Piece
 		/* Requirements E && F The king does not pass through a square that is attacked by an enemy piece, note that if king will end up in check after castle it will be always spotted here */
 		$protectedSquaresByOpponent = $game->getGivenSideProtectedSquares($this->getSide(), '\App\Model\Piece\King');
 
-		foreach ($cordsBeetwenKingAndRook as $cords)
+		foreach ($cordsBetweenKingAndRook as $cords)
 		{
 			if (in_array($cords, $protectedSquaresByOpponent)) {
 				return [];
@@ -160,8 +162,10 @@ class King extends Piece
 		$kingPosition = $this->getKingPositionBeforeAndAfterCastle();
 		$rookPosition = $this->getRookPositionBeforeAndAfterCastle();
 
-		$shortCastleMoves = [['from' => $kingPosition['short']['king']['before'], 'to' => $kingPosition['short']['king']['after']], 
-			['from' => $rookPosition['short']['rook']['before'], 'to' => $rookPosition['short']['rook']['after']]];
+		$shortCastleMoves = [
+            ['from' => $kingPosition['short']['king']['before'], 'to' => $kingPosition['short']['king']['after']],
+			['from' => $rookPosition['short']['rook']['before'], 'to' => $rookPosition['short']['rook']['after']],
+        ];
 
 		return $shortCastleMoves;
 	}
@@ -179,22 +183,26 @@ class King extends Piece
 		
 		/* Long Castle */
 
-		/* Requirement A The king is not currently in check */
-		if ($this->checkIfKingIsInCheck($game)) return [];
+		/* Requirement A - The king is not currently in check */
+		if ($this->checkIfKingIsInCheck($game)) {
+            return [];
+        }
 
 		/* Requirement B There are no pieces between the king and the chosen rook */
 		$areSquaresBetweenKingAndRookOccupied = true;
 
 		$cordsBetweenKingAndRook = $this->side == 'white' ? [[1, 4], [1, 3], [1, 2]] : [[8, 4], [8, 3], [8, 2]];
 
-		foreach ($cordsBetweenKingAndRook as $cords) {
-			if (is_object($game->getBoard()[$cords[0]][$cords[1]]->getPiece())) {
+        $board = $game->getBoard()->getBoardInNumericalNotation();
+
+        foreach ($cordsBetweenKingAndRook as $cords) {
+			if (is_object($board[$cords[0]][$cords[1]]->getPiece())) {
                 return [];
             }
 		}
 
 		/* Requirement C King has not previously moved */
-		$king = $game->getBoard()[$this->cords[0]][$this->cords[1]]->getPiece();
+		$king = $board[$this->cords[0]][$this->cords[1]]->getPiece();
 		$didKingPreviouslyMoved = !empty($game->getPieceMoves($king->getId()));
 
 		if ($didKingPreviouslyMoved) {
@@ -204,11 +212,11 @@ class King extends Piece
 		/* Requirement D Rook has not previously moved */
 		$rookStartingPosition = $this->side == 'white' ? [1, 1] : [8, 1];
 
-		$pieceOnRookStartingPositionSquare = $game->getBoard()[$rookStartingPosition[0]][$rookStartingPosition[1]];
+		$pieceOnRookStartingPositionSquare = $board[$rookStartingPosition[0]][$rookStartingPosition[1]];
 	
 		/* Check if rook actually moved */
 		/* Note that for this if to pass, on this square can't be second rook which moved to rookStartingPosition, cause that rook would have to move in order to do it and second part of if would never pass, so using id of any rook here is ok */
-		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof \App\Model\Piece\Rook or !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
+		if (!$pieceOnRookStartingPositionSquare->getPiece() instanceof Rook or !empty($game->getPieceMoves($pieceOnRookStartingPositionSquare->getPiece()->getId())))
 		{
 			return [];
 		} 
@@ -255,9 +263,11 @@ class King extends Piece
 
 	private function checkIfKingCanMoveToGivenSquare(Game $game, array $cords): bool 
 	{
-		if (!$this->checkIfCoordinatesAreInsideOfBoard($cords[0], $cords[1])) return false;
+		if (!$this->checkIfCoordinatesAreInsideOfBoard($cords[0], $cords[1])) {
+            return false;
+        }
 
-		$board = $game->getBoard();
+		$board = $game->getBoard()->getBoardInNumericalNotation();
 
 		$pieceOnSquare = $board[$cords[0]][$cords[1]]->getPiece();
 
@@ -357,7 +367,8 @@ class King extends Piece
 			
 			/* Check if one of ours pieces can capture attacking piece */
 			/* Więc tak, muszę gdzieś zdobyć figury, które atakują dane pole to znaczy ich pozycję a później sprawdzić czy jedna z moich figur może ją zbić */
-			$kingSquare = $game->getBoard()[$this->cords[0]][$this->cords[1]];
+            $board = $game->getBoard()->getBoardInNumericalNotation();
+			$kingSquare = $board[$this->cords[0]][$this->cords[1]];
 
 			$opponentSide = $this->getSide() == 'white' ? 'black' : 'white';
 
@@ -365,7 +376,7 @@ class King extends Piece
 
 			if (count($attackingPieces) == 1) {
 				$attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];
-				$attackingPieceSquare = $game->getBoard()[$attackingPieceCords[0]][$attackingPieceCords[1]];
+				$attackingPieceSquare = $board[$attackingPieceCords[0]][$attackingPieceCords[1]];
 
 				$myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
 

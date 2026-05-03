@@ -71,19 +71,25 @@
             <div class="col-md-8">
                 <div class="table-responsive">
                     <table class="table table-bordered">
+                        {% set board = game.getBoard.getBoardInNumericalNotation %}
+
                         {% for i in 8..1 %}
                             <tr>
                                 <td>{{ i }}</td>
 
                                 {% for j in 1..8 %}
-                                    {% set color = game.getBoard()[i][j].getColor() %}
+                                    {% set color = board[i][j].getColor() %}
 
-                                    {% if color == 'black' %} {% set color = "#769656" %} {% endif %}
+                                    {% if color == 'BLACK' %} {% set color = "#769656" %} {% endif %}
                                     
-                                    {% if game.getBoard()[i][j].getPiece() == null %}
-                                        <td style="{{ 'background-color:'~color  }}" class="cord-{{ i }}{{ j }}"><img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}"></td>
+                                    {% if board[i][j].getPiece() == null %}
+                                        <td style="{{ 'background-color:'~color  }}" class="cord-{{ i }}{{ j }}">
+                                            <img class="piece-board-img opacity-0" src="{{ asset('/assets/images/black-pawn.png') }}" alt="Board square">
+                                        </td>
                                     {% else %}
-                                        <td style="{{ 'background-color:'~color }}" class="cord-{{ i }}{{ j }}"><img class="piece-board-img" src="{{ asset('/assets/images/'~game.getBoard()[i][j].getPiece().getPicture) }}"></td>
+                                        <td style="{{ 'background-color:'~color }}" class="cord-{{ i }}{{ j }}">
+                                            <img class="piece-board-img" src="{{ asset('/assets/images/'~board[i][j].getPiece().getPicture) }}" alt="Board square">
+                                        </td>
                                     {% endif %}
                                 {% endfor %}
                             </tr>

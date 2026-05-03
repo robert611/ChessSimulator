@@ -37,14 +37,14 @@ class GameAgainstComputer
         fclose($gameFile);
     }
 
-    public function isHumanMoveValid(object $game, array $humanMove, ?string $castle): bool
+    public function isHumanMoveValid(Game $game, array $humanMove, ?string $castle): bool
     {
         $sideToMove = $game->getSideToMove();
 
         if ($castle == 'long' or $castle == 'short') {
             $castleMoves = [];
 
-            $sideToMoveKing = $game->getPieceSquare('king', $sideToMove)->getPiece();
+            $sideToMoveKing = $game->getKingSquare($sideToMove)->getPiece();
 
             foreach ($sideToMoveKing->getPossibleMoves($game) as $move) {
                 if (isset($move[0]['from'])) {
@@ -67,7 +67,7 @@ class GameAgainstComputer
             }
         }
 
-        $piece = $game->getBoard()[$humanMove[0][0]][$humanMove[0][1]]->getPiece();
+        $piece = $game->getBoard()->getBoardInNumericalNotation()[$humanMove[0][0]][$humanMove[0][1]]->getPiece();
 
         if ($piece == null) return false;
 
@@ -86,17 +86,18 @@ class GameAgainstComputer
     /*
         humanMove -> [[], []] first array is 'from' coords and second 'to' coords
     */
-    public function playAndSaveHumanMove(string $gameFileName, array $humanMove, ?string $castle, object $game): void
+    public function playAndSaveHumanMove(string $gameFileName, array $humanMove, ?string $castle, Game $game): void
     {
         if ($game->checkIfGameHasEnded()) {
             return;
         }
 
-        if ($castle == 'long' or $castle == 'short')
-        {
+        $board = $game->getBoard()->getBoardInNumericalNotation();
+
+        if ($castle == 'long' or $castle == 'short') {
             $sideToMove = $game->getSideToMove();
 
-            $sideToMoveKing = $game->getPieceSquare('king', $sideToMove)->getPiece();
+            $sideToMoveKing = $game->getKingSquare($sideToMove)->getPiece();
 
             $kingPosition = $sideToMoveKing->getKingPositionBeforeAndAfterCastle();
             $rookPosition = $sideToMoveKing->getRookPositionBeforeAndAfterCastle();
@@ -106,9 +107,10 @@ class GameAgainstComputer
             $humanMove = [['from' => $kingPositionBefore, 'to' => $kingPosition[$castle]['king']['after']],
                 ['from' => $rookPosition[$castle]['rook']['before'], 'to' => $rookPosition[$castle]['rook']['after']]];
 
-            $game->makeMove($game->getBoard()[$kingPositionBefore[0]][$kingPositionBefore[1]]->getPiece(), $humanMove);
-
-        } else $game->makeMove($game->getBoard()[$humanMove[0][0]][$humanMove[0][1]]->getPiece(), $humanMove[1]);
+            $game->makeMove($board[$kingPositionBefore[0]][$kingPositionBefore[1]]->getPiece(), $humanMove);
+        } else {
+            $game->makeMove($board[$humanMove[0][0]][$humanMove[0][1]]->getPiece(), $humanMove[1]);
+        }
 
         $this->saveMove($gameFileName, $humanMove);
 

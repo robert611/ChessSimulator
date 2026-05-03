@@ -25,7 +25,7 @@ class FindMate
         return $matingPatterns;
     }
 
-    public function traverseThroughGivenMoveSequence($game, $side, $depth, $iteration = 1, $matingMoves = []): ?array
+    public function traverseThroughGivenMoveSequence(Game $game, $side, $depth, $iteration = 1, $matingMoves = []): ?array
     {
         $matingPatternsLeadingFromSomeMove = array();
 
@@ -43,14 +43,14 @@ class FindMate
 
             foreach ($possibleMoves as $move)
             { 
-                $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
+                $recreatedBoard = (new Board)->cloneBoard();
 
                 $gameWithNewMove = clone $game;
                 $gameWithNewMove->setBoard($recreatedBoard);
 
-                $gameWithNewMove->makeMove($gameWithNewMove->getBoard()[$piece->getCords()[0]][$piece->getCords()[1]]->getPiece(), $move);
+                $gameWithNewMove->makeMove($gameWithNewMove->getBoard()->getBoardInNumericalNotation()[$piece->getCords()[0]][$piece->getCords()[1]]->getPiece(), $move);
 
-                $opponentKing = $gameWithNewMove->getPieceSquare('king', $opponentSide)->getPiece();
+                $opponentKing = $gameWithNewMove->getKingSquare($opponentSide)->getPiece();
 
                 $matingMovesWithThisVariation = array_merge($matingMoves, [['from' => [$piece->getCords()[0], $piece->getCords()[1]], 'to' => $move]]);
 

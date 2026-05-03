@@ -55,12 +55,15 @@ abstract class Piece
                 continue;
             }
 
-            $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
+            $recreatedBoard = (new Board)->cloneBoard();
 
             /* Make move and check if in that situation my king is in check */
 			$gameWithPawnMove = clone $game;
             $gameWithPawnMove->setBoard($recreatedBoard);
-			$gameWithPawnMove->makeMove($recreatedBoard[$this->getCords()[0]][$this->getCords()[1]]->getPiece(), $move);
+			$gameWithPawnMove->makeMove(
+                $recreatedBoard->getBoardInNumericalNotation()[$this->getCords()[0]][$this->getCords()[1]]->getPiece(),
+                $move,
+            );
 
             $myKing = $gameWithPawnMove->getKingSquare($this->getSide())->getPiece();
 
@@ -74,7 +77,7 @@ abstract class Piece
     
     public function checkIfGivenMoveSequenceLeavesKingInCheck(Game $game, Piece $piece, array $moves): bool
     {
-        $recreatedBoard = (new Board)->cloneBoard($game->getBoard());
+        $recreatedBoard = (new Board)->cloneBoard();
 
         /* Do not change state of piece which plays in actual game */
         $piece = clone $piece;
@@ -87,7 +90,7 @@ abstract class Piece
         {
             if (isset($move['from'])) 
             {
-                $piece = $gameWithNewMoves->getBoard()[$move['from'][0]][$move['from'][1]]->getPiece();
+                $piece = $gameWithNewMoves->getBoard()->getBoardInNumericalNotation()[$move['from'][0]][$move['from'][1]]->getPiece();
                 $move = $move['to'];
             }
 
