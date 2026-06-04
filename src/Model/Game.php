@@ -548,7 +548,7 @@ class Game
         return $possibleMoves;
 	}
 
-	public function getGivenSideProtectedSquares(string $side, $callingPiece): array
+	public function getGivenSideProtectedSquares(string $side, string $callingPiece): array
     {
         $board = $this->getBoard();
 
@@ -561,8 +561,8 @@ class Game
 
 				/* If there is as piece on that square */
 				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $side) {   
-                    /* Without this if, it would lead to infinite loop beacause one king checks protected squares of another to calculate it's protected squares, so none can really do it */ 
-                    if ($pieceOnSquare instanceof $callingPiece and $pieceOnSquare instanceof \App\Model\Piece\King) {
+                    /* Without this if, it would lead to infinite loop because one king checks protected squares of another to calculate it's protected squares, so none can really do it */
+                    if ($pieceOnSquare instanceof $callingPiece and $pieceOnSquare instanceof King) {
                         $givenSideProtectedSquaresCords = array_merge($pieceOnSquare->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($square->getCords()), $givenSideProtectedSquaresCords);
                         continue;
                     }

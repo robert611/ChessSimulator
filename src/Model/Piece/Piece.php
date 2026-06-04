@@ -37,9 +37,10 @@ abstract class Piece
     
     public function checkIfPossibleMovesLeaveKingInCheckAndFilterThem(array $possibleMoves, Game $game): array
 	{
-        $filteredMoves = array();
+        $filteredMoves = [];
 
-        $opponentKingColor = $this->getSide() == 'white' ? 'black' : 'white';
+        $opponentKingColor = $this->getSide() === 'white' ? 'black' : 'white';
+        /** @var King $opponentKing */
         $opponentKing = $game->getKingSquare($opponentKingColor)->getPiece();
         
         /* In this case that method is called from king method checkIfKingIsInCheckmate to find out king attacking pieces, we do not want to actually capture oponnent's king in loop below */
@@ -65,11 +66,14 @@ abstract class Piece
                 $move,
             );
 
+            /** @var King $myKing */
             $myKing = $gameWithPawnMove->getKingSquare($this->getSide())->getPiece();
 
             $isInCheck = $myKing->checkIfKingIsInCheck($gameWithPawnMove, $myKing->getCords());
 
-            if (!$isInCheck) $filteredMoves[] = $move;
+            if (!$isInCheck) {
+                $filteredMoves[] = $move;
+            }
 		}
 
 		return $filteredMoves;
