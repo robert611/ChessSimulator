@@ -45,54 +45,99 @@ class CheckIfKingIsInCheckmateTest extends TestCase
         self::assertTrue($result);
     }
 
+    #[Test]
+    public function test_if_king_is_in_checkmate_2(): void
+    {
+        // given
+        $game = new Game();
+        $game->getBoard()->removeAllPiecesFromTheBoard();
+
+        // and given
+        $board = $game->getBoard()->getBoardInStringNotation();
+
+        // and given
+        $board[Coord::A5->value]->setPiece(new King(Coord::A5->toArray(), PieceColor::BLACK->value));
+        $board[Coord::C4->value]->setPiece(new King(Coord::C4->toArray(), PieceColor::WHITE->value));
+        $board[Coord::B5->value]->setPiece(new Queen(Coord::B5->toArray(), PieceColor::WHITE->value));
+
+        // when
+        /** @var King $blackKing */
+        $blackKing = $board[Coord::A5->value]->getPiece();
+        $result = $blackKing->checkIfKingIsInCheckmate($game);
+
+        // then
+        self::assertTrue($result);
+    }
+
+    #[Test]
+    public function test_if_king_is_in_checkmate_3(): void
+    {
+        // given
+        $game = new Game();
+        $game->getBoard()->removeAllPiecesFromTheBoard();
+
+        // and given
+        $board = $game->getBoard()->getBoardInStringNotation();
+
+        // and given
+        $board[Coord::G8->value]->setPiece(new King(Coord::G8->toArray(), PieceColor::BLACK->value));
+        $board[Coord::G1->value]->setPiece(new King(Coord::G1->toArray(), PieceColor::WHITE->value));
+
+        $board[Coord::F7->value]->setPiece(new Pawn(Coord::F7->toArray(), PieceColor::BLACK->value));
+        $board[Coord::G7->value]->setPiece(new Pawn(Coord::G7->toArray(), PieceColor::BLACK->value));
+        $board[Coord::H6->value]->setPiece(new Pawn(Coord::H6->toArray(), PieceColor::BLACK->value));
+
+        $board[Coord::F2->value]->setPiece(new Pawn(Coord::F2->toArray(), PieceColor::WHITE->value));
+        $board[Coord::G2->value]->setPiece(new Pawn(Coord::G2->toArray(), PieceColor::WHITE->value));
+        $board[Coord::H3->value]->setPiece(new Pawn(Coord::H3->toArray(), PieceColor::WHITE->value));
+
+        $board[Coord::D3->value]->setPiece(new Bishop(Coord::D3->toArray(), PieceColor::WHITE->value));
+        $board[Coord::C3->value]->setPiece(new Knight(Coord::C3->toArray(), PieceColor::BLACK->value));
+        $board[Coord::B2->value]->setPiece(new Rook(Coord::B2->toArray(), PieceColor::BLACK->value));
+
+        $board[Coord::D8->value]->setPiece(new Rook(Coord::D8->toArray(), PieceColor::WHITE->value));
+
+        // when
+        /** @var King $blackKing */
+        $blackKing = $board[Coord::G8->value]->getPiece();
+        $result = $blackKing->checkIfKingIsInCheckmate($game);
+
+        // then
+        self::assertTrue($result);
+    }
+
+    #[Test]
+    public function test_if_king_is_in_checkmate_4(): void
+    {
+        // given
+        $game = new Game();
+        $game->getBoard()->removeAllPiecesFromTheBoard();
+
+        // and given
+        $board = $game->getBoard()->getBoardInStringNotation();
+
+        // and given
+        $board[Coord::E5->value]->setPiece(new King(Coord::E5->toArray(), PieceColor::BLACK->value));
+        $board[Coord::G1->value]->setPiece(new King(Coord::G1->toArray(), PieceColor::WHITE->value));
+
+        $board[Coord::E4->value]->setPiece(new Pawn(Coord::E4->toArray(), PieceColor::WHITE->value));
+        $board[Coord::E3->value]->setPiece(new Pawn(Coord::E3->toArray(), PieceColor::WHITE->value));
+
+        $board[Coord::D5->value]->setPiece(new Bishop(Coord::D5->toArray(), PieceColor::WHITE->value));
+        $board[Coord::F6->value]->setPiece(new Bishop(Coord::F6->toArray(), PieceColor::WHITE->value));
+        $board[Coord::E8->value]->setPiece(new Knight(Coord::E8->toArray(), PieceColor::WHITE->value));
+
+        // when
+        /** @var King $blackKing */
+        $blackKing = $board[Coord::E5->value]->getPiece();
+        $result = $blackKing->checkIfKingIsInCheckmate($game);
+
+        // then
+        self::assertTrue($result);
+    }
+
     public function testIfKingIsInCheckmate(): void
     {
-        /* Position 2 */
-        $game = new Game();
-
-        for ($i = 1; $i <= 8; $i++) {
-            for ($j = 1; $j <= 8; $j++) {
-                $game->getBoard()[$i][$j]->setPiece(null);
-            }
-        }
-
-        $game->getBoard()[5][1]->setPiece(new King('SOPEDF', [5, 1], 'black'));
-        $game->getBoard()[4][3]->setPiece(new King('SOPEDF', [4, 3], 'white'));
-
-        $game->getBoard()[5][2]->setPiece(new Queen('SOPEDF', [5, 2], 'white'));
-        
-        $correctSet[1]['king'] = $game->getBoard()[5][1]->getPiece();
-        $correctSet[1]['game'] = $game;
-
-        /* Position 3 */
-        $game = new Game();
-
-        for ($i = 1; $i <= 8; $i++) {
-            for ($j = 1; $j <= 8; $j++) {
-                $game->getBoard()[$i][$j]->setPiece(null);
-            }
-        }
-
-        $game->getBoard()[8][7]->setPiece(new King('SOPEDF', [8, 7], 'black'));
-        $game->getBoard()[1][7]->setPiece(new King('SOPEDF', [1, 7], 'white'));
-
-        $game->getBoard()[7][6]->setPiece(new Pawn('SOPEDF', [7, 6], 'black'));
-        $game->getBoard()[7][7]->setPiece(new Pawn('SOPEDF', [7, 7], 'black'));
-        $game->getBoard()[6][8]->setPiece(new Pawn('SOPEDF', [6, 8], 'black'));
-
-        $game->getBoard()[2][6]->setPiece(new Pawn('SOPEDF', [2, 6], 'white'));
-        $game->getBoard()[2][7]->setPiece(new Pawn('SOPEDF', [2, 7], 'white'));
-        $game->getBoard()[3][8]->setPiece(new Pawn('SOPEDF', [3, 8], 'white'));
-
-        $game->getBoard()[3][4]->setPiece(new Bishop('SOPEDF', [3, 4], 'white'));
-        $game->getBoard()[3][3]->setPiece(new Knight('SOPEDF', [3, 3], 'black'));
-        $game->getBoard()[2][2]->setPiece(new Rook('SOPEDF', [2, 2], 'black'));
-
-        $game->getBoard()[8][4]->setPiece(new Rook('SOPEDF', [8, 4], 'white'));
-
-        $correctSet[2]['king'] = $game->getBoard()[8][7]->getPiece();
-        $correctSet[2]['game'] = $game;
-
         /* Position 4 */
         $game = new Game();
 
