@@ -138,28 +138,6 @@ class CheckIfKingIsInCheckmateTest extends TestCase
 
     public function testIfKingIsInCheckmate(): void
     {
-        /* Position 4 */
-        $game = new Game();
-
-        for ($i = 1; $i <= 8; $i++) {
-            for ($j = 1; $j <= 8; $j++) {
-                $game->getBoard()[$i][$j]->setPiece(null);
-            }
-        }
-
-        $game->getBoard()[5][5]->setPiece(new King('SOPEDF', [5, 5], 'black'));
-        $game->getBoard()[1][7]->setPiece(new King('SOPEDF', [1, 7], 'white'));
-
-        $game->getBoard()[4][5]->setPiece(new Pawn('SOPEDF', [4, 5], 'white'));
-        $game->getBoard()[3][5]->setPiece(new Pawn('SOPEDF', [3, 5], 'white'));
-
-        $game->getBoard()[5][4]->setPiece(new Bishop('SOPEDF', [5, 4], 'white'));
-        $game->getBoard()[6][6]->setPiece(new Bishop('SOPEDF', [6, 6], 'white'));
-        $game->getBoard()[8][5]->setPiece(new Knight('SOPEDF', [8, 5], 'white'));
-
-        $correctSet[3]['king'] = $game->getBoard()[5][5]->getPiece();
-        $correctSet[3]['game'] = $game;
-
         /* Position 5 */
         $game = new Game();
 

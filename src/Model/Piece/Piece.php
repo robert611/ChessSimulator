@@ -57,13 +57,10 @@ abstract class Piece
                 continue;
             }
 
-            $recreatedBoard = (new Board)->cloneBoard();
-
             /* Make move and check if in that situation my king is in check */
 			$gameWithPawnMove = clone $game;
-            $gameWithPawnMove->setBoard($recreatedBoard);
 			$gameWithPawnMove->makeMove(
-                $recreatedBoard->getBoardInNumericalNotation()[$this->getCords()[0]][$this->getCords()[1]]->getPiece(),
+                $gameWithPawnMove->getBoard()->getBoardInNumericalNotation()[$this->getCords()[0]][$this->getCords()[1]]->getPiece(),
                 $move,
             );
 

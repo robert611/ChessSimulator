@@ -64,7 +64,7 @@ class Pawn extends Piece
 
 		$possibleMoves = [];
 
-		if ($this->side == "white") {
+		if (strtoupper($this->side) === "WHITE") {
 			$pawnStartingLine = 2;
 			$moveOneSquareUpCords = [$this->cords[0] + 1, $this->cords[1]];	
 			$moveTwoSquaresUpCords = [$this->cords[0] + 2, $this->cords[1]];	
