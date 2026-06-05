@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Model\Piece\King;
 
+use App\Dictionary\Coord;
+use App\Dictionary\PieceColor;
 use App\Model\Game;
 use App\Model\Piece\Rook;
 use App\Model\Piece\Queen;
@@ -11,30 +13,40 @@ use App\Model\Piece\Bishop;
 use App\Model\Piece\King;
 use App\Model\Piece\Knight;
 use App\Model\Piece\Pawn;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class CheckIfKingIsInCheckmateTest extends TestCase
 {
+    #[Test]
+    public function test_if_king_is_in_checkmate_1(): void
+    {
+        // given
+        $game = new Game();
+        $game->getBoard()->removeAllPiecesFromTheBoard();
+
+        // and given
+        $board = $game->getBoard()->getBoardInStringNotation();
+
+        // and given (setup kings)
+        $board[Coord::C2->value]->setPiece(new King(Coord::C2->toArray(), PieceColor::WHITE->value));
+        $board[Coord::F8->value]->setPiece(new King(Coord::F8->toArray(), PieceColor::BLACK->value));
+
+        // and given (white rooks are on 7 and 8 line giving black a checkmate)
+        $board[Coord::A8->value]->setPiece(new Rook(Coord::A8->toArray(), PieceColor::WHITE->value));
+        $board[Coord::B7->value]->setPiece(new Rook(Coord::B7->toArray(), PieceColor::WHITE->value));
+
+        // when
+        /** @var King $blackKing */
+        $blackKing = $board[Coord::F8->value]->getPiece();
+        $result = $blackKing->checkIfKingIsInCheckmate($game);
+
+        // then
+        self::assertTrue($result);
+    }
+
     public function testIfKingIsInCheckmate(): void
     {
-        /* Position 1 */
-        $game = new Game();
-
-        for ($i = 1; $i <= 8; $i++) {
-            for ($j = 1; $j <= 8; $j++) {
-                $game->getBoard()[$i][$j]->setPiece(null);
-            }
-        }
-
-        $game->getBoard()[8][6]->setPiece(new King('SOPEDF', [8, 6], 'black'));
-        $game->getBoard()[2][3]->setPiece(new King('SOPEDF', [2, 3], 'white'));
-
-        $game->getBoard()[8][1]->setPiece(new Rook('SOPEDF', [8, 1], 'white'));
-        $game->getBoard()[7][2]->setPiece(new Rook('SOPEDF', [7, 2], 'white'));
-
-        $correctSet[0]['king'] = $game->getBoard()[8][6]->getPiece();
-        $correctSet[0]['game'] = $game;
-
         /* Position 2 */
         $game = new Game();
 

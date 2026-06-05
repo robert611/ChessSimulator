@@ -211,10 +211,9 @@ class Game
 
 		foreach ($board as $horizontalColumn) {
             /** @var BoardSquare $square */
-            foreach ($horizontalColumn as $square)
-			{
+            foreach ($horizontalColumn as $square) {
 				if ($square->getPiece() instanceof King) {
-					if ($square->getPiece()->getSide() === $side) {
+					if (strtolower($square->getPiece()->getSide()) === strtolower($side)) {
                         return $square;
                     }
 				}
@@ -637,31 +636,18 @@ class Game
 		return $this;
 	}
 
-	/**
-	 * Get the value of positions
-	 */ 
-	public function getPositions()
-	{
+	public function getPositions(): array
+    {
 		return $this->positions;
 	}
 
-	/**
-	 * Set the value of positions
-	 *
-	 * @return  self
-	 */ 
-	public function setPositions($positions)
-	{
-		$this->positions = $positions;
-
-		return $this;
-	}
-
-	/**
-	 * Get the value of result
-	 */ 
-	public function getResult()
-	{
+	public function getResult(): array
+    {
 		return $this->result;
 	}
+
+    public function __clone(): void
+    {
+        $this->board = clone $this->board;
+    }
 }

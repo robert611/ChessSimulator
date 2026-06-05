@@ -125,11 +125,14 @@ class King extends Piece
         }
 
 		/* Requirement B There are no pieces between the king and the chosen rook */
-		$cordsBetweenKingAndRook = $this->side === 'white' ? [[1, 6], [1, 7]] : [[8, 6], [8, 7]];
+		$cordsBetweenKingAndRook = strtoupper($this->side) === 'WHITE' ? [[1, 6], [1, 7]] : [[8, 6], [8, 7]];
 
-        $board = $game->getBoard()->getBoardInNumericalNotation();
+        $board = $game->getBoard();
 
-		if (is_object($board[$cordsBetweenKingAndRook[0][0]][$cordsBetweenKingAndRook[0][1]]->getPiece()) || is_object($board[$cordsBetweenKingAndRook[1][0]][$cordsBetweenKingAndRook[1][1]]->getPiece())) {
+		if (
+            is_object($board->getSquareByNumericalCoords($cordsBetweenKingAndRook[0])->getPiece())
+            || is_object($board->getSquareByNumericalCoords($cordsBetweenKingAndRook[1])->getPiece())
+        ) {
 			return [];
 		}
 
@@ -284,12 +287,19 @@ class King extends Piece
 
 	public function checkIfKingIsInCheck(Game $game, ?array $kingCordsOnBoard = null): bool
 	{
-		$board = $game->getBoard()->getBoardInNumericalNotation();
+        $gameClone = clone $game;
+        $board = $gameClone->getBoard()->getBoardInNumericalNotation();
 
 		/* That function can be used from outside this class in situation which we check coordinates in which king is currently placed not the coordinates to which we want to move */
 		/* So it can check square which already has a king or a square to which king wants to move */
 		if (null === $kingCordsOnBoard) {
             $kingCordsOnBoard = $this->cords;
+        } else {
+            /** @var King $king */
+            $king = $gameClone->getBoard()->getSquareByNumericalCoords($this->cords)->getPiece();
+            $gameClone->getBoard()->getSquareByNumericalCoords($this->cords)->setPiece(null);
+            $king->setCords($kingCordsOnBoard);
+            $gameClone->getBoard()->getSquareByNumericalCoords($kingCordsOnBoard)->setPiece($king);
         }
 
 		/* We must check if: 
@@ -306,7 +316,7 @@ class King extends Piece
 
 		$opponentKingPositionOnBoard = [];
 
-		$opponentProtectedSquaresCoords = array();
+		$opponentProtectedSquaresCoords = [];
 	
 		/* I could go through all the opponent pieces and check if any of them has that square in possible moves, and if on that square is placed an opponent's piece check if that piece is protected */
 		foreach ($board as $horizontalColumn) {
@@ -326,7 +336,7 @@ class King extends Piece
 					}
 
 					$opponentProtectedSquaresCoords = array_merge(
-                        $piece->getProtectedSquares($game),
+                        $piece->getProtectedSquares($gameClone),
                         $opponentProtectedSquaresCoords,
                     );
 				}
@@ -339,90 +349,88 @@ class King extends Piece
 			$isInCheck = true;
 		}
 
-		/* If the examined square has an opponent's piece then we have to check if it is not protected and we can capture */
-		$squareOnBoardToWhichKingIsMoving = $board[$kingCordsOnBoard[0]][$kingCordsOnBoard[1]]->getPiece();
-
-		if (is_object($squareOnBoardToWhichKingIsMoving) && $squareOnBoardToWhichKingIsMoving->getSide() !== $this->getSide()) {
-			if (in_array($kingCordsOnBoard, $opponentProtectedSquaresCoords)) {
-				$isInCheck = true;
-			}
-		}
-
 		/* Check if opponent's king is bordering with given square, I omit kings in previous loop to avoid infinite loop */
 		$cordsOnWhichOpponentKingCannotBe = $this->getPotentialCordsToWhichKingCanMoveBasedOnCurrentPosition($kingCordsOnBoard);
 
 		if (in_array($opponentKingPositionOnBoard, $cordsOnWhichOpponentKingCannotBe)) {
 			$isInCheck = true;
 		}
-		
+
+        unset($gameClone);
+
 		return $isInCheck;
 	}
 
 	public function checkIfKingIsInCheckmate(Game $game): bool
     {
+        if (false === $this->checkIfKingIsInCheck($game)) {
+            return false;
+        }
+
+        if (false === empty($this->getPossibleMoves($game))) {
+            return false;
+        }
+
 		/* If king is in check and has no possible moves, check if some piece can capture or block attacking piece */
-		if ($this->checkIfKingIsInCheck($game) && empty($this->getPossibleMoves($game))) {
+
 			
-			/* Check if one of ours pieces can capture attacking piece */
-			/* Więc tak, muszę gdzieś zdobyć figury, które atakują dane pole, to znaczy ich pozycję, a później sprawdzić, czy jedna z moich figur może ją zbić */
-            $board = $game->getBoard()->getBoardInNumericalNotation();
-			$kingSquare = $board[$this->cords[0]][$this->cords[1]];
+        /* Check if one of ours pieces can capture attacking piece */
+        /* Więc tak, muszę gdzieś zdobyć figury, które atakują dane pole, to znaczy ich pozycję, a później sprawdzić, czy jedna z moich figur może ją zbić */
+        $board = $game->getBoard()->getBoardInNumericalNotation();
+        $kingSquare = $board[$this->cords[0]][$this->cords[1]];
 
-			$opponentSide = $this->getSide() === 'white' ? 'black' : 'white';
+        $opponentSide = $this->getSide() === 'white' ? 'black' : 'white';
 
-			$attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $opponentSide);
+        $attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $opponentSide);
 
-			if (count($attackingPieces) == 1) {
-				$attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];
-				$attackingPieceSquare = $board[$attackingPieceCords[0]][$attackingPieceCords[1]];
+        if (count($attackingPieces) == 1) {
+            $attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];
+            $attackingPieceSquare = $board[$attackingPieceCords[0]][$attackingPieceCords[1]];
 
-				$myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
+            $myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
 
-				$canBlock = false;
+            $canBlock = false;
 
-				/* Check if one of my pieces can block check */
-				if (!$attackingPieces[0] instanceof Knight && !$attackingPieces[0] instanceof Pawn) {
-					$squaresOnWhichMyPieceBlocksCheck = $this->getSquaresOnWhichMyPieceWouldBlockCheck($kingSquare->getCords(), $attackingPieceCords);
+            /* Check if one of my pieces can block check */
+            if (!$attackingPieces[0] instanceof Knight && !$attackingPieces[0] instanceof Pawn) {
+                $squaresOnWhichMyPieceBlocksCheck = $this->getSquaresOnWhichMyPieceWouldBlockCheck($kingSquare->getCords(), $attackingPieceCords);
 
-					$possibleMoves = $game->getGivenSidePossibleMoves($this->getSide());
+                $possibleMoves = $game->getGivenSidePossibleMoves($this->getSide());
 					
-					foreach ($squaresOnWhichMyPieceBlocksCheck as $square) {
-						if (in_array($square, $possibleMoves)) {
-							$canBlock = true;
-						}
-					}
-				}
-
-				if ($canBlock) {
-					return false;
-				}
-
-				/* If king has no possible moves and my pieces can't capture attackin piece then it's checkmate */
-				if (count($myPiecesAbleToCaptureAttackingPiece) == 0) {
-					return true;
-				}
-
-				/* If one of my pieces can capture attacking piece check if by doing so that piece does not leave king in check */
-				foreach ($myPiecesAbleToCaptureAttackingPiece as $piece) {
-					/* Problem is that the king is already in check, so I must omit that one */
-					$attackingPieceSquare->setPiece(null);
-
-					/* If any of those pieces can capture attacking piece then king is not in checkmate */
-					$canCapture = !$this->checkIfGivenMoveSequenceLeavesKingInCheck($game, $piece, [$attackingPieceCords]);
-
-					$attackingPieceSquare->setPiece($attackingPieces[0]);
-
-					if ($canCapture) {
-                        return false;
+                foreach ($squaresOnWhichMyPieceBlocksCheck as $square) {
+                    if (in_array($square, $possibleMoves)) {
+                        $canBlock = true;
                     }
-				}
-			}
+                }
+            }
 
-			/* If king is attacked by two pieces then the only possibility to get out of check is to move king, since you can't capture two pieces in one move */
-			return true;
-		}
+            if ($canBlock) {
+                return false;
+            }
 
-		return false;
+            /* If king has no possible moves and my pieces can't capture attackin piece then it's checkmate */
+            if (count($myPiecesAbleToCaptureAttackingPiece) == 0) {
+                return true;
+            }
+
+            /* If one of my pieces can capture attacking piece check if by doing so that piece does not leave king in check */
+            foreach ($myPiecesAbleToCaptureAttackingPiece as $piece) {
+                /* Problem is that the king is already in check, so I must omit that one */
+                $attackingPieceSquare->setPiece(null);
+
+                /* If any of those pieces can capture attacking piece then king is not in checkmate */
+                $canCapture = !$this->checkIfGivenMoveSequenceLeavesKingInCheck($game, $piece, [$attackingPieceCords]);
+
+                $attackingPieceSquare->setPiece($attackingPieces[0]);
+
+                if ($canCapture) {
+                    return false;
+                }
+            }
+        }
+
+        /* If king is attacked by two pieces then the only possibility to get out of check is to move king, since you can't capture two pieces in one move */
+        return true;
 	}
 
 	public function getSquaresOnWhichMyPieceWouldBlockCheck($kingCords, $attackingPieceCords): array

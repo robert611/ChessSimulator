@@ -122,8 +122,26 @@ class Board
         return $this->board[$coord];
     }
 
+    public function removeAllPiecesFromTheBoard(): void
+    {
+        for ($i = 1; $i <= 8; $i++) {
+            for ($j = 1; $j <= 8; $j++) {
+                /** @var BoardSquare $square */
+                $square = $this->getBoardInNumericalNotation()[$i][$j];
+                $square->setPiece(null);
+            }
+        }
+    }
+
     public function cloneBoard(): Board
     {
         return clone $this;
+    }
+
+    public function __clone(): void
+    {
+        foreach ($this->board as $key => $boardSquare) {
+            $this->board[$key] = clone $boardSquare;
+        }
     }
 }

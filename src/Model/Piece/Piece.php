@@ -2,6 +2,7 @@
 
 namespace App\Model\Piece;
 
+use App\Dictionary\PieceColor;
 use App\Model\Board;
 use App\Model\Game;
 
@@ -39,7 +40,7 @@ abstract class Piece
 	{
         $filteredMoves = [];
 
-        $opponentKingColor = $this->getSide() === 'white' ? 'black' : 'white';
+        $opponentKingColor = PieceColor::getOpponentSide($this->getSide());
         /** @var King $opponentKing */
         $opponentKing = $game->getKingSquare($opponentKingColor)->getPiece();
         

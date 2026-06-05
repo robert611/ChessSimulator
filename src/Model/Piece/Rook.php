@@ -70,22 +70,18 @@ class Rook extends Piece
 		$potentialMoves = $this->getPotentialMovesCoordinates();
 
 		/* Potential moves are sorted by direction in its own arrays with names [left, up, right, down] */
-		foreach ($potentialMoves as $direction)
-		{
-			foreach ($direction as $move)
-			{
+		foreach ($potentialMoves as $direction) {
+			foreach ($direction as $move) {
 				/* These are coordination we check in current loop cycle if bishop can move there */
 				$pieceOnSquare = $board[$move[0]][$move[1]]->getPiece();
 
 				/* If in a given coordinates is placed an opponent piece, then add it to possible moves and break since we can't go further on this diagonal */
-				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide())
-				{
+				if (is_object($pieceOnSquare) && $pieceOnSquare->getSide() !== $this->getSide()) {
 					$possibleMoves[] = $move;
 					break;
 				}
 
-				if ($pieceOnSquare == null)
-				{
+				if (null === $pieceOnSquare) {
 					$possibleMoves[] = $move;
 				}
 
