@@ -137,7 +137,7 @@ class King extends Piece
 		}
 
 		/* Requirement C King has not previously moved */
-		$king = $board[$this->cords[0]][$this->cords[1]]->getPiece();
+		$king = $board->getSquareByNumericalCoords($this->cords)->getPiece();
 		$didKingPreviouslyMoved = !empty($game->getPieceMoves($king->getId()));
 
 		if ($didKingPreviouslyMoved) {
@@ -145,9 +145,9 @@ class King extends Piece
 		}
 		
 		/* Requirement D Rook has not previously moved */
-		$rookStartingPosition = $this->side == 'white' ? [1, 8] : [8, 8];
+		$rookStartingPosition = mb_strtoupper($this->side) === 'WHITE' ? [1, 8] : [8, 8];
 
-		$pieceOnRookStartingPositionSquare = $board[$rookStartingPosition[0]][$rookStartingPosition[1]];
+		$pieceOnRookStartingPositionSquare = $board->getSquareByNumericalCoords($rookStartingPosition);
 		
 		/* Check if rook actually moved */
 		/* Note that for this if to pass, on this square can't be second rook which moved to rookStartingPosition, cause that rook would have to move in order to do it and second part of if would never pass, so using id of any rook here is ok */
@@ -379,7 +379,7 @@ class King extends Piece
         $board = $game->getBoard()->getBoardInNumericalNotation();
         $kingSquare = $board[$this->cords[0]][$this->cords[1]];
 
-        $opponentSide = $this->getSide() === 'white' ? 'black' : 'white';
+        $opponentSide = mb_strtoupper($this->getSide()) === 'WHITE' ? 'BLACK' : 'WHITE';
 
         $attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $opponentSide);
 

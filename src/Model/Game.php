@@ -521,7 +521,7 @@ class Game
      */
     public function getPiecesAttackingGivenSquare(BoardSquare $square, string $side): array
     {
-        $piecesAttackingGivenSquare = array();
+        $piecesAttackingGivenSquare = [];
 
         $squaresAttackedByGivenSidePieces = $this->getGivenSidePieces($side);
 
