@@ -361,6 +361,17 @@ class King extends Piece
 		return $isInCheck;
 	}
 
+    /**
+     * Checkmate occurs when a king is in check, and there is no legal move that removes the check.
+     * This includes moving the king to safety, capturing the attacking piece, or blocking the attack (when possible).
+     *
+     * Steps to consider:
+     * 1. If king is not in check, there is no checkmate.
+     * 2. If king has legal moves, there is no checkmate.
+     * 3. If king is attacked by one piece and this piece can be captured, there is no checkmate.
+     * 4. If king is attacked by one piece and the attack can be blocked, there is no checkmate.
+     * 5. If none above is possible, the king is checkmated.
+     */
 	public function checkIfKingIsInCheckmate(Game $game): bool
     {
         if (false === $this->checkIfKingIsInCheck($game)) {
