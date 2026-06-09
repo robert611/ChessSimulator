@@ -376,24 +376,26 @@ class King extends Piece
 			
         /* Check if one of ours pieces can capture attacking piece */
         /* Więc tak, muszę gdzieś zdobyć figury, które atakują dane pole, to znaczy ich pozycję, a później sprawdzić, czy jedna z moich figur może ją zbić */
-        $board = $game->getBoard()->getBoardInNumericalNotation();
-        $kingSquare = $board[$this->cords[0]][$this->cords[1]];
+        $kingSquare = $game->getBoard()->getSquareByNumericalCoords($this->cords);
 
         $opponentSide = mb_strtoupper($this->getSide()) === 'WHITE' ? 'BLACK' : 'WHITE';
 
         $attackingPieces = $game->getPiecesAttackingGivenSquare($kingSquare, $opponentSide);
 
-        if (count($attackingPieces) == 1) {
-            $attackingPieceCords = [$attackingPieces[0]->getCords()[0], $attackingPieces[0]->getCords()[1]];
-            $attackingPieceSquare = $board[$attackingPieceCords[0]][$attackingPieceCords[1]];
+        if (count($attackingPieces) === 1) {
+            $attackingPiece = $attackingPieces[0];
+            $attackingPieceSquare = $game->getBoard()->getSquareByNumericalCoords($attackingPiece->getCords());
 
             $myPiecesAbleToCaptureAttackingPiece = $game->getPiecesAttackingGivenSquare($attackingPieceSquare, $this->side);
 
             $canBlock = false;
 
             /* Check if one of my pieces can block check */
-            if (!$attackingPieces[0] instanceof Knight && !$attackingPieces[0] instanceof Pawn) {
-                $squaresOnWhichMyPieceBlocksCheck = $this->getSquaresOnWhichMyPieceWouldBlockCheck($kingSquare->getCords(), $attackingPieceCords);
+            if (!$attackingPiece instanceof Knight && !$attackingPiece instanceof Pawn) {
+                $squaresOnWhichMyPieceBlocksCheck = $this->getSquaresOnWhichMyPieceWouldBlockCheck(
+                    $kingSquare->getCords(),
+                    $attackingPiece->getCords(),
+                );
 
                 $possibleMoves = $game->getGivenSidePossibleMoves($this->getSide());
 					
@@ -409,7 +411,7 @@ class King extends Piece
             }
 
             /* If king has no possible moves and my pieces can't capture attackin piece then it's checkmate */
-            if (count($myPiecesAbleToCaptureAttackingPiece) == 0) {
+            if (count($myPiecesAbleToCaptureAttackingPiece) === 0) {
                 return true;
             }
 
@@ -419,9 +421,9 @@ class King extends Piece
                 $attackingPieceSquare->setPiece(null);
 
                 /* If any of those pieces can capture attacking piece then king is not in checkmate */
-                $canCapture = !$this->checkIfGivenMoveSequenceLeavesKingInCheck($game, $piece, [$attackingPieceCords]);
+                $canCapture = !$this->checkIfGivenMoveSequenceLeavesKingInCheck($game, $piece, [$attackingPiece->getCords()]);
 
-                $attackingPieceSquare->setPiece($attackingPieces[0]);
+                $attackingPieceSquare->setPiece($attackingPiece);
 
                 if ($canCapture) {
                     return false;
